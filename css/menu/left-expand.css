@@ -1,0 +1,168 @@
+.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+    margin-left: 0;
+    margin: 0 auto;
+    display: inline-block;
+    float: none;
+}
+
+.navbar>.container {
+    width: 100%;
+}
+
+
+/*.collapse.in .navbar-collapse>ul {
+    transform: translateX(0%);
+}*/
+
+.collapsing .navbar-collapse>ul, .collapse.in .navbar-collapse>ul {
+    transform: translateX(-300%);
+    transition: transform ease 1s;
+    overflow: auto;
+    height: auto !important;
+}
+
+.navbar-collapse ul {
+    transition: transform ease 1s;
+    margin-top: 4px;
+}
+
+.navbar-collapse ul {
+    margin: 0 auto;
+    float: none;
+    display: inline-block;
+}
+
+.navbar-collapse ul li {
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: all ease 0.3s;
+}
+
+#main-navbar-collapse {
+    float: left;
+    overflow: hidden !important;
+    height: auto !important;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin: 0 auto;
+    z-index: 1;
+}
+
+#main-nav-collapse {
+    height: auto !important;
+    width: 100%;
+    transition: all ease 1s;
+}
+
+#main-nav-collapse.collapse {
+    display: block;
+}
+
+#main-nav-collapse.collapse.in, #main-nav-collapse.collapsing {
+    width: 250px;
+    transition: all ease 1s;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+}
+
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #505050;
+}
+
+.navbar-toggle.collapsed span:nth-child(2) {
+    transform: rotate(45deg) translateX(5px) translateY(4px);
+}
+
+.navbar-toggle.collapsed span:nth-child(3) {
+    opacity: 0;
+}
+
+.navbar-toggle.collapsed span:nth-child(4) {
+    transform: rotate(-45deg) translateX(4px) translateY(-4px);
+}
+
+.navbar-toggle {
+    margin-right: 0;
+}
+
+.navbar-toggle .icon-bar {
+    width: 27px;
+    transition: all ease 0.5s;
+}
+
+.scrolling #main-nav-collapse {
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.07);
+}
+
+#main-nav-collapse.collapse.in>div.container, #main-nav-collapse.collapsing>div.container {
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .navbar-toggle {
+        display: block;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        margin-top: -20px;
+        z-index: 9;
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        padding: 0 5px;
+        text-align: center;
+    }
+    .navbar-header {
+        float: left;
+        text-align: center;
+    }
+    .navbar-right {
+        margin-right: 0px;
+        float: left !important;
+    }
+    .navbar-brand>img {
+        display: inline-block;
+        max-height: 100%;
+        overflow: hidden;
+        min-width: 70px;
+        max-width: 300px;
+        transition: all ease 0.5s;
+    }
+    .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+        text-align: center;
+        height: auto;
+        min-height: 40px;
+        overflow: hidden;
+        padding: 5px 0;
+        transition: all ease 0.5s;
+        float: left;
+    }
+    .navbar-nav>li a {
+        transition: all ease 0.5s;
+    }
+    .scrolling .navbar-nav>li a {
+        padding: 25px 10px;
+        transition: all ease 0.5s;
+    }
+    .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+        margin: 5px 0;
+        transition: all ease 0.5s;
+        padding: 0;
+    }
+    .scrolling .navbar-brand>img {
+        max-width: 104px;
+        transition: all ease 0.5s;
+    }
+    .scrolling .navbar-default {
+        transition: all ease 0.5s;
+    }
+}

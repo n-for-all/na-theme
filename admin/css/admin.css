@@ -1,0 +1,36 @@
+.sidebar-columns select {
+    background: white;
+    border-radius: 0;
+    font-size: 12px;
+    height: 24px;
+}
+.sidebar-columns form>button {
+    text-decoration: none;
+    float: right;
+    background: rgba(0, 115, 170, 0.8);
+    color: #fff;
+    display: block;
+    line-height: 21px;
+    margin: 2px 0;
+    border-radius: 50%;
+    width: 22px;
+    text-align: center;
+    padding-top: 1px;
+    border: 0 none;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0px;
+}
+
+.sidebar-columns {
+    padding: 4px 8px;
+    background: #fafafa;
+    border: 1px solid #f5f5f5;
+    margin-bottom: 10px;
+    font-size: 11px;
+}
+.instagram-redirect-uri{
+    background: #fff;
+    display: block;
+    font-size: 10px;
+}

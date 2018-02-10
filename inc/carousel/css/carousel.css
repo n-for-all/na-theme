@@ -1,0 +1,15 @@
+.carousels-inner {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    padding: 4px;
+}
+
+.carousels-inner>img {
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    max-height: 100%;
+    max-width: 100%;
+}

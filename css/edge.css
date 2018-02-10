@@ -1,0 +1,41 @@
+/*edge detect*/
+@supports (-ms-ime-align:auto) {
+    .stroke {
+    text-shadow:
+       -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+         1px 1px 0 #fff;
+     }
+     .stats-info h1 .stroke, .story-info h1 .stroke{
+         -webkit-text-fill-color: #a29061;
+         text-shadow: none;
+     }
+}
+@supports (-ms-accelerator:true) {
+    .stroke {
+    text-shadow:
+       -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+         1px 1px 0 #fff;
+     }
+     .stats-info h1 .stroke, .story-info h1 .stroke{
+         -webkit-text-fill-color: #a29061;
+         text-shadow: none;
+     }
+}
+.ie .stroke {
+    color: transparent;
+    text-shadow:
+   -1px -1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px 1px 0 #fff,
+     1px 1px 0 #fff;
+    /*-webkit-text-fill-color: transparent;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #fff;*/
+}
+.ie .stats-info h1 .stroke, .ie .story-info h1 .stroke{
+    -webkit-text-fill-color: #a29061;
+}

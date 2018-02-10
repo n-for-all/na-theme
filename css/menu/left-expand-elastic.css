@@ -1,0 +1,210 @@
+.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+    margin-left: 0;
+    margin: 0 auto;
+    display: inline-block;
+    float: none;
+}
+
+.navbar>.container {
+    width: 100%;
+}
+
+/*.collapse.in .navbar-collapse>ul {
+    transform: translateX(0%);
+}*/
+
+.collapsing .navbar-collapse>ul, .collapse.in .navbar-collapse>ul {
+    transform: translateX(-300%);
+    transition: transform ease 1s;
+    overflow: auto;
+    height: auto !important;
+}
+
+.navbar-collapse ul {
+    transition: transform ease 1s;
+    margin-top: 4px;
+}
+
+.navbar-nav>li {
+    display: inline-block;
+    float: none;
+}
+
+.navbar-collapse > ul {
+    margin: 0 auto;
+    float: none !important;
+    display: none;
+}
+.navbar-collapse.collpasing > ul, .navbar-collapse.collapse.in > ul {
+    display: block;
+}
+
+.navbar-collapse ul li {
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: all ease 0.3s;
+}
+
+#main-navbar-collapse {
+    float: left;
+    overflow: hidden !important;
+    /* height: 100% !important; */
+    position: fixed;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin: 0 auto;
+    z-index: 8;
+    max-height: none;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+}
+
+body:before {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 30px;
+    border-radius: 50%;
+    left: 10px;
+    width: 10px;
+    height: 10px;
+    transform-origin: center;
+    opacity: 0;
+    z-index: 7;
+    transition: all ease 0.4s;
+    background: #723a83;
+}
+
+body.menu-open #main-navbar-collapse {
+    opacity: 1;
+}
+
+body.menu-open:before {
+    transform: scale(400);
+    opacity: 1;
+}
+
+body svg.particles {
+    display: none;
+}
+
+#main-nav-collapse {
+    width: 100%;
+    transition: all ease 1s;
+}
+
+#main-nav-collapse.collapse {
+    display: block;
+}
+
+#main-nav-collapse.collapse.in, #main-nav-collapse.collapsing {
+    width: 250px;
+    transition: all ease 1s;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+}
+
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #505050;
+}
+
+.navbar-toggle .icon-bar {
+    height: 3px;
+    border-radius: 1px;
+}
+
+.navbar-toggle {
+    margin-right: 0;
+}
+
+.navbar-toggle .icon-bar {
+    width: 27px;
+    transition: all ease 0.5s;
+}
+
+
+#main-nav-collapse.collapse.in>div.container, #main-nav-collapse.collapsing>div.container {
+    overflow: hidden;
+}
+
+.navbar-toggle, .navbar-default .navbar-toggle {
+    left: 15px;
+}
+
+@media (min-width: 768px) {
+    .navbar-toggle {
+        display: block;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        margin-top: -20px;
+        z-index: 9;
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        padding: 0 5px;
+        text-align: center;
+    }
+    .navbar-header {
+        float: left;
+        text-align: center;
+        z-index: 9;
+        background: #fff;
+    }
+    .navbar-right {
+        margin-right: 0px;
+    }
+    .navbar-brand>img {
+        display: inline-block;
+        max-height: 100%;
+        overflow: hidden;
+        min-width: 70px;
+        max-width: 300px;
+        transition: all ease 0.5s;
+    }
+    .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+        text-align: center;
+        height: 60px;
+        overflow: hidden;
+        padding: 5px 0;
+        transition: all ease 0.5s;
+        float: left;
+    }
+    .navbar-nav>li a {
+        transition: all ease 0.5s;
+    }
+    .scrolling .navbar-nav>li a {
+        padding: 25px 10px;
+        transition: all ease 0.5s;
+    }
+    .navbar>.container .navbar-brand:before, .navbar>.container-fluid .navbar-brand:before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 60px;
+        height: 100%;
+        background: #24282e;
+        content: "";
+    }
+    .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+        margin: 5px 0;
+        transition: all ease 0.5s;
+        padding: 0 20px 0 80px;
+    }
+    .scrolling .navbar-brand>img {
+        max-width: 104px;
+        transition: all ease 0.5s;
+    }
+    .scrolling .navbar-default {
+        transition: all ease 0.5s;
+    }
+}
