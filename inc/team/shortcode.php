@@ -23,7 +23,7 @@ class Team_Shortcode extends NA_METABOXES
     }
     public function scripts()
     {
-        wp_enqueue_style('team-shortcode', get_stylesheet_directory_uri() . '/inc/team/css/team.css', array(), '1.0.0', 'screen');
+        wp_enqueue_style('team-shortcode', get_template_directory_uri() . '/inc/team/css/team.css', array(), '1.0.0', 'screen');
         wp_enqueue_script('wp-util');
         wp_enqueue_script('underscore');
     }

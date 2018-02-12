@@ -1,0 +1,188 @@
+.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+    margin-left: 0;
+    margin: 0 auto;
+    display: inline-block;
+    float: none;
+}
+
+.navbar>.container {
+    width: 100%;
+}
+
+/*.collapse.in .navbar-collapse>ul {
+    transform: translateX(0%);
+}*/
+
+.collapsing .navbar-collapse>ul, .collapse.in .navbar-collapse>ul {
+    transform: translateX(-300%);
+    transition: transform ease 1s;
+    overflow: auto;
+    height: auto !important;
+}
+
+.navbar-collapse ul {
+    transition: transform ease 1s;
+    margin-top: 4px;
+}
+
+.navbar-collapse ul {
+    margin: 0 auto;
+    display: inline-block;
+    float: none !important;
+}
+
+.navbar-collapse ul li {
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: all ease 0.3s;
+}
+
+#main-navbar-collapse {
+    right: 0%;
+    left: auto;
+    min-width: 1170px !important;
+}
+
+.menu-open #main-navbar-collapse {
+    width: 100%;
+}
+
+#main-navbar-collapse {
+    overflow: hidden !important;
+    height: auto !important;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0;
+    z-index: 1;
+    transition: all ease 1s;
+    top: 0;
+    font-size: 0;
+    border-radius: 50px;
+    z-index: 8;
+}
+
+#main-nav-collapse {
+    height: 70px;
+    width: 380px;
+    transition: all ease 1s;
+    background-color: #fff;
+    border-radius: 70px;
+    left: 10px;
+    top: 10px;
+    overflow: hidden;
+}
+
+#main-nav-collapse.collapse {
+    display: block;
+}
+
+.menu-open #main-nav-collapse {
+    width: 100%;
+    width: calc(100% - 20px);
+}
+
+.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+    width: 220px !important;
+}
+
+#main-nav-collapse {
+    width: 290px;
+}
+
+#main-nav-collapse.collapse.in, #main-nav-collapse.collapsing {
+    transition: all ease 1s;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+}
+
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #505050;
+}
+
+.navbar-toggle {
+    margin-right: 0;
+}
+
+.scrolling #main-nav-collapse {
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.07);
+}
+
+#main-nav-collapse.collapse.in>div.container, #main-nav-collapse.collapsing>div.container {
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .navbar-toggle, .navbar-default .navbar-toggle {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        margin-top: -20px;
+        z-index: 9;
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        padding: 0 5px;
+        text-align: center;
+    }
+    .navbar-header {
+        text-align: center;
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        z-index: 9;
+        left: 0;
+        top: 0;
+        background: #fff;
+    }
+    .navbar-right {
+        margin-right: 0px;
+    }
+    .navbar-brand img {
+        max-width: 100%;
+    }
+    .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+        text-align: center;
+        min-height: 50px;
+        overflow: hidden;
+        padding: 5px 0;
+        width: 320px;
+        transition: all ease 0.5s;
+        position: relative;
+        z-index: 9;
+        background-color: #f8f8f8;
+    }
+    .navbar-nav>li a {
+        transition: all ease 0.5s;
+    }
+    .scrolling .navbar {
+        background-color: transparent;
+    }
+    .scrolling .navbar-nav>li a {
+        transition: all ease 0.5s;
+    }
+    .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+        transition: all ease 0.5s;
+        padding: 0 15px 0 15px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin-right: 0px !important;
+    }
+    .scrolling .navbar-brand>img {
+        max-width: 104px;
+        transition: all ease 0.5s;
+    }
+    .scrolling .navbar-default {
+        transition: all ease 0.5s;
+    }
+}

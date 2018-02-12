@@ -27,10 +27,10 @@ class Events_Shortcode extends NA_METABOXES
     }
     public function scripts()
     {
-        wp_enqueue_style('events-shortcode', get_stylesheet_directory_uri() . '/inc/events/css/events.css', array(), '1.0.0', 'screen');
+        wp_enqueue_style('events-shortcode', get_template_directory_uri() . '/inc/events/css/events.css', array(), '1.0.0', 'screen');
         wp_enqueue_script('wp-util');
         wp_enqueue_script('underscore');
-        wp_enqueue_script('events-js-shortcode', get_stylesheet_directory_uri() . '/inc/events/js/events.js', array(), '1.0.0', 'screen');
+        wp_enqueue_script('events-js-shortcode', get_template_directory_uri() . '/inc/events/js/events.js', array(), '1.0.0', 'screen');
     }
     public function inline_scripts()
     {

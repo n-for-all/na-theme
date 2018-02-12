@@ -141,7 +141,18 @@ function Na_Slider(element, settings) {
 			this.circularNav();
         }
         this.columns = parseInt(this.settings.columns, 10);
-        var height = this.settings.height == 'auto' ? this.maxHeight() : this.wrapper.outerHeight(true);
+        var height = 0;
+        switch(this.settings.height){
+            case 'auto':
+                height = this.maxHeight();
+                break;
+            case '100%':
+                height = jQuery(window).height();
+                break;
+            default:
+                height = this.wrapper.outerHeight(true)
+                break;
+        }
         var width = Math.round((this.wrapper.width() / this.columns * 10) / 10);
         this.slide = {
             height: height,

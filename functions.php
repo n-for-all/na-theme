@@ -27,9 +27,6 @@
 
 define('NA_THEME_TEXT_DOMAIN', 'na_theme');
 
-
-require_once('inc/custom.php');
-
 /* Remove Extra <p> injection from wordpress */
 remove_filter("the_content", "wpautop");
 remove_filter("the_excerpt", "wpautop");
@@ -66,34 +63,6 @@ if ( class_exists( 'woocommerce' ) ){
 	require get_template_directory() . '/woocommerce-functions.php';
 }
 
-/**
- * Customizer additions.
- *
- */
-//require get_template_directory() . '/admin/customizer.php';
-
-function _attachment_type( $form_fields, $post ) {
-		$type = get_post_meta($post->ID, "attachment_type", true);
-    $form_fields['attachment_type'] = array(
-        'label' => 'Visibility',
-        'input' => 'html',
-				'html' => "<select name='attachments[".$post->ID."][attachment_type]'><option ".selected($type, 'public',false).' value="public">Public</option><option '.selected($type, 'private',false).' value="private">Private</option></select>',
-        'helps' => 'Private: can be accessed if only user is logged in.',
-    );
-    return $form_fields;
-}
-
-add_filter( 'attachment_fields_to_edit', '_attachment_type', 11, 2 );
-
-function _attachment_type_save( $post, $attachment ) {
-    if( isset( $attachment['attachment_type'] ) )
-        update_post_meta( $post['ID'], 'attachment_type', $attachment['attachment_type']);
-
-
-    return $post;
-}
-
-add_filter( 'attachment_fields_to_save', '_attachment_type_save', 10, 2 );
 add_shortcode('na_gallery', 'na_gallery_shortcode');
 function na_gallery_shortcode( $attr ) {
 	$post = get_post();
@@ -258,83 +227,4 @@ function na_gallery_shortcode( $attr ) {
 	$output .= "
 		</div>\n";
 	return $output;
-}
-function searchfilter($query) {
-
-    if ($query->is_search && !is_admin() ) {
-        $query->set('post_type',array('service', 'post', 'beauty-care', 'team-member'));
-    }
-
-return $query;
-}
-
-add_filter('pre_get_posts','searchfilter');
-
-//google map shortcode 
-add_shortcode( 'bm-map',  'bm_map_shortcode' );
-function bm_map_shortcode($atts){
-     $d = shortcode_atts( array(
-        'height' => '350'
-		), $atts );
-    $args = array(
-        
-		'post_type' => 'distributer',
-		'orderby' => 'title',
-		'order'=> 'ASC',
-		'post_status' => 'publish',
-		'posts_per_page' => -1
-        );
-    $map_markers = get_posts( $args );
-    //print_r($map_markers);
-    
-    //store data into array
-    $map_vars = array();
-    foreach ( $map_markers as $key => $post ) {
-
-        //print_r($key);
-       // print_r($post);
-        // is the same as this:
-        $post_meta_values =  get_post_meta( $post->ID, '', false );
-        
-       // print_r($post_meta_values["store_code"][0]);
-
-        $map_var[$post->ID] = array(
-        'name' => $post->post_title,
-        'coordinates' => array(
-                        'lat' =>$post_meta_values["latitude"][0],
-                        'lng' =>$post_meta_values["longitude"][0],
-                            ),
-        'store_code' => $post_meta_values["store_code"][0],
-        'address' => $post_meta_values["address"][0]
-        );
-        
-    }
-    //print_r($map_var);
-    $map_var_j = json_encode ($map_var);
-    
-    //print_r($map_var_j);
-    //shows map checkboxes
-    echo '<div id="controls"></div>';
-    
-    $height = $d['height'];
-    //shows map canvas
-    echo '<div id="map_canvas" style="height:'. $height .'" ></div>';
-    echo '<script type="text/javacript">
-    var markerJson = ' . $map_var_j
-    .'</script> ';
-    
-    
-    
-// Register the script
-wp_register_script( 'custom_map', '/wp-content/themes/aaagency/js/custom_map.js' );
-
-// Localize the script with new data
-$translation_array = array(
-	'markerJson' => $map_var_j
-);
-wp_localize_script( 'custom_map', 'markerJson1',  $map_var);
-
-// Enqueued script with localized data.
-wp_enqueue_script( 'custom_map' );
-
 }

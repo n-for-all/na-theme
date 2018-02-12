@@ -26,10 +26,10 @@ class Carousels_Shortcode extends NA_METABOXES
 
     public function scripts()
     {
-        wp_enqueue_style('carousel-shortcode', get_stylesheet_directory_uri().'/inc/carousel/css/carousel.css', array(), '1.0.0', 'screen');
+        wp_enqueue_style('carousel-shortcode', get_template_directory_uri().'/inc/carousel/css/carousel.css', array(), '1.0.0', 'screen');
         wp_enqueue_script('wp-util');
         wp_enqueue_script('underscore');
-        wp_enqueue_script('carousel-shortcode-js', get_stylesheet_directory_uri().'/inc/carousel/js/carousel.js', array('jquery'), '1.0.0');
+        wp_enqueue_script('carousel-shortcode-js', get_template_directory_uri().'/inc/carousel/js/carousel.js', array('jquery'), '1.0.0');
     }
 
     public function init()

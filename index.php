@@ -30,7 +30,7 @@ get_header(); ?>
 						</header>
 					<?php endif; ?>
 					<div class="blog-sidebar sidebar">
-						<?php if(dynamic_sidebar('blog-sidebar')):else:endif; ?>
+						<?php dynamic_sidebar('blog-sidebar'); ?>
 					</div>
 					<div class="blogroll">
 					<?php
@@ -42,7 +42,7 @@ get_header(); ?>
 						 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
 						 */
 
-						get_template_part( 'blog-parts/content', get_post_format() );
+						get_template_part( 'template-parts/blog/content', get_post_format() );
 
 						/*
 						?>
@@ -68,7 +68,7 @@ get_header(); ?>
 
 				// If no content, include the "No posts found" template.
 				else :
-					get_template_part( 'content', 'none' );
+					get_template_part( 'template-parts/blog/content', 'none' );
 
 				endif;
 				?>

@@ -31,8 +31,8 @@ global $theme;
         <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
         <link rel="icon" type="image/png" href="<?php echo $theme->favicon; ?>" />
         <!--[if lt IE 9]>
-	<script src="<?php echo esc_url( get_template_directory_uri() ); ?>/js/html5.js"></script>
-	<![endif]-->
+    	<script src="<?php echo esc_url( get_template_directory_uri() ); ?>/js/html5.js"></script>
+    	<![endif]-->
         <?php wp_head(); ?>
     </head>
 
@@ -57,24 +57,11 @@ global $theme;
                     <nav id="main-nav-collapse" class="navbar navbar-default <?php echo $theme->navbar; ?> <?php echo $theme->menu_expanded == 1 ? 'in' : ''; ?>">
                         <div class="container">
                             <div class="navbar-header">
-                                <?php if($theme->logo): ?>
-                                    <a class="navbar-brand" href="<?php echo home_url("/"); ?>">
-                                        <span class="vertical-center <?php echo $theme->glitch == 1 ? 'glitch' : ''; ?>" <?php echo $theme->glitch == 1 ? 'style="background-image:url('.esc_url( $theme->logo ).'"': ''; ?> >
-                                            <img class="logo" src="<?php echo esc_url( $theme->logo ); ?>" alt="" />
-                                            <?php if($theme->logo_dark): ?>
-                                            <img class="logo-dark" src="<?php echo esc_url( $theme->logo_dark ); ?>" alt="" />
-                                            <?php endif; ?>
-                                        </span>
-                                    </a>
-                                <?php else: ?>
-                                    <a class="navbar-brand" href="<?php echo home_url("/"); ?>">
-                                        <span class="vertical-center"><?php echo bloginfo('title'); ?></span>
-                                    </a>
-                                <?php endif; ?>
+                                <?php if($theme->menu != 'left-expand-logo.css') include('inc/menu/logo.php'); ?>
                                 <button type="button" class="navbar-toggle <?php echo $theme->menu_expanded == 1 ? 'collapsed' : ''; ?> <?php echo $theme->btn_menu_style; ?>" data-toggle="collapse" data-target="#main-navbar-collapse">  <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span><span class="icon-bar"></span> <span class="sr-only">Menu</span></button>
                             </div>
                             <?php include('inc/menu/header.php'); ?>
-                                <!-- End navbar-header -->
+                            <!-- End navbar-header -->
                         </div>
                     </nav>
                     <!-- End navbar -->

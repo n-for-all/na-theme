@@ -1,5 +1,4 @@
 <?php
-
 class Na_Slider
 {
     public function __construct()
@@ -300,6 +299,7 @@ class NA_POST_IMAGE extends NA_POST_COLUMN
         }
     }
 }
+global $slider;
 $slider = new Na_Slider();
 $NA_POST_IMAGE = new NA_POST_IMAGE("slides-image", "Slides", "image", "slider", 2);
 

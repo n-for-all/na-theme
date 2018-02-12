@@ -57,10 +57,10 @@ abstract class NA_METABOXES {
 
 	public function admin_enqueue_scripts(){
 		wp_enqueue_media();
-		wp_register_script('na-metabox', get_template_directory_uri() . '/inc/metaboxes/js/metabox.js', array('jquery'), '1.0.0');
+		wp_register_script('na-metabox', get_stylesheet_directory_uri() . '/inc/metaboxes/js/metabox.js', array('jquery'), '1.0.0');
         wp_enqueue_script('na-metabox');
 
-		wp_register_style('na-metabox', get_template_directory_uri() . '/inc/metaboxes/css/styles.css', array(), '1.0', 'all');
+		wp_register_style('na-metabox', get_stylesheet_directory_uri() . '/inc/metaboxes/css/styles.css', array(), '1.0', 'all');
         wp_enqueue_style('na-metabox');
 	}
 	/**

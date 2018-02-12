@@ -4,12 +4,12 @@
  * Sets up theme defaults and registers support for various WordPress features.
  *
  */
-
-
-
 class Na_Theme {
 
-	function __construct(){
+	private $search = [];
+	private $modules = [];
+
+	public function __construct(){
 		$this->actions();
 		$this->filters();
 	}
@@ -22,7 +22,6 @@ class Na_Theme {
 		add_action( 'wp_enqueue_scripts', array(&$this, 'scripts') , 11);
 		add_action( 'admin_enqueue_scripts', array(&$this, 'admin_scripts') );
 		add_action( 'credits', array(&$this, 'credits') );
-		add_action( 'init',  array(&$this, 'init') );
 		add_action('woocommerce_before_shop_loop', array( &$this,'woocommerce_before_shop_loop'), 10);
 		add_action('woocommerce_after_shop_loop', array( &$this,'woocommerce_after_shop_loop'), 10);
 		if(is_admin()){
@@ -40,6 +39,7 @@ class Na_Theme {
 		}
 		add_filter( 'body_class', array(&$this, 'body_class') );
 		add_filter( 'get_the_excerpt', array(&$this, 'get_excerpt') );
+		add_filter('pre_get_posts', array(&$this, 'search_filter'));
 	}
 
 	public function setup(){
@@ -111,9 +111,6 @@ class Na_Theme {
 		<span class="copyright"><?php echo $this->copyright; ?></span>
 
 		<?php
-	}
-	function init(){
-
 	}
 
 	function body_class( $classes ) {
@@ -276,7 +273,7 @@ class Na_Theme {
 		//$font_variants = (array)get_theme_mod('font_variants', array());
 		wp_enqueue_style(
         'custom-fonts',
-        get_template_directory_uri() . '/css/fonts.css'
+        get_template_directory_uri() . '/assets/css/fonts.css'
     );
 		$fonts = array();
 		if(trim($font) != ""){
@@ -329,66 +326,67 @@ class Na_Theme {
 
 
 		//bootstrap styles for this theme
-		wp_enqueue_style( 'grid', get_template_directory_uri() . '/css/bootstrap.min.css', array(), '1.0' );
+		wp_enqueue_style( 'grid', get_template_directory_uri() . '/assets/css/bootstrap.min.css', array(), '1.0' );
 
 		// Add custom fonts, used in the main stylesheet
 		$fonts = $this->fonts_url();
 		wp_enqueue_style( 'na_fonts', $fonts, array(), null );
 
 		//main styles for this theme
-		wp_enqueue_style( 'main', get_template_directory_uri() . '/css/style.css', array(), '1.0' );
-		wp_enqueue_style( 'main-edge', get_template_directory_uri() . '/css/edge.css', array(), '1.0' );
+		wp_enqueue_style( 'main', get_template_directory_uri() . '/assets/css/style.css', array(), '1.0' );
+		wp_enqueue_style( 'main-edge', get_template_directory_uri() . '/assets/css/edge.css', array(), '1.0' );
 
 		// font awesome icons
-		wp_enqueue_style( 'font-awesome', get_template_directory_uri() . '/css/font-awesome.min.css', array(), '3.2' );
+		wp_enqueue_style( 'font-awesome', get_template_directory_uri() . '/assets/css/font-awesome.min.css', array(), '3.2' );
 
 		// Load our main stylesheet.
 		wp_enqueue_style( 'na_theme-style', get_stylesheet_uri() );
 
 		// Load the Internet Explorer specific stylesheet.
-		wp_enqueue_style( 'na_theme-ie', get_template_directory_uri() . '/css/ie.css', array( 'na_theme-style' ), '20141010' );
+		wp_enqueue_style( 'na_theme-ie', get_template_directory_uri() . '/assets/css/ie.css', array( 'na_theme-style' ), '20141010' );
 		wp_style_add_data( 'na_theme-ie', 'conditional', 'lt IE 9' );
 
 
-		wp_enqueue_style( 'na_theme-ie7', get_template_directory_uri() . '/css/ie7.css', array( 'na_theme-style' ), '20141010' );
+		wp_enqueue_style( 'na_theme-ie7', get_template_directory_uri() . '/assets/css/ie7.css', array( 'na_theme-style' ), '20141010' );
 		wp_style_add_data( 'na_theme-ie7', 'conditional', 'lt IE 8' );
 
 		//custom styles for this theme
 		if($this->menu){
-		wp_enqueue_style( 'na_menu', get_template_directory_uri() . '/css/menu/'.$this->menu, array(), '1.0' );
+			wp_enqueue_style( 'na_menu', get_template_directory_uri() . '/assets/css/menu/'.$this->menu, array(), '1.0' );
+		}else{
+			wp_enqueue_style( 'na_menu', get_template_directory_uri() . '/assets/css/menu/default.css', array(), '1.0' );
 		}
-		wp_enqueue_style( 'na_theme-custom', get_template_directory_uri() . '/css/custom.css', array(), '1.0' );
 		if ( class_exists( 'woocommerce' ) ){
-			wp_enqueue_style( 'na_woocommerce', get_template_directory_uri() . '/css/woocommerce.css', array('woocommerce-general'), '1.0' );
+			wp_enqueue_style( 'na_woocommerce', get_template_directory_uri() . '/assets/css/woocommerce.css', array('woocommerce-general'), '1.0' );
 		}
 		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 			wp_enqueue_script( 'comment-reply' );
 		}
 
 		if ( is_singular() && wp_attachment_is_image() ) {
-			wp_enqueue_script( 'na_theme-keyboard-image-navigation', get_template_directory_uri() . '/js/keyboard-image-navigation.js', array( 'jquery' ), '20141010' );
+			wp_enqueue_script( 'na_theme-keyboard-image-navigation', get_template_directory_uri() . '/assets/js/keyboard-image-navigation.js', array( 'jquery' ), '20141010' );
 		}
 		//main scripts
-		wp_enqueue_script( 'jquery', get_template_directory_uri() . '/js/jquery.min.js', array( ), '1.0.0', true );
-		wp_enqueue_script( 'jquery-hashchange', get_template_directory_uri() . '/js/plugins/jquery.hashchange.js', array('jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-hashchange', get_template_directory_uri() . '/assets/js/plugins/jquery.hashchange.js', array('jquery' ), '1.0.0', true );
 
 
-		wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/js/bootstrap.min.js', array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'bootstrap', get_template_directory_uri() . '/assets/js/bootstrap.min.js', array( 'jquery' ), '1.0.0', true );
 
 
 
-		wp_enqueue_script( 'na_theme-custom', get_template_directory_uri() . '/js/custom.js', array( 'jquery' ), '1.0.0', true );
-		wp_enqueue_script( 'na_theme-script', get_template_directory_uri() . '/js/functions.js', array( 'jquery' ), '1.0.0', true );
-		wp_enqueue_script( 'na_theme-scripts', get_template_directory_uri() . '/js/scripts.js', array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'na_theme-custom', get_template_directory_uri() . '/assets/js/custom.js', array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'na_theme-script', get_template_directory_uri() . '/assets/js/functions.js', array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'na_theme-scripts', get_template_directory_uri() . '/assets/js/scripts.js', array( 'jquery' ), '1.0.0', true );
 		wp_add_inline_script('na_theme-script', 'var options = {};');
-		wp_enqueue_script( 'na_theme-waypoints', get_template_directory_uri() . '/js/plugins/jquery.waypoints.min.js', array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'na_theme-waypoints', get_template_directory_uri() . '/assets/js/plugins/jquery.waypoints.min.js', array( 'jquery' ), '1.0.0', true );
 
 		if($this->homepage_scrolling != ""){
 			wp_add_inline_script('na_theme-scripts', 'options["scrolling"] = "'.$this->homepage_scrolling.'";');
-			wp_enqueue_script( 'na_theme-tweenmax', get_template_directory_uri() . '/js/plugins/scrollmagic/TweenMax.min.js', array( 'jquery' ), '1.0.0', true );
-			wp_enqueue_script( 'na_theme-scrollmagic', get_template_directory_uri() . '/js/plugins/scrollmagic/ScrollMagic.js', array( 'jquery' ), '1.0.0', true );
-			wp_enqueue_script( 'na_theme-gsap-animation', get_template_directory_uri() . '/js/plugins/scrollmagic/animation.gsap.js', array( 'jquery' ), '1.0.0', true );
-			wp_enqueue_script( 'na_theme-gsap-scrollto-plugin', get_template_directory_uri() . '/js/plugins/scrollmagic/ScrollToPlugin.min.js', array( 'jquery' ), '1.0.0', true );
+			wp_enqueue_script( 'na_theme-tweenmax', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/TweenMax.min.js', array( 'jquery' ), '1.0.0', true );
+			wp_enqueue_script( 'na_theme-scrollmagic', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollMagic.js', array( 'jquery' ), '1.0.0', true );
+			wp_enqueue_script( 'na_theme-gsap-animation', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/animation.gsap.js', array( 'jquery' ), '1.0.0', true );
+			wp_enqueue_script( 'na_theme-gsap-scrollto-plugin', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollToPlugin.min.js', array( 'jquery' ), '1.0.0', true );
 		}
 		wp_localize_script( 'na_theme-script', 'screenReaderText', array(
 			'expand'   => '<span class="screen-reader-text">' . __( 'expand child menu', NA_THEME_TEXT_DOMAIN ) . '</span>',
@@ -695,21 +693,47 @@ class Na_Theme {
 		<?php
 
 	}
+	public function enable($module){
+		if(is_array($module)){
+			foreach($module as $key){
+				if(isset($this->modules[$key])){
+					require_once $this->modules[$key];
+				}
+			}
+		}elseif(isset($this->modules[$module])){
+			require_once $this->modules[$module];
+		}
+	}
+	public function enable_search($post_type){
+		$this->search[] = $post_type;
+	}
+	public function search_filter($query) {
+		if ($query->is_search && !is_admin() && !empty($this->search)) {
+			$query->set('post_type', $this->search);
+		}
+		return $query;
+	}
+	public function register($module, $loader){
+		$this->modules[$module] = $loader;
+	}
 }
 global $theme;
 $theme = new Na_Theme();
 
-require get_template_directory() . '/inc/shortcodes/shortcodes.php';
 require get_template_directory() . '/inc/metaboxes/loader.php';
-require get_template_directory() . '/inc/slider/loader.php';
-require get_template_directory() . '/inc/social/twitter.php';
-require get_template_directory() . '/inc/social/instagram.php';
-require get_template_directory() . '/inc/team/shortcode.php';
-require get_template_directory() . '/inc/case-studies/shortcode.php';
-require get_template_directory() . '/inc/services/shortcode.php';
-require get_template_directory() . '/inc/carousel/shortcode.php';
-require get_template_directory() . '/inc/testimonials/shortcode.php';
-require get_template_directory() . '/inc/posts/shortcodes.php';
-require get_template_directory() . '/inc/events/shortcode.php';
 
+$theme->register('shortcodes', get_template_directory() . '/inc/shortcodes/shortcodes.php');
+$theme->register('twitter', get_template_directory() . '/inc/social/twitter.php');
+$theme->register('services', get_template_directory() . '/inc/services/shortcode.php');
+$theme->register('slider', get_template_directory() . '/inc/slider/loader.php');
+$theme->register('instagram', get_template_directory() . '/inc/social/instagram.php');
+$theme->register('team', get_template_directory() . '/inc/team/shortcode.php');
+$theme->register('case-studies', get_template_directory() . '/inc/case-studies/shortcode.php');
+$theme->register('carousel', get_template_directory() . '/inc/carousel/shortcode.php');
+$theme->register('testimonials', get_template_directory() . '/inc/testimonials/shortcode.php');
+$theme->register('posts', get_template_directory() . '/inc/posts/shortcodes.php');
+$theme->register('events', get_template_directory() . '/inc/events/shortcode.php');
+$theme->register('attachment', get_template_directory() . '/inc/attachment/loader.php');
+
+do_action('theme_init', $theme);
 ?>

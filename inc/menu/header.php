@@ -13,18 +13,15 @@
 			'theme_location' => 'primary',
 			'container'			=> ''
 		) );
-	?>
-	<?php if ( has_nav_menu( 'primary-right' ) ) : ?>
-	<!-- Start nav-collapse -->
-		<?php
+	if ( has_nav_menu( 'primary-right' ) ) :
 			// Primary navigation menu.
 			wp_nav_menu( array(
 				'menu_class'     => 'nav nav-menu navbar-nav navbar-right nav-primary-right',
 				'theme_location' => 'primary-right',
 				'container'			=> ''
 			) );
-		?>
-	<?php endif; ?>
+	 endif; ?>
+	<?php if($theme->menu == 'left-expand-logo.css') include('logo.php'); ?>
 </div>
 <?php elseif ( has_nav_menu( 'primary-right' ) ) : ?>
 <!-- Start nav-collapse -->
@@ -37,6 +34,7 @@
 			'container'			=> ''
 		) );
 	?>
+	<?php if($theme->menu == 'left-expand-logo.css') include('logo.php'); ?>
 </div>
 <?php endif; ?>
 

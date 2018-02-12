@@ -36,7 +36,7 @@ class Na_Theme_Admin
     public function list_all_menu_css()
     {
         $theme_root = get_template_directory() ;
-        $files_array = glob("$theme_root/css/menu/*.css");
+        $files_array = glob("$theme_root/assets/css/menu/*.css");
         $x = array();
         foreach ($files_array as $key => &$value) {
             $x[basename($value)] = basename($value);
@@ -83,9 +83,9 @@ class Na_Theme_Admin
             );
         $setting = 'navbar';
         $wp_customize->add_setting($setting, array(
-                'default'           => '',
+            'default'           => '',
             'type'              => 'theme_mod',
-            ));
+        ));
         $wp_customize->add_control($setting, array(
             'type'     => 'radio',
             'choices'  => array(
@@ -102,14 +102,14 @@ class Na_Theme_Admin
 
         $setting = 'menu';
         $wp_customize->add_setting($setting, array(
-                'default'           => '',
+            'default'           => '',
             'type'              => 'theme_mod',
-            ));
+        ));
         $wp_customize->add_control($setting, array(
             'type'     => 'radio',
             'choices'  => $this->list_all_menu_css(),
             'default' => '',
-            'priority' => 5, // Within the section.
+            'priority' => 6, // Within the section.
             'section' => $section, // Required, core or custom.
             'label' => __('Header Menu Style'),
             'description' => __('')

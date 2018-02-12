@@ -23,10 +23,10 @@ class Testimonials_Shortcode extends NA_METABOXES
     }
     public function scripts()
     {
-        wp_enqueue_style('testimonials-shortcode', get_stylesheet_directory_uri() . '/inc/testimonials/css/testimonials.css', array(), '1.0.0', 'screen');
+        wp_enqueue_style('testimonials-shortcode', get_template_directory_uri() . '/inc/testimonials/css/testimonials.css', array(), '1.0.0', 'screen');
         wp_enqueue_script('wp-util');
         wp_enqueue_script('underscore');
-        wp_enqueue_script('testimonials-shortcode-js', get_stylesheet_directory_uri() . '/inc/testimonials/js/testimonials.js', array('jquery'), '1.0.0');
+        wp_enqueue_script('testimonials-shortcode-js', get_template_directory_uri() . '/inc/testimonials/js/testimonials.js', array('jquery'), '1.0.0');
     }
 
     public function get_testimonial()
