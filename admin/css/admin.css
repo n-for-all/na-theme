@@ -4,6 +4,7 @@
     font-size: 12px;
     height: 24px;
 }
+
 .sidebar-columns form>button {
     text-decoration: none;
     float: right;
@@ -22,14 +23,25 @@
     padding-bottom: 0px;
 }
 
-.sidebar-columns {
-    padding: 4px 8px;
-    background: #fafafa;
-    border: 1px solid #f5f5f5;
-    margin-bottom: 10px;
-    font-size: 11px;
+.widgets-sortables.saved {
+    background-color: rgba(61, 255, 0, 0.12);
 }
-.instagram-redirect-uri{
+
+.widgets-sortables.error {
+    background-color: rgba(255, 0, 0, 0.12);
+}
+
+.sidebar-columns {
+    padding: 11px 10px 11px 0;
+    margin-bottom: 0px;
+    font-size: 11px;
+    position: absolute;
+    right: 42px;
+    top: 0;
+    border-right: 1px solid #eee;
+}
+
+.instagram-redirect-uri {
     background: #fff;
     display: block;
     font-size: 10px;

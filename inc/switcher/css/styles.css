@@ -1,0 +1,9 @@
+.switcher-content .switch{
+    display: none;
+}
+.switcher-content .switch.active{
+    display: block;
+}
+.switcher-nav ul{
+
+}

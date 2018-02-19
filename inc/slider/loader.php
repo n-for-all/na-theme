@@ -168,7 +168,6 @@ class Na_Slider
 		</script>
 		<div id="<?php echo $id; ?>" class="na-slider-wrapper na-slider-<?php echo $settings['vertical'] != 0 ? 'vertical': 'horizontal'; ?> na-<?php echo $settings['type'] != '' ? $settings['type']: 'normal'; ?>" data-slider="<?php echo $id; ?>" style="height:<?php echo $settings['height']; ?>">
             <?php if($settings['type'] == 'circular'): ?>
-                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js"></script>
                 <div id="circular-nav">
                     <div class="svg-wrap">
                         <svg width="500px" height="500px" viewBox="0 0 500 500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -194,45 +193,6 @@ class Na_Slider
                          </ul>
                     </div>
                 </div>
-                <script type="text/javascript">
-                jQuery(document).ready(function(){
-                var width = "100%",
-                    height = "100%";
-
-                var i = 0;
-
-                var svg = d3.select("body").append("svg")
-                    .attr("width", width)
-                    .attr("height", height).attr("class", "particles");
-
-                svg.append("rect")
-                    .attr("width", width)
-                    .attr("height", height)
-                    .on("ontouchstart" in document ? "touchmove" : "mousemove", particle);
-
-                function particle() {
-                  var m = d3.mouse(this);
-
-                  svg.insert("circle", "rect")
-                      .attr("class", 'particle')
-                      .attr("cx", m[0])
-                      .attr("cy", m[1])
-                      .attr("r", 2) // 1e-6
-                      // .style("stroke", d3.hsl(100, .1, .6))
-                      // .style("stroke-opacity", 1)
-                    .transition()
-                      .duration(2000)
-                      .ease(Math.sqrt)
-                      .attr("r", 10)
-                      .style("stroke-opacity", 1e-6)
-                    	.style("stroke-width", 20)
-                      .remove();
-
-                  d3.event.preventDefault();
-                }
-                });
-
-                </script>
             <?php endif; ?>
         	<div class="na-slider">
 				<ul class="na-slides">

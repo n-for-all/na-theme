@@ -12,8 +12,9 @@ class Case_Studies_Shortcode extends NA_METABOXES
     {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
-        // add_action('wp_footer', array($this, 'inline_scripts'));
-
+        add_action('wp_footer', array($this, 'inline_scripts'));
+        add_action('wp_ajax_case_study', array($this, 'ajax_case_study'));
+        add_action('wp_ajax_nopriv_case_study', array($this, 'ajax_case_study'));
     }
     public function shortcodes()
     {
@@ -22,11 +23,20 @@ class Case_Studies_Shortcode extends NA_METABOXES
     public function scripts()
     {
         wp_enqueue_style('case-studies-shortcode', get_template_directory_uri() . '/inc/case-studies/css/styles.css', array(), '1.0.0', 'screen');
+        wp_enqueue_script('case-studies-shortcode', get_template_directory_uri() . '/inc/case-studies/js/scripts.js', array(), '1.0.0', 'screen');
         wp_enqueue_script('wp-util');
         wp_enqueue_script('underscore');
     }
     public function inline_scripts()
     {
+        ?>
+        <script id="tmpl-case-study" type="text/template">
+        <?php include('template/popup.php'); ?>
+        </script>
+        <script type="text/javascript">
+            var CaseStudiesSettings = <?php echo json_encode(array('url' => admin_url('admin-ajax.php'))); ?>;
+        </script>
+        <?php
     }
     public function init()
     {
@@ -95,6 +105,31 @@ class Case_Studies_Shortcode extends NA_METABOXES
         );
 
         register_taxonomy('case-studies', 'case-study', $args);
+    }
+    public function ajax_case_study()
+    {
+        $output = array('status' => 'failure');
+        $id = intval($_POST['id']);
+        if ($id > 0) {
+            global $post;
+            $post = get_post($id);
+            if ($post->post_type == 'case-study') {
+                setup_postdata($post);
+                $image = false;
+                if (has_post_thumbnail()) {
+                    $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
+                }
+                $pst = array(
+                    'title' => get_the_title(),
+                    'content' => get_the_content(),
+                    'image' => $image ? $image[0] : '',
+                    'meta'  => $this->get_meta(get_the_ID(), 'team')
+                );
+                $output = array('status' => 'success', 'post' => $pst);
+            }
+        }
+        echo json_encode($output);
+        die();
     }
     public function shortcode($atts)
     {

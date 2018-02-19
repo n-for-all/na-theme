@@ -584,14 +584,13 @@ class Na_Theme {
 			<form action="<?php echo admin_url( 'admin-ajax.php' ); ?>" method="post">
 				<input type="hidden" name="sidebar" value="<?php echo $index; ?>" />
 				<input type="hidden" name="action" value="na_save_sidebars" />
-				<select name="columns">
+				<select class="na-sidebar-columns" title="Number of columns" name="columns">
 					<option value="-1">Auto</option>
 					<option value="0">Hidden</option>
 					<?php for($i = 1; $i <= 12; $i ++): ?>
-						<option <?php echo isset($sidebars[$index]) && $sidebars[$index][0] == $i ? 'selected="selected"': ''; ?> value="<?php echo $i; ?>"><?php echo $i; ?> Columns</option>
+						<option <?php echo isset($sidebars[$index]) && $sidebars[$index][0] == $i ? 'selected="selected"': ''; ?> value="<?php echo $i; ?>"><?php echo $i; ?></option>
 					<?php endfor; ?>
 				</select>
-				<button class="na-sidebar-save"><span class="dashicons dashicons-yes"></span></button>
 			</form>
 		</div>
 		<?php
@@ -607,7 +606,7 @@ class Na_Theme {
 		}
 		$sidebars[$sidebar] = array($columns);
 		update_option('na_sidebars', $sidebars);
-		echo "Updated";
+		echo json_encode(array('status' => 'success'));
 		wp_die();
 	}
 
@@ -724,16 +723,17 @@ require get_template_directory() . '/inc/metaboxes/loader.php';
 
 $theme->register('shortcodes', get_template_directory() . '/inc/shortcodes/shortcodes.php');
 $theme->register('twitter', get_template_directory() . '/inc/social/twitter.php');
-$theme->register('services', get_template_directory() . '/inc/services/shortcode.php');
+$theme->register('services', get_template_directory() . '/inc/services/loader.php');
 $theme->register('slider', get_template_directory() . '/inc/slider/loader.php');
 $theme->register('instagram', get_template_directory() . '/inc/social/instagram.php');
-$theme->register('team', get_template_directory() . '/inc/team/shortcode.php');
+$theme->register('team', get_template_directory() . '/inc/team/loader.php');
 $theme->register('case-studies', get_template_directory() . '/inc/case-studies/shortcode.php');
 $theme->register('carousel', get_template_directory() . '/inc/carousel/shortcode.php');
 $theme->register('testimonials', get_template_directory() . '/inc/testimonials/shortcode.php');
 $theme->register('posts', get_template_directory() . '/inc/posts/shortcodes.php');
-$theme->register('events', get_template_directory() . '/inc/events/shortcode.php');
+$theme->register('events', get_template_directory() . '/inc/events/loader.php');
 $theme->register('attachment', get_template_directory() . '/inc/attachment/loader.php');
+$theme->register('switcher', get_template_directory() . '/inc/switcher/loader.php');
 
 do_action('theme_init', $theme);
 ?>

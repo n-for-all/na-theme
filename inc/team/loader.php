@@ -1,5 +1,5 @@
 <?php
-class Team_Shortcode extends NA_METABOXES
+class Na_Team extends NA_METABOXES
 {
     public function __construct()
     {
@@ -234,5 +234,5 @@ jQuery(document).on("click", ".close-team", function(){
 		<?php
     }
 }
-new Team_Shortcode();
+new Na_Team();
 ?>

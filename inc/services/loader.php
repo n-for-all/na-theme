@@ -1,5 +1,18 @@
 <?php
-class Service_Shortcode extends NA_METABOXES
+
+/**
+ * [services category=""]
+ * Returns a list of services with specific category, if category is null or empty the it will return all services
+ *
+ * [services-categories]
+ * Returns a list of service taxonomies
+ *
+ * [service-members]
+ * Returns a list of service members
+ */
+
+
+class Na_Services extends NA_METABOXES
 {
     public function __construct()
     {
@@ -12,7 +25,6 @@ class Service_Shortcode extends NA_METABOXES
     {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'scripts'));
-        add_action('wp_footer', array($this, 'inline_scripts'));
 
         add_action('wp_ajax_service', array($this, 'get_service'));
         add_action('wp_ajax_nopriv_service', array($this, 'get_service'));
@@ -26,58 +38,11 @@ class Service_Shortcode extends NA_METABOXES
     public function shortcodes()
     {
         add_shortcode('services', array($this, 'shortcode'));
-        add_shortcode('services-categories', array($this, 'categories_shortcode'));
-        add_shortcode('service-doctors', array($this, 'shortcode_doctors'));
+        add_shortcode('services-categories', array($this, 'shortcode_categories'));
+        add_shortcode('service-members', array($this, 'shortcode_members'));
     }
     public function scripts()
     {
-        // wp_enqueue_style('services-shortcode', get_stylesheet_directory_uri() . '/inc/services/css/services.css', array(), '1.0.0', 'screen');
-        wp_enqueue_script('wp-util');
-        wp_enqueue_script('underscore');
-    }
-    public function inline_scripts()
-    {
-        return; ?>
-<script id="tmpl-service" type="text/template">
-<?php include('template/popup.php'); ?>
-</script>
-<script type="text/javascript">
-jQuery(document).on("click", ".services-button", function(){
-  jQuery("body").addClass("na-services-overlay");
-  event.preventDefault();
-	jQuery.ajax({
-		url: "<?php echo admin_url('admin-ajax.php'); ?>",
-		type: 'post',
-    //dataType: "jsonp",
-		data: {
-			action: 'service',
-      id: jQuery(this).data("id")
-		},
-		success: function( result ) {
-      result = eval('(' + result.trim() +')');
-			if(result && result.status == "success"){
-        var post_template = wp.template( 'service' );
-        jQuery("body").append("<div id='na-service-template'><a class='close-services' href='#'></a>"+post_template(result.post)+"</div>");
-        jQuery('#na-service-template').fadeIn();
-      }
-		},
-    error: function(){
-      jQuery("body").removeClass("na-services-overlay");
-    }
-	})
-  return false;
-});
-jQuery(document).on("click", ".close-services", function(){
-  event.preventDefault();
-  jQuery('#na-service-template').fadeOut(function(){
-    jQuery(this).remove();
-    jQuery("body").removeClass("na-services-overlay");
-  });
-
-});
-
-</script><?php
-
     }
     public function services_save($term_id, $tt_id)
     {
@@ -101,11 +66,11 @@ jQuery(document).on("click", ".close-services", function(){
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
                 }
                 $pst = array(
-            'title' => get_the_title(),
-            'content' => get_the_content(),
-            'image' => $image ? $image[0] : '',
-            'meta'  => $this->get_meta(get_the_ID(), 'services')
-          );
+                    'title' => get_the_title(),
+                    'content' => get_the_content(),
+                    'image' => $image ? $image[0] : '',
+                    'meta'  => $this->get_meta(get_the_ID(), 'services')
+                );
                 $output = array('status' => 'success', 'post' => $pst);
             }
         }
@@ -211,8 +176,8 @@ jQuery(document).on("click", ".close-services", function(){
         $args = array(
             'post_type' => 'service',
             'orderby' => 'menu_order',
-          'order' => 'ASC'
-         );
+            'order' => 'ASC'
+        );
         $field_type = is_numeric($categories[0]) ? 'term_id' : 'slug';
         if (!empty($atts['category'])) {
             $args = array(
@@ -224,8 +189,8 @@ jQuery(document).on("click", ".close-services", function(){
                         'terms' => $categories,
                     ),
                 ),
-                        'orderby' => 'menu_order',
-              'order' => 'ASC'
+                'orderby' => 'menu_order',
+                'order' => 'ASC'
              );
         }
         $output = "";
@@ -247,43 +212,39 @@ jQuery(document).on("click", ".close-services", function(){
         wp_reset_postdata();
         return $output;
     }
-    public function shortcode_doctors($atts)
+    public function shortcode_members($atts)
     {
         $atts = shortcode_atts(array(
-        ), $atts, 'service-doctors-shortcode');
+        ), $atts, 'service-members-shortcode');
         ob_start();
         if (is_single()) {
-          global $post;
+            global $post;
             $meta = get_post_meta(get_the_ID(), '_meta_service', true);
-            if($post->post_type == 'beauty-care'){
-              $meta = get_post_meta(get_the_ID(), '_meta_beauty', true);
-            }
-            if (isset($meta['doctors'])) {
-                ?><div class="service-doctors"><?php
-                foreach ($meta['doctors'] as $doctor) {
-                    $post = get_post($doctor);
+            if (isset($meta['members'])) {
+                ?><div class="service-members"><?php
+                foreach ($meta['members'] as $member) {
+                    $post = get_post($member);
                     setup_postdata($post); ?>
-  					<div class="service-doctor">
-  							<div class="image">
-  								<?php if (has_post_thumbnail()) {
-                        echo get_the_post_thumbnail(get_the_ID(), 'large'); ?>
-  									<?php
-                    } ?>
-  							</div>
-  							<h3><?php the_title(); ?></h3>
-  							<div class="excerpt"><?php the_excerpt(); ?></div>
+  					<div class="service-member">
+						<div class="image">
+							<?php if (has_post_thumbnail()) {
+                                echo get_the_post_thumbnail(get_the_ID(), 'large'); ?>
+							<?php
+                            } ?>
+						</div>
+						<h3><?php the_title(); ?></h3>
+						<div class="excerpt"><?php the_excerpt(); ?></div>
   					</div>
   					<?php
 
                 } ?></div><?php
-
             }
         }
         wp_reset_postdata();
         $output = ob_get_clean();
         return $output;
     }
-    public function categories_shortcode($atts)
+    public function shortcode_categories($atts)
     {
         $terms = get_terms('services', array(
             'hide_empty' => false,
@@ -318,15 +279,16 @@ jQuery(document).on("click", ".close-services", function(){
 					<td><?php $this->_metabox_text($post->ID, 'position', 'services'); ?>
 					<p class="description">The services position.</p></td>
 				</tr>
-        <tr class="form-field form-required term-name-wrap">
-					<th scope="row"><label for="name">Doctors</label></th>
-          <?php $_doctors = get_posts(array('post_type' => 'team-member', 'post_status' => 'publish', 'posts_per_page' => -1));
-        $doctors = array();
-        foreach ($_doctors as $doctor) {
-            $doctors[$doctor->ID] = $doctor->post_title;
-        } ?>
-					<td><?php $this->_metabox_select($post->ID, $doctors, 'doctors', 'service', true); ?>
-					<p class="description">The service doctors.</p></td>
+                <tr class="form-field form-required term-name-wrap">
+					<th scope="row"><label for="name">Team Members</label></th>
+                    <?php
+                    $_members = get_posts(array('post_type' => 'team-member', 'post_status' => 'publish', 'posts_per_page' => -1));
+                    $members = array();
+                    foreach ($_members as $member) {
+                        $members[$member->ID] = $member->post_title;
+                    } ?>
+					<td><?php $this->_metabox_select($post->ID, $members, 'members', 'service', true); ?>
+					<p class="description">The service members.</p></td>
 				</tr>
 			</tbody>
 		</table>
@@ -334,5 +296,5 @@ jQuery(document).on("click", ".close-services", function(){
 
     }
 }
-new Service_Shortcode();
+new Na_Services();
 ?>
