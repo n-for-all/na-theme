@@ -79,10 +79,6 @@ ul.na-case-studies {
     display: none;
 }
 
-.na-case-studies>li .case-studies-position {
-    font-size: 13px;
-}
-
 .na-case-studies>li .case-studies-header {
     margin: 0 30px;
     display: block;
@@ -124,6 +120,7 @@ ul.na-case-studies {
     transition: all ease 0.6s;
     position: fixed !important;
     overflow: auto;
+    z-index: 9999;
     padding-bottom: 30px;
 }
 

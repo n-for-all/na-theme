@@ -378,7 +378,7 @@ class Na_Theme {
 		wp_enqueue_script( 'na_theme-custom', get_template_directory_uri() . '/assets/js/custom.js', array( 'jquery' ), '1.0.0', true );
 		wp_enqueue_script( 'na_theme-script', get_template_directory_uri() . '/assets/js/functions.js', array( 'jquery' ), '1.0.0', true );
 		wp_enqueue_script( 'na_theme-scripts', get_template_directory_uri() . '/assets/js/scripts.js', array( 'jquery' ), '1.0.0', true );
-		wp_add_inline_script('na_theme-script', 'var options = {};');
+		wp_add_inline_script('na_theme-script', 'var options = {};options.ajax = "'.admin_url('admin-ajax.php').'"');
 		wp_enqueue_script( 'na_theme-waypoints', get_template_directory_uri() . '/assets/js/plugins/jquery.waypoints.min.js', array( 'jquery' ), '1.0.0', true );
 
 		if($this->homepage_scrolling != ""){
