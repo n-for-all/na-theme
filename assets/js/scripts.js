@@ -1,5 +1,7 @@
 function theme(options) {
     this.options = options;
+    this.controller = null;
+    this.scene = null;
     this.load = function() {
         var me = this;
         if (this.options.scrolling) {
@@ -20,7 +22,7 @@ function theme(options) {
                         });
                         jQuery("#inner-scroll").width((100 * count + "%"));
                         // jQuery(".scrolling-container--2").width((100 * count + "%"));
-                        var controller = new ScrollMagic.Controller({});
+                        me.controller = new ScrollMagic.Controller({});
                         var wipeAnimation = new TimelineMax();
 
                         for (i = 0; i < count; i++) {
@@ -39,17 +41,17 @@ function theme(options) {
 
                         // create scene to pin and link animation
                         var count = slides.length > 0 ? slides.length : 1;
-                        var scene = new ScrollMagic.Scene({
+                        me.scene = new ScrollMagic.Scene({
                                 triggerElement: ".scrolling-container--2",
                                 triggerHook: "onLeave",
                                 duration: "500%"
                             })
                             .setPin(".scrolling-container--2")
                             .setTween(wipeAnimation)
-                            .addTo(controller);
+                            .addTo(me.controller);
                         var _current = 0;
                         var offset = 0.3; //offset in percentage
-                        scene.on("progress", function(event) {
+                        met.scene.on("progress", function(event) {
                             var direction = event.scrollDirection == 'FORWARD' ? 0 : 0;
                             var v = (event.progress * count) + offset + 1;
                             if (v > count) {
@@ -70,7 +72,7 @@ function theme(options) {
                         slides.css({
                             'height': jQuery(window).height()
                         });
-                        var controller = new ScrollMagic.Controller({
+                        me.controller = new ScrollMagic.Controller({
                             globalSceneOptions: {
                                 triggerHook: 'onLeave'
                             }
@@ -83,11 +85,11 @@ function theme(options) {
                                     triggerElement: slides.get(i)
                                 })
                                 .setPin(slides.get(i))
-                                .addTo(controller);
+                                .addTo(me.controller);
                         }
                         break;
                     case "4":
-                        var controller = new ScrollMagic.Controller();
+                        me.controller = new ScrollMagic.Controller();
                         // define movement of panels
                         var wipeAnimation = new TimelineMax();
 
@@ -134,7 +136,7 @@ function theme(options) {
                             // console.log(dir);
                         }
                         // create scene to pin and link animation
-                        new ScrollMagic.Scene({
+                        me.scene = new ScrollMagic.Scene({
                                 loglevel: 2,
                                 triggerElement: "#inner-scroll",
                                 triggerHook: "onLeave",
@@ -142,7 +144,7 @@ function theme(options) {
                             })
                             .setPin("#inner-scroll")
                             .setTween(wipeAnimation)
-                            .addTo(controller);
+                            .addTo(me.controller);
                         break;
                     default:
                         var sections = jQuery('section.section-scroll');
@@ -195,27 +197,69 @@ function theme(options) {
             }
         }
         var current = null;
-        jQuery(window).hashchange(function() {
-            var hash = location.hash;
-            jQuery(".content").removeClass('active');
-            var menu_item = jQuery('#menu-main-menu li a[href^="' + me.escapeRegExp(hash) + '"]');
-            if(menu_item.length > 0){
-                jQuery("#menu-main-menu li a").removeClass('active');
-                menu_item.addClass('active');
-            }
-        });
-        // Since the event is only triggered when the hash changes, we need to trigger
-        // the event now, to handle the hash the page may have loaded with.
-        jQuery(window).hashchange();
+        // me.controller.scrollTo(function(newScrollPos) {
+        //     console.log('pos', newScrollPos);
+        //     jQuery("html, body").animate({
+        //         scrollTop: newScrollPos
+        //     });
+        // });
+        if ("onhashchange" in window) {
+            jQuery(window).hashchange(function(event) {
+                event.stopPropagation();
+                event.preventDefault();
+                var hash = location.hash;
+                if(hash.replace('#', '').trim() == '' || hash.indexOf('#!') >= 0){
+                    return false;
+                }
+                jQuery(".content").removeClass('active');
+                var menu_item = jQuery('#menu-main-menu li a[href^="' + me.escapeRegExp(hash) + '"]');
+                if (menu_item.length > 0) {
+                    jQuery("#menu-main-menu li a").removeClass('active');
+                    menu_item.addClass('active');
+                }
+                var section = jQuery('#section-' + hash.replace('#', ''));
+                if (section.length == 0) {
+                    console.warn('#section-' + hash.replace('#', '') + ' was not found, did you forget to enable permalinks?');
+                    return;
+                }
+                if (me.scene) {
+                    var offset = me.scene.scrollOffset();
+                    var index = section.data('index');
+                    if(index){
+                        jQuery("html, body").animate({
+                            scrollTop: offset*(index+1)
+                        }, 2000);
+                    }
+                    // me.controller.scrollTo('#section-' + hash.replace('#', ''));
+                    return;
+                }
+                jQuery('html, body').animate({
+                    scrollTop: jQuery(section).offset().top - jQuery('.navbar').height()
+                }, 1000);
+            });
+            // Since the event is only triggered when the hash changes, we need to trigger
+            // the event now, to handle the hash the page may have loaded with.
+            jQuery(window).hashchange();
+        } else {
+            jQuery('#menu-main-menu li a[href^=\\/\\#]').click(function(event) {
+                var hash = location.hash;
+                jQuery(".content").removeClass('active');
+                var menu_item = jQuery('#menu-main-menu li a[href^="' + me.escapeRegExp(hash) + '"]');
+                if (menu_item.length > 0) {
+                    jQuery("#menu-main-menu li a").removeClass('active');
+                    menu_item.addClass('active');
+                }
+                jQuery('html, body').animate({
+                    scrollTop: jQuery(jQuery(this).attr("href").replace('/', '')).offset().top - jQuery('.navbar').height()
+                }, 1000);
+            });
+        }
+
         jQuery(".btn.btn-back").click(function() {
             jQuery(".content").removeClass('active');
             location.hash = "#home";
         });
-        jQuery('#menu-main-menu li a[href^=\\/\\#]').click(function(event) {
-            jQuery('html, body').animate({
-                scrollTop: jQuery(jQuery(this).attr("href").replace('/', '')).offset().top - jQuery('.navbar').height()
-            }, 1000);
-        });
+
         jQuery('a[href="#search"]').click(function() {
             jQuery('body').addClass('search-active').removeClass('search-closed');
             return false;

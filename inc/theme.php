@@ -734,6 +734,7 @@ $theme->register('posts', get_template_directory() . '/inc/posts/shortcodes.php'
 $theme->register('events', get_template_directory() . '/inc/events/loader.php');
 $theme->register('attachment', get_template_directory() . '/inc/attachment/loader.php');
 $theme->register('switcher', get_template_directory() . '/inc/switcher/loader.php');
+$theme->register('popup', get_template_directory() . '/inc/popup/loader.php');
 
 do_action('theme_init', $theme);
 ?>

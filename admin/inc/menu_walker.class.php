@@ -71,7 +71,7 @@ function na_nav_menu_link_attributes($atts, $item, $args, $depth){
   $slug = get_post_meta( $item->ID, '_menu_item_hash_slug', true);
   if($slug){
     if(isset($item->slug)){
-      $atts['href'] = "/#".$item->slug;
+      $atts['href'] = home_url('/')."#".$item->slug;
       $atts['data-anchor'] = $atts['href'];
       $atts['data-object'] = $item->object_id;
     }

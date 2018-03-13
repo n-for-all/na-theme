@@ -2,10 +2,11 @@ jQuery(document).ready(function() {
     var last = null;
     jQuery('.services-popup').click(function(event) {
         var wrapper = jQuery(this).closest('.na-services').data('wrapper');
+        jQuery('html').css('overflow', 'hidden');
         event.preventDefault();
         var inner = jQuery(this).closest('.service-inner');
         var clone = jQuery('.service-inner-clone');
-        if(jQuery('.service-inner-clone').length == 0){
+        if (jQuery('.service-inner-clone').length == 0) {
             clone = jQuery('<div class="service-inner-clone"></div>');
         }
         last = inner;
@@ -44,7 +45,7 @@ jQuery(document).ready(function() {
             success: function(result) {
                 if (result && result.status == "success") {
                     var post_template = wp.template('service');
-                    jQuery(".service-inner-clone").html("<div id='na-service-template'><a class='close' href='#'></a>" + post_template(result.post) + "</div>");
+                    jQuery(".service-inner-clone").html("<div id='na-service-template'>" + post_template(result.post) + "</div>");
                     setTimeout(function() {
                         jQuery('#na-service-template').css('opacity', 1);
                     }, 100);
@@ -53,8 +54,15 @@ jQuery(document).ready(function() {
         });
         return false;
     });
+    jQuery(document).on('keydown', function(event) {
+        if (last && event.keyCode == 27) {
+            event.preventDefault();
+            jQuery('.close-service').trigger('click');
+        }
+    });
     jQuery(document).on("click", ".close-service", function(event) {
         event.preventDefault();
+        jQuery('html').css('overflow', '');
         if (last) {
             var wrapper = jQuery(last).closest('.na-services').data('wrapper');
             jQuery(wrapper).removeClass('na-service-active');
@@ -71,6 +79,7 @@ jQuery(document).ready(function() {
         } else {
             jQuery(".service-inner-clone").remove();
         }
+        window.location.hash = '#!';
         return false;
     });
 });

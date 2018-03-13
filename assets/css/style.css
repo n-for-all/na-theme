@@ -16,6 +16,7 @@ CSS structure
 html, body {
     overflow-x: hidden;
     overflow-y: auto;
+    overflow-y: overlay;
 }
 
 .stroke {

@@ -13,9 +13,6 @@ global $theme, $post;
  * Featured Image
  */
 $featured_image = $theme->get_post_thumbnail(null, 'full');
-
-
-
 ?>
 <div class="inner-section <?php echo $featured_image? 'has-featured-image': ''; ?>" style="<?php echo $featured_image? "background-image:url(  $featured_image)": ''; ?>">
 	<?php

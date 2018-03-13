@@ -260,6 +260,7 @@
 .na-slide.visible {
     transform: translateX(0%);
     opacity: 1;
+    z-index: 9;
 }
 
 .na-slider-wrapper .na-slider-actions:hover {

@@ -49,7 +49,7 @@ get_header(); ?>
                     <div id="inner-scroll" class="scrolling-style-<?php echo $theme->homepage_scrolling; ?>">
                     <?php endif; ?>
                 <?php endif; ?>
-                <section id="section-<?php echo $post->post_name; ?>" class="<?php echo $_class; ?>" style="<?php echo $background ? 'background-image:url('.$background.');': '' ?>">
+                <section data-index="<?php echo $i; ?>" id="section-<?php echo $post->post_name; ?>" class="<?php echo $_class; ?>" style="<?php echo $background ? 'background-image:url('.$background.');': '' ?>">
                     <div class="<?php echo $theme->get_template_layout($post->ID, 'container'); ?>">
                         <?php get_template_part( 'template-parts/'.$theme->get_template_part($post->ID, 'content-page-notitle'));
                         if($i == 0 && $theme->show_scroll_icon == 1){
@@ -60,7 +60,7 @@ get_header(); ?>
                         ?>
                     </div>
                 </section>
-                <?php if($theme->homepage_scrolling != ""): //scrollmagic manual
+                <?php if($theme->homepage_scrolling != "" || false): //scrollmagic manual
                     if($i == sizeof($_children)-1 && $i > 1):
                         if($theme->homepage_scrolling == 4):
                     ?>

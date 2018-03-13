@@ -96,12 +96,6 @@
             window.location.hash = "";
         }
     });
-    jQuery(document).keyup(function(e) {
-        if (e.keyCode === 27) {
-            jQuery('.content').removeClass('active'); // esc
-            window.location.hash = "";
-        }
-    });
     jQuery('a[data-toggle]').click(function() {
         var x = jQuery(this).data('toggle');
         if (jQuery(x).length == 0) {

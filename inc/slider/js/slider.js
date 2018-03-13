@@ -116,7 +116,6 @@ function Na_Slider(element, settings) {
                     if (start >= 360 && reverse) {
                         start = start - 360;
                     }
-					console.log(start);
                 };
 				this.cInterval = setInterval(function() {
 					rotation_slider();
