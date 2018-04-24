@@ -15,11 +15,38 @@
  * @package 	WooCommerce/Templates
  * @version     2.0.0
  */
+
+global $theme;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
+if(is_shop()){
+	$id = wc_get_page_id('shop');
+	$featured_image = $theme->get_post_thumbnail($id, 'full');
+}else{
+	$id = wc_get_page_id('shop');
+	$featured_image = $theme->get_post_thumbnail($id, 'full');
+	$featured_image = $theme->get_woocommerce_archive_thumbnail(null, 'full', $featured_image);
+}
 get_header( 'shop' ); ?>
 
+
+	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+		<?php
+		if($featured_image):
+		?>
+		<figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
+			<img src="<?php echo $featured_image; ?>" />
+		</figure>
+		<?php endif; ?>
+		<?php if ( apply_filters( 'woocommerce_show_page_title', true ) ) : ?>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12"><h1 class="entry-title"><?php woocommerce_page_title(); ?></h1></div>
+			</div>
+		</div>
+		<?php endif; ?>
+	</header><!-- .entry-header -->
 	<?php
 		/**
 		 * woocommerce_before_main_content hook.
@@ -30,14 +57,7 @@ get_header( 'shop' ); ?>
 		 */
 		do_action( 'woocommerce_before_main_content' );
 	?>
-
     <header class="woocommerce-products-header">
-
-		<?php if ( apply_filters( 'woocommerce_show_page_title', true ) ) : ?>
-
-			<h1 class="woocommerce-products-header__title page-title"><?php woocommerce_page_title(); ?></h1>
-
-		<?php endif; ?>
 
 		<?php
 			/**
@@ -53,13 +73,13 @@ get_header( 'shop' ); ?>
 
 		<?php if ( have_posts() ) : ?>
 			<?php
-	  		/**
-	  		 * woocommerce_sidebar hook.
-	  		 *
-	  		 * @hooked woocommerce_get_sidebar - 10
-	  		 */
-	  		do_action( 'woocommerce_sidebar' );
-	  	?>
+		  		/**
+		  		 * woocommerce_sidebar hook.
+		  		 *
+		  		 * @hooked woocommerce_get_sidebar - 10
+		  		 */
+		  		do_action( 'woocommerce_sidebar' );
+		  	?>
 			<?php
 				/**
 				 * woocommerce_before_shop_loop hook.

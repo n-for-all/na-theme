@@ -222,7 +222,7 @@ class Na_Services extends NA_METABOXES
                     $style[] = "background-image:url($image[0])";
                 }
                 $class = array();
-                $popup = '';
+                $popup = false;
                 //add end class to the last columns
                 if(isset($meta['popup']) && $meta['popup'] == 1){
                     $popup = 'services-popup';
@@ -234,7 +234,7 @@ class Na_Services extends NA_METABOXES
                     $class[] = 'column-end';
                 }
                 $output .= '<li class="service-inner '.implode(" ", $class).'">
-                <a data-id="'.get_the_ID().'" class="services-image services-button '.$popup.'" style="'.implode(";", $style).'" href="'.get_the_permalink().'">
+                <a data-id="'.get_the_ID().'" class="services-image services-button '.$popup.'" style="'.implode(";", $style).'" href="'.($popup ? '#!service/'.get_the_ID() : get_the_permalink()).'">
                 <span class="services-wrapper"><span class="services-header">'.get_the_title().'</span>
                 <span class="services-tagline">'.$meta['tagline'].'</span>
                 <span class="services-content">'.$post->post_excerpt.'</span><span class="services-btn btn">Read More &rarr;</span></span></a></li>';

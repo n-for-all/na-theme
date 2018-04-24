@@ -21,7 +21,6 @@
 				'container'			=> ''
 			) );
 	 endif; ?>
-	<?php if($theme->menu == 'left-expand-logo.css') include('logo.php'); ?>
 </div>
 <?php elseif ( has_nav_menu( 'primary-right' ) ) : ?>
 <!-- Start nav-collapse -->
@@ -34,7 +33,6 @@
 			'container'			=> ''
 		) );
 	?>
-	<?php if($theme->menu == 'left-expand-logo.css') include('logo.php'); ?>
 </div>
 <?php endif; ?>
 

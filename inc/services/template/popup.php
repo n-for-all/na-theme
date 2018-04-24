@@ -1,7 +1,8 @@
 <div class="service-tpl">
     <a href="#" class="close-service">&times;</a>
     <div class="service-tpl-inner">
-        <header <# if(data.image != '') { #>style="background-image:url({{data.image}})"<# }else{ #>class="no-image"<# } #>>
+        <header <# if(data.image == '') { #>class="no-image"<# } #>>
+            <# if(data.image != '') { #><span class="service-tpl-image" style="background-image:url({{data.image}})"></span><# } #>
             <div class="container">
                 <div class="row">
                     <div class="col-md-8 col-md-offset-2">

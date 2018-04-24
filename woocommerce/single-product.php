@@ -16,12 +16,24 @@
  * @version     1.6.4
  */
 
+global $theme;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+$id = wc_get_page_id('shop');
+$featured_image = $theme->get_post_thumbnail($id, 'full');
 get_header( 'shop' ); ?>
 
+	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+		<?php
+		if($featured_image):
+		?>
+		<figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
+			<img src="<?php echo $featured_image; ?>" />
+		</figure>
+		<?php endif; ?>
+	</header><!-- .entry-header -->
 	<?php
 		/**
 		 * woocommerce_before_main_content hook.

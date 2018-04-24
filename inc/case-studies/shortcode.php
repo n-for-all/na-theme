@@ -171,6 +171,10 @@ class Case_Studies_Shortcode extends NA_METABOXES
                     $style[] = "background-image:url($image[0])";
                 }
                 $logos = array();
+                $popup = false;
+                if(isset($meta['popup']) && $meta['popup'] == 1){
+                    $popup = 'services-popup';
+                }
                 if(isset($meta['logo'])){
                     foreach((array)$meta['logo']  as $logo){
                         $l = wp_get_attachment_image_src($logo, 'full');
@@ -181,7 +185,7 @@ class Case_Studies_Shortcode extends NA_METABOXES
                 }
                 $output .= '<li>
                 <div class="case-studies-inner">
-                    <a data-id="'.get_the_ID().'" class="case-studies-image case-studies-button" style="'.implode(";", $style).'" href="'.get_the_permalink().'">
+                    <a data-id="'.get_the_ID().'" class="case-studies-image case-studies-button" style="'.implode(";", $style).'" href="'.($popup ? '#!case-study/'.get_the_ID() : get_the_permalink()).'">
                         <span class="case-studies-text">
                             <span class="case-studies-header">
                                 <h3 class="case-studies-title">'.get_the_title().'</h3>
@@ -214,6 +218,11 @@ class Case_Studies_Shortcode extends NA_METABOXES
 					<td><?php $this->_metabox_image($post->ID, 'logo', 'case-studies'); ?>
 					<p class="description">The logo.</p></td>
 				</tr>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Popup</label></th>
+                    <td><?php $this->_metabox_checkbox($post->ID, 'Open as popup', 'popup', 'case-studies'); ?>
+                    <p class="description">Opens as popup or seperate page</p></td>
+                </tr>
 			</tbody>
 		</table>
 		<?php

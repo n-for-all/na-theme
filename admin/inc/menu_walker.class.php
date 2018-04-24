@@ -5,6 +5,9 @@ require_once( ABSPATH . 'wp-admin/includes/class-walker-nav-menu-edit.php' );
 class Na_Walker_Nav_Menu_Edit extends Walker_Nav_Menu_Edit {
   public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
     $item_id = esc_attr( $item->ID );
+
+    parent::start_el( $output, $item, $depth, $args, $id);
+
     $slug = get_post_meta( $item_id, '_menu_item_hash_slug',true) ? true: false;
     $text = get_post_meta( $item_id, '_menu_item_hash_hash',true);
     $html = 'id="menu-item-settings-'.$item_id.'"><p class="field-hash-attribute field-attr-hash description description-wide">
@@ -16,8 +19,12 @@ class Na_Walker_Nav_Menu_Edit extends Walker_Nav_Menu_Edit {
             <br/>
 					</label>
 				</p>';
-    parent::start_el( $output, $item, $depth, $args, $id);
-    $output = $this->str_replace_first('id="menu-item-settings-'.$item_id.'">', $html, $output);
+
+
+    ob_start();
+    do_action( 'wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args );
+    $html .= ob_get_clean();
+$output = $this->str_replace_first('id="menu-item-settings-'.$item_id.'">', $html, $output);
   }
   function str_replace_first($search, $replace, $subject) {
     $pos = strpos($subject, $search);
@@ -63,7 +70,12 @@ function na_wp_get_nav_menu_items($items, $menu, $args){
         $item->slug = $pst->post_name;
       }
     }
+    if(is_user_logged_in()){
+        $user = wp_get_current_user();
+        $item->title = str_replace('{display_name}', $user->display_name, $item->title);
+    }
   }
+
   return $items;
 }
 add_filter('nav_menu_link_attributes', 'na_nav_menu_link_attributes', 10, 4);

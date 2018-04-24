@@ -125,11 +125,13 @@ ul.na-services li>a .services-header {
     font-family: arial;
     text-decoration: none;
     transition: all ease 0.3s;
+    z-index: 999;
 }
 
-.service-content-tpl ul{
+.service-content-tpl ul {
     padding-left: 20px;
 }
+
 .service-tagline-tpl {
     margin-bottom: 30px;
     display: block;
@@ -164,26 +166,46 @@ ul.na-service.na-service-columns-2>li {
 }
 
 #na-service-template {
-    overflow: auto;
+    overflow: visible;
     transition: all ease 2s;
     opacity: 0;
 }
 
+.service-tpl {
+    overflow: visible;
+}
+
+.service-tpl-inner {
+    overflow: overlay;
+    max-height: 100%;
+}
+
 .service-tpl-inner header {
+    position: relative;
+}
+
+.service-tpl-inner .service-tpl-image {
     background-size: cover;
     background-position: center;
     margin-bottom: 30px;
     background-color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
-.service-tpl-inner header.no-image h2{
+
+.service-tpl-inner header.no-image h2 {
     color: #333;
     text-shadow: none;
 }
+
 .service-tpl-inner header h2 {
     padding: 50px 0 0px 0;
-        color: #fff;
-        text-shadow: 0 0 14px rgba(0, 0, 0, 0.5);
-        font-size: 300%;
+    color: #fff;
+    text-shadow: 0 0 14px rgba(0, 0, 0, 0.5);
+    font-size: 300%;
 }
 
 .service-tpl-inner .service-content-tpl {
@@ -192,7 +214,7 @@ ul.na-service.na-service-columns-2>li {
 }
 
 .service-inner-clone {
-    background-color: #eaeaea;
+    background-color: #fff;
     transition: all ease 0.6s;
     position: fixed !important;
     overflow: auto;
@@ -249,12 +271,12 @@ ul.na-service.na-service-columns-2>li {
 }
 
 @media all and (max-width: 1024px) {
-    ul.na-services li {
+    /* ul.na-services li {
         width: 50% !important;
-    }
-    ul.na-services li a:after {
+    } */
+    /* ul.na-services li a:after {
         display: none
-    }
+    } */
 }
 
 @media all and (max-width: 768px) {
@@ -263,5 +285,14 @@ ul.na-service.na-service-columns-2>li {
     }
     ul.na-services li a:after {
         display: none
+    }
+    #na-service-template .close-service{
+        bottom: 30px;
+top: auto;
+left: 50%;
+margin-left: -10px;
+    }
+    .service-tpl-inner{
+        padding-bottom: 50px;
     }
 }

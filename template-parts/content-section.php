@@ -11,7 +11,7 @@ $background = $theme->get_post_thumbnail(null, 'full');
 ?>
 
 
-<div id="<?php echo $post->post_name; ?>" <?php post_class( 'content inner-content' ); ?> style="<?php echo $background ? 'background-image:url('.$background.')': '' ?>;">
+<div <?php post_class( 'content inner-content '.$post->post_name ); ?> style="<?php echo $background ? 'background-image:url('.$background.')': '' ?>;">
 	<div class="entry-inner inner">
         <div class="entry-title">
             <h2>

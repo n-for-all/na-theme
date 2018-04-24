@@ -40,7 +40,7 @@ function Na_Slider(element, settings) {
 	this.isCircular = false;
 	this.cInterval = null;
 
-
+    this.pause = false;
     this.slide = {
         "height": 0,
         "width": 0
@@ -63,10 +63,12 @@ function Na_Slider(element, settings) {
         if (this.settings.autoplay > 0 && !this.isCircular) {
             var _this = this;
             var xf = function() {
-                setTimeout(function() {
-                    // _this.next();
-                    xf();
-                }, _this.settings.autoplay);
+                setInterval(function() {
+                    if(!_this.pause){
+                        _this.next();
+                    }
+                    _this.pause = false;
+				}, this.settings.autoplay*1000);
             };
             xf();
         }
@@ -100,6 +102,11 @@ function Na_Slider(element, settings) {
             var circle = nav.find('.circular-wrap');
             if (step > 0) {
                 var rotation_slider = function() {
+                    if(me.pause){
+                        me.pause = false;
+                        return;
+                    }
+
                     circle.attr('transform', 'rotate(' + start*5 + ' 0 0)');
 					setTimeout(function() {
 	                    circle.attr('transform', 'rotate(' + start + ' 0 0)');
@@ -262,9 +269,9 @@ function Na_Slider(element, settings) {
         } else {
             this.wrapper.removeClass('na-no-prev');
         }
+        this.inform();
     };
     this.toPage = function(i) {
-        var index = this.current.index;
         this.scroll = true;
         this.direction = 1;
         this.current.index = i * this.columns;
@@ -285,6 +292,8 @@ function Na_Slider(element, settings) {
             if (this.current.index > this.slides.length) {
                 this.current.index = this.slides.length;
             }
+        }else{
+            this.toPage(0);
         }
         this.direction = +1;
         this.navClass();
@@ -301,12 +310,11 @@ function Na_Slider(element, settings) {
     this.has3d = function() {
         return ('WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix());
     };
+    this.inform = function() {
+        window.requestAnimationFrame(this.draw.bind(this));
+    }
     this.draw = function() {
-
         var _this = this;
-        setTimeout(function() {
-            requestAnimationFrame(_this.draw.bind(_this));
-        }, 2);
 		if(this.isCircular){
 			if(this.scroll){
 				this.active(this.current.index);
@@ -371,19 +379,23 @@ function Na_Slider(element, settings) {
         });
         if (this.settings.pagination == 1) {
             this.wrapper.find(".na-slider-actions.prev").on("click", function() {
+                _this.pause = true;
                 _this.prev();
                 return false;
             });
             this.wrapper.find(".na-slider-actions.next").on("click", function() {
+                _this.pause = true;
                 _this.next();
                 return false;
             });
         } else {
             this.wrapper.find(".na-slider-actions.prev").on("click", function() {
+                _this.pause = true;
                 _this.prevPage();
                 return false;
             });
             this.wrapper.find(".na-slider-actions.next").on("click", function() {
+                _this.pause = true;
                 _this.nextPage();
                 return false;
             });
@@ -391,11 +403,13 @@ function Na_Slider(element, settings) {
         if (this.nav.length > 0) {
             if (this.settings.pagination == 1) {
                 this.nav.on("click", function() {
+                    _this.pause = true;
                     _this.to(jQuery(this).data('to'));
                     return false;
                 });
             } else {
                 this.nav.on("click", function() {
+                    _this.pause = true;
                     _this.toPage(jQuery(this).data('to'));
                     return false;
                 });
@@ -405,11 +419,10 @@ function Na_Slider(element, settings) {
     this.visibility = function() {
         var range = [this.current.index, this.current.index + this.columns - 1];
         this.slides.each(function(index, slide) {
-            jQuery(slide).attr('class', 'na-slide');
+            jQuery(slide).removeClass('before after visible').addClass('na-slide');
             if (index >= range[0] && index <= range[1]) {
                 jQuery(slide).addClass('visible');
             } else {
-
                 jQuery(slide).removeClass('visible');
             }
             if (index == range[1] + 1) {

@@ -2,9 +2,10 @@ function theme(options) {
     this.options = options;
     this.controller = null;
     this.scene = null;
+    this.scrollHandler = null;
     this.load = function() {
         var me = this;
-        if (this.options.scrolling) {
+        if (this.options.scrolling && jQuery(window).width() > 768) {
             var slides = jQuery("#inner-scroll>section");
             var count = slides.length;
             if (count > 0) {
@@ -197,61 +198,65 @@ function theme(options) {
             }
         }
         var current = null;
-        // me.controller.scrollTo(function(newScrollPos) {
-        //     console.log('pos', newScrollPos);
-        //     jQuery("html, body").animate({
-        //         scrollTop: newScrollPos
-        //     });
-        // });
+
+
+        var mobileHandler = function(section){
+            jQuery('html, body').animate({
+                scrollTop: jQuery(section).offset().top - jQuery('.navbar').height()
+            }, 1000);
+            return true;
+        }
+        var desktopHandler = function(section){
+            if (me.scene) {
+                var offset = me.scene.scrollOffset();
+                var index = section.data('index');
+                if(index){
+                    jQuery("html, body").animate({
+                        scrollTop: offset*(index+1)
+                    }, 2000);
+                }
+                // me.controller.scrollTo('#section-' + hash.replace('#', ''));
+                return true;
+            }
+            return false;
+        }
+
+        var handler = jQuery(window).width() > 768 ? desktopHandler: mobileHandler;
+        if(jQuery(window).width() <= 768){
+            jQuery('body').addClass('no-scrolling-style');
+        }
+        this.scrollHandler = function(){
+            var hash = location.hash;
+            if(hash.replace('#', '').trim() == '' || hash.indexOf('#!') >= 0){
+                return false;
+            }
+            jQuery(".content").removeClass('active');
+            var menu_item = jQuery('#menu-main-menu li a[href^="' + me.escapeRegExp(hash) + '"]');
+            if (menu_item.length > 0) {
+                jQuery("#menu-main-menu li a").removeClass('active');
+                menu_item.addClass('active');
+            }
+            var section = jQuery('#section-' + hash.replace('#', ''));
+            if (section.length == 0) {
+                console.warn('#section-' + hash.replace('#', '') + ' was not found, did you forget to enable permalinks?');
+                return false;
+            }
+            return handler(section);
+        }
         if ("onhashchange" in window) {
             jQuery(window).hashchange(function(event) {
-                event.stopPropagation();
-                event.preventDefault();
-                var hash = location.hash;
-                if(hash.replace('#', '').trim() == '' || hash.indexOf('#!') >= 0){
-                    return false;
+                if(me.scrollHandler()){
+                    event.stopPropagation();
+                    event.preventDefault();
                 }
-                jQuery(".content").removeClass('active');
-                var menu_item = jQuery('#menu-main-menu li a[href^="' + me.escapeRegExp(hash) + '"]');
-                if (menu_item.length > 0) {
-                    jQuery("#menu-main-menu li a").removeClass('active');
-                    menu_item.addClass('active');
-                }
-                var section = jQuery('#section-' + hash.replace('#', ''));
-                if (section.length == 0) {
-                    console.warn('#section-' + hash.replace('#', '') + ' was not found, did you forget to enable permalinks?');
-                    return;
-                }
-                if (me.scene) {
-                    var offset = me.scene.scrollOffset();
-                    var index = section.data('index');
-                    if(index){
-                        jQuery("html, body").animate({
-                            scrollTop: offset*(index+1)
-                        }, 2000);
-                    }
-                    // me.controller.scrollTo('#section-' + hash.replace('#', ''));
-                    return;
-                }
-                jQuery('html, body').animate({
-                    scrollTop: jQuery(section).offset().top - jQuery('.navbar').height()
-                }, 1000);
             });
-            // Since the event is only triggered when the hash changes, we need to trigger
-            // the event now, to handle the hash the page may have loaded with.
             jQuery(window).hashchange();
         } else {
             jQuery('#menu-main-menu li a[href^=\\/\\#]').click(function(event) {
-                var hash = location.hash;
-                jQuery(".content").removeClass('active');
-                var menu_item = jQuery('#menu-main-menu li a[href^="' + me.escapeRegExp(hash) + '"]');
-                if (menu_item.length > 0) {
-                    jQuery("#menu-main-menu li a").removeClass('active');
-                    menu_item.addClass('active');
+                if(me.scrollHandler()){
+                    event.stopPropagation();
+                    event.preventDefault();
                 }
-                jQuery('html, body').animate({
-                    scrollTop: jQuery(jQuery(this).attr("href").replace('/', '')).offset().top - jQuery('.navbar').height()
-                }, 1000);
             });
         }
 
@@ -281,6 +286,20 @@ function theme(options) {
 
         var menuItems = jQuery('#navbar ul li a');
         var scrollItems = jQuery('#wrapper > section');
+        jQuery(window).on('resize', function() {
+            if(jQuery(window).width() <= 768){
+                if(me.controller){
+                    if(me.scene){
+                        me.scene.destroy(true);
+                    }
+                    me.controller.destroy(true);
+                    jQuery('body').addClass('no-scrolling-style');
+                }
+                handler = mobileHandler;
+            }else{
+                handler = desktopHandler;
+            }
+        });
         jQuery(window).scroll(function() {
             // Get container scroll position
             var fromTop = jQuery(this).scrollTop() + jQuery('.navbar').outerHeight(true) + 100;

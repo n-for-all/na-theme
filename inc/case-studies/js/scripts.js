@@ -1,8 +1,8 @@
 jQuery(document).ready(function() {
     var last = null;
-    jQuery('.case-studies-button').click(function(event) {
+    function showCaseStudy(id) {
         event.preventDefault();
-        var inner = jQuery(this).closest('.case-studies-inner');
+        var inner = jQuery('.case-studies-inner');
         var clone = jQuery('<div class="case-studies-inner-clone"></div>');
         last = inner;
         var coor = inner.get(0).getBoundingClientRect();
@@ -36,19 +36,40 @@ jQuery(document).ready(function() {
             dataType: "json",
             data: {
                 action: 'case_study',
-                id: jQuery(this).data("id")
+                id: id
             },
             success: function(result) {
                 if (result && result.status == "success") {
                     var post_template = wp.template('case-study');
                     jQuery(".case-studies-inner-clone").html("<div id='na-case-study-template'><a class='close' href='#'></a>" + post_template(result.post) + "</div>");
                     setTimeout(function() {
-                    jQuery('#na-case-study-template').css('opacity', 1);
-                }, 100);
+                        jQuery('#na-case-study-template').css('opacity', 1);
+                    }, 100);
+                }else{
+                    jQuery('.close-case-studies').trigger('click');
+                    jQuery("body").removeClass('na-case-study-active');
                 }
             }
+        }).fail(function(){
+            jQuery('.close-case-studies').trigger('click');
+            jQuery("body").removeClass('na-case-study-active');
         });
         return false;
+    }
+    jQuery(document).on('keydown', function(event) {
+        if (last && event.keyCode == 27) {
+            event.preventDefault();
+            jQuery('.close-case-studies').trigger('click');
+        }
+    });
+    jQuery(window).on('hashchange', function(e) {
+        var hash = window.location.hash.replace(/^#!/, '');
+        if (hash) {
+            var path = hash.split('/');
+            if (path[0] == 'case-study') {
+                showCaseStudy(path[1]);
+            }
+        }
     });
     jQuery(document).on("click", ".close-case-studies", function(event) {
         event.preventDefault();
@@ -66,15 +87,10 @@ jQuery(document).ready(function() {
             }, 1000);
         } else {
             jQuery(".case-studies-inner-clone").remove();
+            jQuery("body").removeClass('na-case-study-active');
         }
         jQuery('html, body').css('overflow', '');
+        window.location.hash = '#!';
         return false;
-    });
-    jQuery(document).on("click", ".close-team", function() {
-        event.preventDefault();
-        jQuery('#na-team-member-template').fadeOut(function() {
-            jQuery(this).remove();
-            jQuery("body").removeClass("na-team-overlay");
-        });
     });
 });

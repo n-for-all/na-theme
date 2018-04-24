@@ -23,6 +23,41 @@ add_filter('single_product_large_thumbnail_size', function ($size) {
     return 'full';
 });
 
+add_filter( 'default_checkout_billing_country',function ($_fields) {
+    return 'AE';
+} );
+add_filter( 'default_checkout_shipping_country',function ($_fields) {
+    return 'AE';
+} );
+add_filter('woocommerce_checkout_fields', function ($_fields) {
+    $fields = &$_fields['billing'];
+    $fields['billing_country'] = array_replace($fields['billing_country'], array(
+        'type' => 'select',
+        'options' => array(
+	    	'AE'		=> __( 'United Arab Emirates' )
+	    )
+    ));
+    $fields['billing_city'] = array_replace($fields['billing_city'], array(
+        'type' => 'select',
+        'options' => array(
+	    	'Dubai'		=> __( 'Dubai' ),
+	        'Abu Dhabi'	=> __( 'Abu Dhabi', 'wps' ),
+	        'Ajman'	=> __( 'Ajman', 'wps' ),
+	        'Fujairah' 	=> __( 'Fujairah', 'wps' ),
+	        'Ras al-Khaimah' 	=> __( 'Ras al-Khaimah', 'wps' ),
+	        'Sharjah' 	=> __( 'Sharjah', 'wps' ),
+	        'Umm al-Quwain' 	=> __( 'Umm al-Quwain', 'wps' )
+	    )
+    ));
+    unset($fields['billing_state']);
+    unset($fields['billing_postcode']);
+    $fields['billing_phone']['required'] = true;
+    $shipping_fields = &$_fields['shipping'];
+unset($shipping_fields['shipping_state']);
+    return $_fields;
+
+});
+
 
 /*add_action('woocommerce_product_thumbnails', function () {
     global $product;
@@ -116,12 +151,12 @@ add_action('woocommerce_after_main_content', function () {
                 </div>
                 <?php
 });
-add_filter('woocommerce_product_tabs', function ($tabs) {
-    unset($tabs['additional_information']);    // Remove the additional information tab
-    $tabs['description']['title'] = "Ingredients";    // Remove the additional information tab
-
-    return $tabs;
-}, 98);
+// add_filter('woocommerce_product_tabs', function ($tabs) {
+//     unset($tabs['additional_information']);    // Remove the additional information tab
+//     $tabs['description']['title'] = "Ingredients";    // Remove the additional information tab
+//
+//     return $tabs;
+// }, 98);
 add_filter('woocommerce_currency_symbol', function ($currency_symbol, $currency) {
     switch ($currency) {
           case 'AED': $currency_symbol = 'AED'; break;
@@ -146,17 +181,17 @@ remove_action('woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30
 // add_filter( 'woocommerce_get_breadcrumb', '__return_false' );
 function exclude_product_cat_children($wp_query) {
 if ( isset ( $wp_query->query_vars['product_cat'] ) && $wp_query->is_main_query()) {
-    $wp_query->set('tax_query', array( 
+    $wp_query->set('tax_query', array(
                                     array (
                                         'taxonomy' => 'product_cat',
                                         'field' => 'slug',
                                         'terms' => $wp_query->query_vars['product_cat'],
                                         'include_children' => false
-                                    ) 
+                                    )
                                  )
     );
   }
-}  
+}
 add_filter('pre_get_posts', 'exclude_product_cat_children');
 
 // Change number or products per row to 3

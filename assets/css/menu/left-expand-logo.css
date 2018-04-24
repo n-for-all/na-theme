@@ -1,127 +1,121 @@
-.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
-    margin-left: 0;
-    margin: 0 auto;
-    display: inline-block;
-    float: none;
-}
-
-.navbar>.container {
-    width: 100%;
-}
-
-/*.collapse.in .navbar-collapse>ul {
-    transform: translateX(0%);
-}*/
-
-.collapsing .navbar-collapse>ul, .collapse.in .navbar-collapse>ul {
-    transform: translateX(-300%);
-    transition: transform ease 1s;
-    overflow: auto;
-    height: auto !important;
-}
-
-.navbar-collapse ul {
-    transition: transform ease 1s;
-    margin-top: 4px;
-}
-
-.navbar-collapse ul {
-    margin: 0 auto;
-    display: inline-block;
-    float: none !important;
-}
-
-.navbar-collapse ul li {
-    width: auto;
-    white-space: nowrap;
-    overflow: hidden;
-    transition: all ease 0.3s;
-}
-
-#main-navbar-collapse {
-    right: 0%;
-    left: auto;
-    min-width: 1170px !important;
-}
-
-.menu-open #main-navbar-collapse {
-    width: 100%;
-}
-
-#main-navbar-collapse {
-    overflow: hidden !important;
-    height: auto !important;
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 0;
-    z-index: 1;
-    transition: all ease 1s;
-    top: 0;
-    font-size: 0;
-    border-radius: 50px;
-    z-index: 8;
-}
-
-#main-nav-collapse {
-    height: 70px;
-    width: 380px;
-    transition: all ease 1s;
-    background-color: #fff;
-    border-radius: 70px;
-    left: 10px;
-    top: 10px;
-    overflow: hidden;
-}
-
-#main-nav-collapse.collapse {
-    display: block;
-}
-
-.menu-open #main-nav-collapse {
-    width: 100%;
-    width: calc(100% - 20px);
-}
-
-.navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
-    width: 220px !important;
-}
-
-#main-nav-collapse {
-    width: 290px;
-}
-
-#main-nav-collapse.collapse.in, #main-nav-collapse.collapsing {
-    transition: all ease 1s;
-}
-
-.navbar-default .navbar-toggle {
-    border-color: transparent;
-}
-
-.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
-    background-color: rgba(0, 0, 0, 0.03);
-}
-
-.navbar-default .navbar-toggle .icon-bar {
-    background-color: #505050;
-}
-
-.navbar-toggle {
-    margin-right: 0;
-}
-
-.scrolling #main-nav-collapse {
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.07);
-}
-
-#main-nav-collapse.collapse.in>div.container, #main-nav-collapse.collapsing>div.container {
-    overflow: hidden;
+.navbar-header {
+    min-height: 60px;
 }
 
 @media (min-width: 768px) {
-    .navbar-toggle, .navbar-default .navbar-toggle {
+    #main-navbar-collapse  {
+        transition: transform ease 2s, max-width ease 0.5s, opacity ease 0.4s;
+        max-width:100%;
+    }
+    #main-navbar-collapse ul {
+        transition: transform ease 2s, max-width ease 0.5s, opacity ease 0.4s;
+        height: auto !important;
+        /* display: flex; */
+    }
+    #main-navbar-collapse.navbar-collapse.collapse{
+        overflow: hidden;
+        transform: translateX(-200%);
+        opacity: 0;
+    }
+    #main-navbar-collapse.collapsing , #main-navbar-collapse.navbar-collapse.in{
+        overflow: hidden;
+        transition: transform ease 1s, max-width ease 1s, opacity ease 3s;
+        transform: translateX(0%);
+        opacity: 1;
+    }
+    .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+        margin-left: 0;
+        margin: 0 auto;
+        display: inline-block;
+        float: none;
+        height: 70px;
+    }
+    .navbar>.container {
+        width: 100%;
+    }
+
+    .navbar-collapse ul {
+        margin: 0 auto;
+        display: inline-block;
+        float: none !important;
+    }
+    .navbar-collapse ul li {
+        width: auto;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: all ease 0.3s;
+    }
+    #main-navbar-collapse {
+        right: 0%;
+        left: auto;
+        top: 12px;
+    }
+    .menu-open #main-navbar-collapse {
+        width: 80%;
+        right: 10%;
+    }
+    #main-navbar-collapse {
+        overflow: hidden !important;
+        height: auto !important;
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 0;
+        z-index: 1;
+        transition: all ease 1s;
+        top: 0;
+        font-size: 0;
+        z-index: 9;
+    }
+    #main-nav-collapse {
+        height: 70px;
+        width: 380px;
+        transition: all ease 1s;
+        background-color: #fff;
+        border-radius: 70px;
+        left: 10px;
+        top: 10px;
+        overflow: hidden;
+    }
+    #main-nav-collapse.navbar>.container .navbar-brand, #main-nav-collapse.navbar>.container-fluid .navbar-brand {
+        background-color: transparent;
+    }
+    #main-nav-collapse.collapse {
+        display: block;
+    }
+    .menu-open #main-nav-collapse {
+        width: 100%;
+        width: calc(100% - 20px);
+    }
+    .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+        width: 220px !important;
+    }
+    #main-nav-collapse {
+        width: 290px;
+    }
+    /* #main-nav-collapse.collapse.in, #main-nav-collapse.collapsing {
+        transition: all ease 1s;
+    } */
+    .navbar-default .navbar-toggle {
+        border-color: transparent;
+    }
+    .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+    .navbar-default .navbar-toggle .icon-bar {
+        background-color: #505050;
+    }
+    .navbar-toggle {
+        margin-right: 0;
+    }
+    .scrolling #main-nav-collapse {
+        box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.07);
+    }
+    #main-nav-collapse.collapse.in>div.container, #main-nav-collapse.collapsing>div.container {
+        overflow: hidden;
+    }
+    body .navbar-toggle, body .navbar-default .navbar-toggle {
         display: block;
         position: absolute;
         left: 0;
@@ -133,16 +127,16 @@
         width: 40px;
         padding: 0 5px;
         text-align: center;
+        margin-left: -10px;
     }
     .navbar-header {
         text-align: center;
         position: absolute;
-        width: 70px;
+        width: 100%;
         height: 70px;
         z-index: 9;
         left: 0;
         top: 0;
-        background: #fff;
     }
     .navbar-right {
         margin-right: 0px;

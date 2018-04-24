@@ -186,6 +186,7 @@ ul.na-case-studies {
     width: calc(100% - 30px);
     margin-left: 30px;
     bottom: 15px;
+    max-width: 80%;
 }
 
 .na-case-studies>li .case-studies-header>span.case-studies-tagline {
@@ -319,5 +320,24 @@ ul.na-case-studies.na-case-studies-columns-2>li {
 @media all and (max-width: 450px) {
     .na-case-studies>li {
         width: 99%;
+    }
+}
+
+@media (max-width:768px) {
+    ul.na-case-studies.na-case-studies-columns-3>li {
+        width: 100%;
+    }
+    ul.na-case-studies {
+        display: block;
+        height: auto;
+    }
+    ul.na-case-studies>li {
+        float: none;
+    }
+    .na-case-studies>li span.case-studies-logo {
+        position: relative;
+    }
+    .na-case-studies>li .case-studies-text {
+        position: relative;
     }
 }

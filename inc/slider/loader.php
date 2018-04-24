@@ -95,11 +95,12 @@ class Na_Slider
             'tax_query' => array(
                 array(
                     'taxonomy' => 'slider',
-                    'field' => 'term_id',
+                    'field' => is_numeric($atts['category']) ? 'term_id': 'slug',
                     'terms' => $atts['category']
                 )
             ))
         );
+        $settings = array();
         $_slides = array();
         if (count($slides) > 0) {
             $settings = array(
@@ -199,7 +200,7 @@ class Na_Slider
 					<?php
                     foreach ($slides as $slide):
                          ?>
-						<li class="na-slide">
+						<li class="na-slide na-slide-<?php echo $slide['post']->ID; ?>">
 						     <?php echo $slide['content']; ?>
 						</li>
 					<?php endforeach;

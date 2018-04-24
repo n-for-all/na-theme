@@ -36,7 +36,6 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 			</div>
 		</div>
 	</header><!-- .entry-header -->
-
 	<div class="<?php $theme->classes('content', 'entry-content'); ?>  <?php echo $theme->get_template_layout(get_the_ID(), 'container'); ?>">
 		<div class="entry-inner-content">
 			<?php

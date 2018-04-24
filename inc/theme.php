@@ -12,6 +12,7 @@ class Na_Theme {
 	public function __construct(){
 		$this->actions();
 		$this->filters();
+		$this->shortcodes();
 	}
 
 	protected function actions(){
@@ -19,11 +20,12 @@ class Na_Theme {
 		add_action( 'widgets_init', array(&$this, 'widgets_init') );
 		add_action( 'wp_head', array(&$this, 'javascript_detection'), 0 );
 		add_action( 'wp_head', array(&$this, 'head') );
-		add_action( 'wp_enqueue_scripts', array(&$this, 'scripts') , 11);
+		add_action( 'wp_enqueue_scripts', array(&$this, 'scripts') , 100);
 		add_action( 'admin_enqueue_scripts', array(&$this, 'admin_scripts') );
 		add_action( 'credits', array(&$this, 'credits') );
 		add_action('woocommerce_before_shop_loop', array( &$this,'woocommerce_before_shop_loop'), 10);
 		add_action('woocommerce_after_shop_loop', array( &$this,'woocommerce_after_shop_loop'), 10);
+		add_action('template_redirect', array( &$this, 'disable_author_page'));
 		if(is_admin()){
 			add_action( 'dynamic_sidebar_before',  array(&$this, 'dynamic_sidebar_before'), 10, 2 );
 			add_action( 'wp_ajax_na_save_sidebars', array(&$this, 'save_sidebars') );
@@ -32,6 +34,9 @@ class Na_Theme {
 		}
 	}
 
+	protected function shortcodes(){
+		add_shortcode('permalink', array(&$this, 'shortcode_permalinks'));
+	}
 	protected function filters(){
 		add_filter( 'get_search_form', array(&$this, 'search_form_modify') );
 		if(!is_admin()){
@@ -39,7 +44,9 @@ class Na_Theme {
 		}
 		add_filter( 'body_class', array(&$this, 'body_class') );
 		add_filter( 'get_the_excerpt', array(&$this, 'get_excerpt') );
-		add_filter('pre_get_posts', array(&$this, 'search_filter'));
+		add_filter( 'pre_get_posts', array(&$this, 'search_filter'));
+		add_filter( 'get_the_archive_title', array(&$this, 'get_the_archive_title'));
+		add_filter( 'author_link', array(&$this, 'redirect_author_link') );
 	}
 
 	public function setup(){
@@ -54,6 +61,9 @@ class Na_Theme {
 		// Add default posts and comments RSS feed links to head.
 		add_theme_support( 'automatic-feed-links' );
 		add_theme_support( 'woocommerce' );
+		add_theme_support( 'wc-product-gallery-zoom' );
+		add_theme_support( 'wc-product-gallery-lightbox' );
+		add_theme_support( 'wc-product-gallery-slider' );
 		/*
 		 * Let WordPress manage the document title.
 		 * By adding theme support, we declare that this theme does not use a
@@ -108,7 +118,7 @@ class Na_Theme {
 	*/
 	function credits(){
 		?>
-		<span class="copyright"><?php echo $this->copyright; ?></span>
+		<span class="copyright"><?php echo do_shortcode($this->copyright); ?></span>
 
 		<?php
 	}
@@ -333,7 +343,7 @@ class Na_Theme {
 		wp_enqueue_style( 'na_fonts', $fonts, array(), null );
 
 		//main styles for this theme
-		wp_enqueue_style( 'main', get_template_directory_uri() . '/assets/css/style.css', array(), '1.0' );
+
 		wp_enqueue_style( 'main-edge', get_template_directory_uri() . '/assets/css/edge.css', array(), '1.0' );
 
 		// font awesome icons
@@ -392,6 +402,8 @@ class Na_Theme {
 			'expand'   => '<span class="screen-reader-text">' . __( 'expand child menu', NA_THEME_TEXT_DOMAIN ) . '</span>',
 			'collapse' => '<span class="screen-reader-text">' . __( 'collapse child menu', NA_THEME_TEXT_DOMAIN ) . '</span>',
 		) );
+
+		wp_enqueue_style( 'main', get_template_directory_uri() . '/assets/css/style.css', array(), '1.0' );
 	}
 	public function admin_scripts() {
 
@@ -432,7 +444,23 @@ class Na_Theme {
 		}
 		return $output;
 	}
+	function shortcode_permalinks( $atts ) {
 
+	    extract( shortcode_atts(
+	        array(
+	            'id' => 1,
+	            'text' => ""
+	        ), $atts )
+	    );
+
+	    if ( $text ) {
+	        $url = get_permalink( $id );
+	        return '<a href="' . $url . '">' . $text . '</a>';
+	    } else {
+	        return get_permalink( $id );
+	    }
+
+	}
 	function the_post_thumbnail(){
 		if ( post_password_required() || is_attachment() || ! has_post_thumbnail() ) {
 			return;
@@ -470,6 +498,22 @@ class Na_Theme {
 		}else{
 			return false;
 		}
+	}
+	function get_woocommerce_archive_thumbnail($category = null, $size = 'thumbnail_id', $default = ''){
+		global $wp_query;
+		if(!$category){
+			$cat = $wp_query->get_queried_object();
+			$category = $cat->term_id;
+		}
+	    // get the thumbnail id using the queried category term_id
+	    $thumbnail_id = get_woocommerce_term_meta( $cat->term_id, $size, true );
+		if(!$thumbnail_id){
+			return $default;
+		}
+	    // get the image URL
+	    $image = wp_get_attachment_url( $thumbnail_id );
+
+	   	return $image;
 	}
 	function the_entry_meta(){
 		if ( is_sticky() && is_home() && ! is_paged() ) {
@@ -648,7 +692,7 @@ class Na_Theme {
 		<p class="post-attributes-label-wrapper"><label class="post-attributes-label">Layout</label>
 		<small class="help">Select the template layout.</small>
 		<select name="page_template_layout">
-			<option <?php echo $layout == '' ? 'selected': ''; ?>  value="">None</option>
+			<option <?php echo $layout == 'none' ? 'selected': ''; ?>  value="none">None</option>
 			<option <?php echo $layout == 'container' ? 'selected': ''; ?>  value="container">Boxed</option>
 			<option <?php echo $layout == 'container-fluid' ? 'selected': ''; ?> value="container-fluid">Fluid</option>
 		</select>
@@ -674,7 +718,7 @@ class Na_Theme {
 	}
 	function get_template_layout($post_id, $default){
 		$part = get_post_meta($post_id, '_wp_page_template_layout', true);
-		return $part;
+		return $part != '' ? $part: $default;
 	}
 	public function woocommerce_before_shop_loop()
 	{
@@ -714,6 +758,47 @@ class Na_Theme {
 	}
 	public function register($module, $loader){
 		$this->modules[$module] = $loader;
+	}
+
+	/**
+	 * Redirect Author Link to homepage
+	 *
+	 * @since  1.0.0
+	 * @date   2018-04-24
+	 */
+	public function redirect_author_link () {
+		return home_url( '/' );
+	}
+	/**
+	 * Disable the author page and redirect it to homepage
+	 *
+	 * @since  1.0.0
+	 * @date   2018-04-24
+	 */
+	public function disable_author_page () {
+		global $wp_query;
+		if ( is_author() ) {
+			wp_redirect(home_url('/'), 301);
+			exit;
+		}
+	}
+	/**
+	 * remove 'Archives', 'Categories' labels from titles
+	 *
+	 * @since  1.0.0
+	 * @date   2018-04-24
+	 * @param  [type]     $title
+	 * @return [type]            [description]
+	 */
+	public function get_the_archive_title ($title) {
+	    if ( is_category() ) {
+            $title = single_cat_title( '', false );
+        } elseif ( is_tag() ) {
+            $title = single_tag_title( '', false );
+        } elseif ( is_author() ) {
+            $title = '<span class="vcard">' . get_the_author() . '</span>' ;
+        }
+	    return $title;
 	}
 }
 global $theme;

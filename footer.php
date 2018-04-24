@@ -33,8 +33,6 @@
     <div id="searchform"> <a href="#" class="search-close">&#215; close</a>
         <?php echo get_search_form(); ?>
     </div>
-    <!-- End footer -->
-    </div>
     <?php wp_footer(); ?>
 </body>
 </html>
