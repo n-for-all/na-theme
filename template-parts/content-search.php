@@ -1,51 +1,43 @@
 <?php
 /**
- * The template part for displaying results in search pages
+ * The template used for displaying page content
  *
  * @package WordPress
  * @subpackage Twenty_Sixteen
  * @since Twenty Sixteen 1.0
  */
+global $theme, $post;
+?>
+<?php
+/**
+ * Featured Image
+ */
+$featured_image = $theme->get_post_thumbnail(null, 'full');
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<header class="entry-header">
-		<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
+	<?php if(function_exists('bcn_display') && false){ ?>
+		<div class="breadcrumb">
+			<?php  bcn_display(); ?>
+		</div>
+	<?php } ?>
+
+	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+		<?php
+		if($featured_image):
+		?>
+		<figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
+			<img src="<?php echo $featured_image; ?>" />
+		</figure>
+		<?php endif; ?>
+		<?php the_title( '<h1 class="entry-title"><a href="'.get_the_permalink().'">', '</a></h1>' ); ?>
 	</header><!-- .entry-header -->
 
-	<?php the_post_thumbnail(); ?>
-
-	<?php the_excerpt(); ?>
-
-	<?php if ( 'post' === get_post_type() ) : ?>
-
-		<footer class="entry-footer">
+	<div class="<?php $theme->classes('content', 'entry-content'); ?>">
+		<div class="entry-inner-content">
 			<?php
-				edit_post_link(
-					sprintf(
-						/* translators: %s: Name of current post */
-						__( 'Edit<span class="screen-reader-text"> "%s"</span>', 'twentysixteen' ),
-						get_the_title()
-					),
-					'<span class="edit-link">',
-					'</span>'
-				);
+			the_excerpt();
 			?>
-		</footer><!-- .entry-footer -->
-
-	<?php else : ?>
-
-		<?php
-			edit_post_link(
-				sprintf(
-					/* translators: %s: Name of current post */
-					__( 'Edit<span class="screen-reader-text"> "%s"</span>', 'twentysixteen' ),
-					get_the_title()
-				),
-				'<footer class="entry-footer"><span class="edit-link">',
-				'</span></footer><!-- .entry-footer -->'
-			);
-		?>
-
-	<?php endif; ?>
+		</div>
+	</div><!-- .entry-content -->
 </article><!-- #post-## -->

@@ -30,7 +30,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 			<img src="<?php echo $featured_image; ?>" />
 		</figure>
 		<?php endif; ?>
-		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+		<?php the_title( '<h1 class="entry-title"><a href="'.get_the_permalink().'">', '</a></h1>' ); ?>
 	</header><!-- .entry-header -->
 
 	<div class="<?php $theme->classes('content', 'entry-content'); ?>">

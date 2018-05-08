@@ -26,7 +26,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 		<?php
 		if($featured_image):
 		?>
-		<figure class="entry-image" style="background-image:<?php echo $featured_image; ?>">
+		<figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
 			<img src="<?php echo $featured_image; ?>" />
 		</figure>
 		<?php endif; ?>

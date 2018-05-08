@@ -13,26 +13,43 @@
  * @subpackage Twenty_Fifteen
  * @since Twenty Fifteen 1.0
  */
+
+global $theme, $post;
+
+$page = get_option( 'page_for_posts' );
+$featured_image = $theme->get_post_thumbnail($page ?$page:null , 'full');
 get_header(); ?>
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main blog-list" role="main">
-
-			<div class="inner-header">
-				<div class="inner-overlay" style=""></div>
-			</div>
+			<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+				<?php
+				if($featured_image):
+				?>
+				<figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
+					<img src="<?php echo $featured_image; ?>" />
+				</figure>
+				<?php endif; ?>
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<?php if ( is_home() && ! is_front_page() ) : ?>
+								<h1 class="entry-title blog-title"><?php single_post_title(); ?></h1>
+							<?php endif; ?>
+						</div>
+					</div>
+				</div>
+			</header><!-- .entry-header -->
 			<div class="blog-list-container">
-				<?php if ( have_posts() ) : ?>
-
-					<?php if ( is_home() && ! is_front_page() ) : ?>
-						<header>
-							<h1 class="page-title screen-reader-text"><?php single_post_title(); ?></h1>
-						</header>
-					<?php endif; ?>
+				<?php if ( have_posts() ) :
+					$sidebar = is_active_sidebar('blog-sidebar');
+					?>
+				<?php if ( $sidebar ) : ?>
 					<div class="blog-sidebar sidebar">
 						<?php dynamic_sidebar('blog-sidebar'); ?>
 					</div>
-					<div class="blogroll">
+				<?php endif; ?>
+					<div class="blogroll <?php echo !$sidebar ? 'no-sidebar': '' ?>">
 					<?php
 					// Start the loop.
 					while ( have_posts() ) : the_post();
@@ -43,19 +60,6 @@ get_header(); ?>
 						 */
 
 						get_template_part( 'template-parts/blog/content', get_post_format() );
-
-						/*
-						?>
-
-						<article id="<?php echo $post_id; ?>" class="<?php echo $post_id; ?> post blog-post"><div class="entry-content">
-						<?php echo get_the_post_thumbnail($post->ID,'large'); ?>
-						<h3 class="post-title"><a href="<?php echo get_permalink();?>"><?php echo get_the_title(); ?></a></h3>
-						<span class="meta-info-container">By: <?php the_author_posts_link(); ?> | <?php echo get_the_date('F j, Y', $post->ID);?></span>
-						<?php the_content('Read More'); ?>
-						</div></article>
-
-						<?php
-						*/
 					// End the loop.
 					endwhile;
 

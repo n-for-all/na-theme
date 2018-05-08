@@ -737,7 +737,8 @@ h1, h2, h3, h4, h5 {
 }
 
 .single article.post .entry-header {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
+    min-height: 200px;
 }
 
 .single article.post .entry-content {
@@ -778,12 +779,24 @@ h1, h2, h3, h4, h5 {
     max-width: 1000px;
     margin: 0 auto;
     padding: 0 30px;
+    min-height: 500px;
+}
+
+.blog-list-container .blogroll article .excerpt-actions {
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
 }
 
 .blog-list-container .sidebar {
     width: 20%;
     float: right;
     margin: 30px 0 30px 2%;
+}
+
+.blog-list-container .blogroll.no-sidebar {
+    width: 100%;
+    float: none;
 }
 
 .blog-list-container .blogroll {
@@ -805,6 +818,11 @@ h1, h2, h3, h4, h5 {
 
 .blog article .entry-header h1.entry-title {
     padding: 250px 15px 15px;
+}
+
+.blog article .entry-header h1.entry-title a {
+    font-family: inherit;
+    color: inherit;
 }
 
 .blog article .entry-header h1.entry-title {
@@ -2061,6 +2079,7 @@ ul.na-services-category:after {
 .no-scrolling-style .section-placeholder {
     display: none;
 }
+
 .no-scrolling-style #inner-scroll>section {
     height: auto;
     float: none;
@@ -2116,6 +2135,100 @@ div.wpcf7-validation-errors, div.wpcf7-acceptance-missing {
     border-radius: 3px;
 }
 
+.blog-list-container article .entry-header {
+    margin-bottom: 0;
+}
+
+.search-products article .entry-header {
+    background: transparent;
+    margin-bottom: 0;
+}
+
+.search-products article {
+    width: 31.3%;
+    float: left;
+    margin: 1%;
+    height: 500px;
+    overflow: hidden;
+    position: relative;
+    background: #f7f7f7;
+}
+
+.search-products .entry-header figure.entry-image img {
+    display: none;
+}
+
+.search-products .entry-header h1.entry-title a {
+    font-size: 20px;
+    font-family: inherit;
+    color: inherit;
+    line-height: 1.2;
+    display: block;
+}
+
+.search-products .entry-header figure.entry-image {
+    height: 100%;
+    width: 100%;
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.search-products .block-content {
+    margin-left: -1%;
+    margin-right: -1%;
+}
+
+.search-products h2.block-title {
+    clear: both;
+}
+
+.search-products article .entry-inner-content .excerpt-actions {
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+    position: absolute;
+    width: 100%;
+    background: rgba(247, 247, 247, 0.93);
+    bottom: 10px;
+}
+
+.search-products .navigation.pagination .nav-links>span, .search-products .navigation.pagination .nav-links>a {
+    background: #f7f7f7;
+    display: inline-block;
+    line-height: 40px;
+    min-width: 40px;
+    font-size: 16px;
+    margin-right: 1px;
+}
+
+.search-products .navigation.pagination .nav-links>span {
+    font-weight: bold;
+}
+
+.search-products .navigation.pagination {
+    clear: both;
+    display: block;
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #f7f7f7;
+}
+
+.search-products article .entry-inner-content {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 20px;
+    padding: 10px;
+    background: #f7f7f7;
+}
+
+.search-products .entry-header h1.entry-title {
+    position: absolute;
+    bottom: 0;
+    background: #9ec58c;
+    padding: 10px 15px;
+}
+
 @-webkit-keyframes intro {
     0% {
         opacity: 0;
@@ -2164,26 +2277,25 @@ div.wpcf7-validation-errors, div.wpcf7-acceptance-missing {
     }
 }
 
-@media (min-width:768px) {
+@media (min-width:768px) {}
 
-}
 @media (max-width:768px) {
-    .mobile-hide{
+    .mobile-hide {
         display: none !important;
     }
-    footer .widget{
+    footer .widget {
         padding-bottom: 1px;
         padding-top: 1px;
     }
-    .navbar-default{
+    .navbar-default {
         background-color: #fff !important;
     }
-    .navbar-toggle, .navbar-default .navbar-toggle{
+    .navbar-toggle, .navbar-default .navbar-toggle {
         margin-right: 0px;
         margin-bottom: 0px;
         border-radius: 0;
     }
-    .navbar-header{
+    .navbar-header {
         background: #fff;
     }
     #searchform {
@@ -2219,5 +2331,35 @@ div.wpcf7-validation-errors, div.wpcf7-acceptance-missing {
     }
     #main>section, #inner-scroll>section {
         padding: 30px 0;
+    }
+    .entry-header {
+        margin-bottom: 15px;
+    }
+    .search-products block-content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .search-products article {
+        width: 48%;
+        height: 400px;
+    }
+    .search-products .entry-header {
+        min-height: 200px;
+    }
+}
+
+@media (max-width:500px) {
+    .search-products block-content {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .search-products article {
+        width: 100%;
+        height: auto;
+    }
+    .blog article .entry-header h1.entry-title {
+        padding: 150px 15px 15px;
+        font-size: 20px;
+        text-align: left;
     }
 }

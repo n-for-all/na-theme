@@ -9,10 +9,17 @@ class Na_Theme {
 	private $search = [];
 	private $modules = [];
 
+	private $cache_id = false;
+
 	public function __construct(){
 		$this->actions();
 		$this->filters();
 		$this->shortcodes();
+		if($this->cache){
+			$this->cache_id = strtotime('now');
+		}else{
+			$this->cache_id = get_option('na_cache_id');
+		}
 	}
 
 	protected function actions(){
@@ -47,6 +54,9 @@ class Na_Theme {
 		add_filter( 'pre_get_posts', array(&$this, 'search_filter'));
 		add_filter( 'get_the_archive_title', array(&$this, 'get_the_archive_title'));
 		add_filter( 'author_link', array(&$this, 'redirect_author_link') );
+		add_filter( 'script_loader_src', array(&$this, 'cache'), 10, 2);
+		add_filter( 'style_loader_src', array(&$this, 'cache'), 10, 2);
+		add_filter( 'tiny_mce_before_init', array(&$this, 'override_mce_options'));
 	}
 
 	public function setup(){
@@ -122,7 +132,24 @@ class Na_Theme {
 
 		<?php
 	}
-
+	function cache($src, $handle){
+		if(!$this->cache_id){
+			return $src;
+		}
+		update_option('na_cache_id', $this->cache_id);
+		$src = add_query_arg( '_', $this->cache_id, $src );
+		return $src;
+	}
+	/**
+	 * This will stop mce from removing html code
+	 *
+	 */
+	function override_mce_options($initArray) {
+		$opts = '*[*]';
+		$initArray['valid_elements'] = $opts;
+		$initArray['extended_valid_elements'] = $opts;
+		return $initArray;
+	}
 	function body_class( $classes ) {
 		if(is_singular()){
 			// search the array for the class
@@ -428,7 +455,7 @@ class Na_Theme {
 	 * @return string 'Continue reading' link prepended with an ellipsis.
 	 */
 	function excerpt_more( $more ) {
-		$link = sprintf( '<br/><a href="%1$s" class="btn btn-default more-link">%2$s &raquo;</a>',
+		$link = sprintf( '<div class="excerpt-actions"><a href="%1$s" class="btn btn-default more-link">%2$s &raquo;</a></div>',
 			esc_url( get_permalink( get_the_ID() ) ),
 			_('Read More')
 			);
@@ -437,7 +464,7 @@ class Na_Theme {
 	function get_excerpt( $output ) {
 		global $post;
 		if ( has_excerpt() && ! is_attachment() && ! is_admin() ) {
-			$output .= sprintf( '<br/><a href="%1$s" class="btn btn-default more-link">%2$s &raquo;</a>',
+			$output .= sprintf( '<div class="excerpt-actions"><a href="%1$s" class="btn btn-default more-link">%2$s &raquo;</a></div>',
 				esc_url( get_permalink( get_the_ID() ) ),
 				_('Read More')
 				);

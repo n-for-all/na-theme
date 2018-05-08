@@ -35,9 +35,10 @@ add_filter('woocommerce_checkout_fields', function ($_fields) {
         'type' => 'select',
         'options' => array(
 	    	'AE'		=> __( 'United Arab Emirates' )
-	    )
+	    ),
+        'class' => array( 'form-row-first', 'address-field', 'update_totals_on_change' )
     ));
-    $fields['billing_city'] = array_replace($fields['billing_city'], array(
+    $billing_city = $fields['billing_city'] = array_replace($fields['billing_city'], array(
         'type' => 'select',
         'options' => array(
 	    	'Dubai'		=> __( 'Dubai' ),
@@ -47,16 +48,39 @@ add_filter('woocommerce_checkout_fields', function ($_fields) {
 	        'Ras al-Khaimah' 	=> __( 'Ras al-Khaimah', 'wps' ),
 	        'Sharjah' 	=> __( 'Sharjah', 'wps' ),
 	        'Umm al-Quwain' 	=> __( 'Umm al-Quwain', 'wps' )
-	    )
+	    ),
+        'priority' => 45,
+        'class'        => array( 'form-row-last', 'address-field' ),
     ));
+    unset($fields['billing_city']);
+    $fields = array_insert($fields, array('billing_city' => $billing_city), 'billing_country');
+
     unset($fields['billing_state']);
     unset($fields['billing_postcode']);
+    unset($fields['billing_company']);
+
     $fields['billing_phone']['required'] = true;
+
     $shipping_fields = &$_fields['shipping'];
-unset($shipping_fields['shipping_state']);
+    unset($shipping_fields['shipping_state']);
     return $_fields;
 
 });
+
+function array_insert($arr, $insert, $_position) {
+    if(is_string($_position)){
+        $position = array_search($_position, array_keys($arr));
+    }
+    $i = 0;
+    foreach ($arr as $key => $value) {
+        $ret[$key] = $value;
+        if ($i == $position) {
+            $ret = array_merge($ret, $insert);
+        }
+        $i++;
+    }
+    return $ret;
+}
 
 
 /*add_action('woocommerce_product_thumbnails', function () {
