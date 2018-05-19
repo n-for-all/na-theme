@@ -57,6 +57,11 @@
 
 .na-slider-wrapper {
     position: relative;
+    direction: ltr;
+}
+
+.rtl .na-slide-text{
+    direction: rtl;
 }
 
 .na-slider-wrapper.na-carousel {
@@ -366,9 +371,11 @@
     opacity: 1;
     transition: all ease 0.8s;
 }
-.na-circular .inner-slide-text *{
+
+.na-circular .inner-slide-text * {
     color: #fff;
 }
+
 #circular-nav .point-circle {
     fill: #fff;
 }

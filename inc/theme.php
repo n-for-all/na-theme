@@ -27,7 +27,7 @@ class Na_Theme {
 		add_action( 'widgets_init', array(&$this, 'widgets_init') );
 		add_action( 'wp_head', array(&$this, 'javascript_detection'), 0 );
 		add_action( 'wp_head', array(&$this, 'head') );
-		add_action( 'wp_enqueue_scripts', array(&$this, 'scripts') , 100);
+		add_action( 'wp_enqueue_scripts', array(&$this, 'scripts'), 11);
 		add_action( 'admin_enqueue_scripts', array(&$this, 'admin_scripts') );
 		add_action( 'credits', array(&$this, 'credits') );
 		add_action('woocommerce_before_shop_loop', array( &$this,'woocommerce_before_shop_loop'), 10);
@@ -321,7 +321,7 @@ class Na_Theme {
 			}";
       wp_add_inline_style( 'custom-fonts', $custom_css );
 		}
-		if(trim($header_font) != ""){
+		if(trim($header_font) != "" && false){
 			$fonts = array_merge($fonts, (array)($header_font.":".implode(",", $header_variants)));
 			$custom_css = "
 			h1, h2, h3, h4, h5, h6, .entry-title{
@@ -376,15 +376,12 @@ class Na_Theme {
 		// font awesome icons
 		wp_enqueue_style( 'font-awesome', get_template_directory_uri() . '/assets/css/font-awesome.min.css', array(), '3.2' );
 
-		// Load our main stylesheet.
-		wp_enqueue_style( 'na_theme-style', get_stylesheet_uri() );
-
 		// Load the Internet Explorer specific stylesheet.
-		wp_enqueue_style( 'na_theme-ie', get_template_directory_uri() . '/assets/css/ie.css', array( 'na_theme-style' ), '20141010' );
+		wp_enqueue_style( 'na_theme-ie', get_template_directory_uri() . '/assets/css/ie.css', array( 'na_theme-main' ), '20141010' );
 		wp_style_add_data( 'na_theme-ie', 'conditional', 'lt IE 9' );
 
 
-		wp_enqueue_style( 'na_theme-ie7', get_template_directory_uri() . '/assets/css/ie7.css', array( 'na_theme-style' ), '20141010' );
+		wp_enqueue_style( 'na_theme-ie7', get_template_directory_uri() . '/assets/css/ie7.css', array( 'na_theme-main' ), '20141010' );
 		wp_style_add_data( 'na_theme-ie7', 'conditional', 'lt IE 8' );
 
 		//custom styles for this theme
@@ -394,7 +391,11 @@ class Na_Theme {
 			wp_enqueue_style( 'na_menu', get_template_directory_uri() . '/assets/css/menu/default.css', array(), '1.0' );
 		}
 		if ( class_exists( 'woocommerce' ) ){
-			wp_enqueue_style( 'na_woocommerce', get_template_directory_uri() . '/assets/css/woocommerce.css', array('woocommerce-general'), '1.0' );
+			wp_enqueue_style( 'na_woocommerce', get_template_directory_uri() . '/assets/css/woocommerce.css', array('na_theme-main', 'woocommerce-general'), '1.0' );
+		}
+
+		if (defined('ICL_LANGUAGE_CODE') && ICL_LANGUAGE_CODE == "ar"){
+			wp_enqueue_style( 'na_wpml_rtl', get_template_directory_uri() . '/rtl.css', '1.0' );
 		}
 		if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 			wp_enqueue_script( 'comment-reply' );
@@ -430,7 +431,10 @@ class Na_Theme {
 			'collapse' => '<span class="screen-reader-text">' . __( 'collapse child menu', NA_THEME_TEXT_DOMAIN ) . '</span>',
 		) );
 
-		wp_enqueue_style( 'main', get_template_directory_uri() . '/assets/css/style.css', array(), '1.0' );
+		wp_enqueue_style( 'na_theme-main', get_template_directory_uri() . '/assets/css/style.css', array(), '1.0' );
+
+		// Load our main stylesheet.
+		wp_enqueue_style( 'na_theme-style', get_stylesheet_uri(), array('na_theme-main') );
 	}
 	public function admin_scripts() {
 
@@ -457,7 +461,7 @@ class Na_Theme {
 	function excerpt_more( $more ) {
 		$link = sprintf( '<div class="excerpt-actions"><a href="%1$s" class="btn btn-default more-link">%2$s &raquo;</a></div>',
 			esc_url( get_permalink( get_the_ID() ) ),
-			_('Read More')
+			__('Read More', 'na_theme')
 			);
 		return $link;
 	}
@@ -466,7 +470,7 @@ class Na_Theme {
 		if ( has_excerpt() && ! is_attachment() && ! is_admin() ) {
 			$output .= sprintf( '<div class="excerpt-actions"><a href="%1$s" class="btn btn-default more-link">%2$s &raquo;</a></div>',
 				esc_url( get_permalink( get_the_ID() ) ),
-				_('Read More')
+				__('Read More', 'na_theme')
 				);
 		}
 		return $output;
@@ -479,7 +483,7 @@ class Na_Theme {
 	            'text' => ""
 	        ), $atts )
 	    );
-
+		$id = apply_filters('wpml_object_id', $id);
 	    if ( $text ) {
 	        $url = get_permalink( $id );
 	        return '<a href="' . $url . '">' . $text . '</a>';
@@ -707,6 +711,7 @@ class Na_Theme {
 		}
 		$part = get_post_meta($post->ID, '_wp_page_template_part', true);
 		$layout = get_post_meta($post->ID, '_wp_page_template_layout', true);
+		$id = get_post_meta($post->ID, '_wp_section_id', true);
 		?>
 		<b>Part</b><br/>
 		<small class="help">Select the template part, this applies to sections and inner content area.</small>
@@ -716,6 +721,11 @@ class Na_Theme {
 				<option <?php echo $part == $key ? 'selected': ''; ?> value="<?php echo $key; ?>"><?php echo $value; ?></option>
 			<?php } ?>
 		</select>
+		<p class="post-attributes-label-wrapper"><label class="post-attributes-label">Section ID</label><small class="help">Overrides the section id.</small>
+		<input name="section_id" type="text" value="<?php echo $id; ?>" />
+		<div><small class="help">Applies on to sections, if empty it will use the page slug.</small></div>
+		</p>
+		<p class="post-attributes-label-wrapper"><label class="post-attributes-label">Template</label></p>
 		<p class="post-attributes-label-wrapper"><label class="post-attributes-label">Layout</label>
 		<small class="help">Select the template layout.</small>
 		<select name="page_template_layout">
@@ -735,6 +745,7 @@ class Na_Theme {
 		if(isset($_POST['page_template_layout'])){
 			update_post_meta($post_ID, '_wp_page_template_layout', $_POST['page_template_layout']);
 		}
+		update_post_meta($post_ID, '_wp_section_id', $_POST['section_id']);
 	}
 	function get_template_part($post_id, $default){
 		$part = get_post_meta($post_id, '_wp_page_template_part', true);
@@ -746,6 +757,10 @@ class Na_Theme {
 	function get_template_layout($post_id, $default){
 		$part = get_post_meta($post_id, '_wp_page_template_layout', true);
 		return $part != '' ? $part: $default;
+	}
+	function get_section_id($post_id, $default){
+		$part = get_post_meta($post_id, '_wp_section_id', true);
+		return $part && trim($part) != '' ? trim($part): $default;
 	}
 	public function woocommerce_before_shop_loop()
 	{
