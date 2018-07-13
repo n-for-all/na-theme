@@ -57,6 +57,7 @@ class Na_Theme {
 		add_filter( 'script_loader_src', array(&$this, 'cache'), 10, 2);
 		add_filter( 'style_loader_src', array(&$this, 'cache'), 10, 2);
 		add_filter( 'tiny_mce_before_init', array(&$this, 'override_mce_options'));
+		add_filter('upload_mimes', array($this, 'allow_svg'));
 	}
 
 	public function setup(){
@@ -132,6 +133,12 @@ class Na_Theme {
 
 		<?php
 	}
+
+	function allow_svg($mimes) {
+		$mimes['svg'] = 'image/svg+xml';
+		return $mimes;
+	}
+
 	function cache($src, $handle){
 		if(!$this->cache_id){
 			return $src;
@@ -417,14 +424,19 @@ class Na_Theme {
 		wp_enqueue_script( 'na_theme-script', get_template_directory_uri() . '/assets/js/functions.js', array( 'jquery' ), '1.0.0', true );
 		wp_enqueue_script( 'na_theme-scripts', get_template_directory_uri() . '/assets/js/scripts.js', array( 'jquery' ), '1.0.0', true );
 		wp_add_inline_script('na_theme-script', 'var options = {};options.ajax = "'.admin_url('admin-ajax.php').'"');
-		wp_enqueue_script( 'na_theme-waypoints', get_template_directory_uri() . '/assets/js/plugins/jquery.waypoints.min.js', array( 'jquery' ), '1.0.0', true );
+		// wp_enqueue_script( 'na_theme-waypoints', get_template_directory_uri() . '/assets/js/plugins/jquery.waypoints.min.js', array( 'jquery' ), '1.0.0', true );
 
 		if($this->homepage_scrolling != ""){
 			wp_add_inline_script('na_theme-scripts', 'options["scrolling"] = "'.$this->homepage_scrolling.'";');
-			wp_enqueue_script( 'na_theme-tweenmax', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/TweenMax.min.js', array( 'jquery' ), '1.0.0', true );
-			wp_enqueue_script( 'na_theme-scrollmagic', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollMagic.js', array( 'jquery' ), '1.0.0', true );
-			wp_enqueue_script( 'na_theme-gsap-animation', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/animation.gsap.js', array( 'jquery' ), '1.0.0', true );
-			wp_enqueue_script( 'na_theme-gsap-scrollto-plugin', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollToPlugin.min.js', array( 'jquery' ), '1.0.0', true );
+
+			if($this->homepage_scrolling == 1){
+				wp_enqueue_script( 'na_theme-tweenmax', get_template_directory_uri() . '/assets/js/plugins/fullpage/javascript.fullPage.min.js', array( 'jquery' ), '1.0.0', true );
+			}else{
+				wp_enqueue_script( 'na_theme-tweenmax', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/TweenMax.min.js', array( 'jquery' ), '1.0.0', true );
+				wp_enqueue_script( 'na_theme-scrollmagic', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollMagic.js', array( 'jquery' ), '1.0.0', true );
+				wp_enqueue_script( 'na_theme-gsap-animation', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/animation.gsap.js', array( 'jquery' ), '1.0.0', true );
+				wp_enqueue_script( 'na_theme-gsap-scrollto-plugin', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollToPlugin.min.js', array( 'jquery' ), '1.0.0', true );
+			}
 		}
 		wp_localize_script( 'na_theme-script', 'screenReaderText', array(
 			'expand'   => '<span class="screen-reader-text">' . __( 'expand child menu', NA_THEME_TEXT_DOMAIN ) . '</span>',
@@ -745,7 +757,9 @@ class Na_Theme {
 		if(isset($_POST['page_template_layout'])){
 			update_post_meta($post_ID, '_wp_page_template_layout', $_POST['page_template_layout']);
 		}
-		update_post_meta($post_ID, '_wp_section_id', $_POST['section_id']);
+		if(isset($_POST['section_id'])){
+			update_post_meta($post_ID, '_wp_section_id', $_POST['section_id']);
+		}
 	}
 	function get_template_part($post_id, $default){
 		$part = get_post_meta($post_id, '_wp_page_template_part', true);

@@ -43,7 +43,7 @@ if(!$options){
 							$row_count ++;
 						}
 					?>
-					<div class="col-md-<?php echo $cols; ?> col-sm-<?php echo $cols >= 6 ? '12':'6'; ?>">
+					<div class="col-lg-<?php echo $cols; ?> col-sm-<?php echo $cols >= 6 ? '12': $cols; ?> col-xs-12">
 						<div class="sidebar <?php echo $sidebar; ?>">
 					  		<?php dynamic_sidebar($sidebar); ?>
 						</div>

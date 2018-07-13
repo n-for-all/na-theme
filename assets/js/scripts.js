@@ -2,24 +2,27 @@ function theme(options) {
     this.options = options;
     this.controller = null;
     this.scene = null;
+    this.fullpage = null;
+    this.sections = null;
     this.scrollHandler = null;
     this.load = function() {
         var me = this;
         if (this.options.scrolling && jQuery(window).width() > 768) {
-            var slides = jQuery("#inner-scroll>section");
-            var count = slides.length;
-            if (count > 0) {
-                // jQuery("#inner-scroll>section").height(jQuery(window).height());
-                // jQuery("#inner-scroll>.inner-scroll-inner").width((100 * count + "%"));
-                // jQuery("#inner-scroll>section").width((widthPercent + "%"));
 
-                var flip = false;
-                var widthPercent = 100 / count;
-                // console.log(this.options.scrolling);
-                switch (this.options.scrolling) {
-                    case "2":
+            // jQuery("#inner-scroll>section").height(jQuery(window).height());
+            // jQuery("#inner-scroll>.inner-scroll-inner").width((100 * count + "%"));
+            // jQuery("#inner-scroll>section").width((widthPercent + "%"));
+
+            var flip = false;
+            var widthPercent = 100 / count;
+            // console.log(this.options.scrolling);
+            switch (this.options.scrolling) {
+                case "2":
+                    var slides = jQuery("#inner-scroll>section");
+                    var count = slides.length;
+                    if (count > 0) {
                         slides.width((widthPercent + "%")).css({
-                            'min-height': jQuery(window).height()
+                            'height': jQuery(window).height()
                         });
                         jQuery("#inner-scroll").width((100 * count + "%"));
                         // jQuery(".scrolling-container--2").width((100 * count + "%"));
@@ -52,7 +55,7 @@ function theme(options) {
                             .addTo(me.controller);
                         var _current = 0;
                         var offset = 0.3; //offset in percentage
-                        met.scene.on("progress", function(event) {
+                        me.scene.on("progress", function(event) {
                             var direction = event.scrollDirection == 'FORWARD' ? 0 : 0;
                             var v = (event.progress * count) + offset + 1;
                             if (v > count) {
@@ -67,9 +70,12 @@ function theme(options) {
                                 _current = v;
                             }
                         });
-
-                        break;
-                    case "3":
+                    }
+                    break;
+                case "3":
+                    var slides = jQuery("#inner-scroll>section");
+                    var count = slides.length;
+                    if (count > 0) {
                         slides.css({
                             'height': jQuery(window).height()
                         });
@@ -88,8 +94,12 @@ function theme(options) {
                                 .setPin(slides.get(i))
                                 .addTo(me.controller);
                         }
-                        break;
-                    case "4":
+                    }
+                    break;
+                case "4":
+                    var slides = jQuery("#inner-scroll>section");
+                    var count = slides.length;
+                    if (count > 0) {
                         me.controller = new ScrollMagic.Controller();
                         // define movement of panels
                         var wipeAnimation = new TimelineMax();
@@ -146,88 +156,127 @@ function theme(options) {
                             .setPin("#inner-scroll")
                             .setTween(wipeAnimation)
                             .addTo(me.controller);
-                        break;
-                    default:
-                        var sections = jQuery('section.section-scroll');
+                    }
+                    break;
+                case "5":
+                    var slides = jQuery('section.section');
+                    var count = slides.length;
+                    if (count > 0) {
+                        slides.css({
+                            'height': jQuery(window).height() - jQuery('.navbar').height()/2
+                        });
+                    }
+                    jQuery(document).on('scrolling-resize', function() {
+                        slides.css({
+                            'height': jQuery(window).height()
+                        });
+                    });
+                    break;
+                default:
+                    var scroll_selector = '.page-template-page-home-section #wrapper';
+                    var section_selector = '.section, .site-footer';
+                    this.sections = jQuery(scroll_selector).find(section_selector);
 
-                        if (sections.length > 0) {
-                            var section_nav = jQuery('<div class="section-nav"><ul class="inner"></ul></div>').appendTo('body').find('.inner');
-                            sections.each(function(index, section) {
-                                section_nav.append('<li data-index="' + index + '">' + index + '</li>');
+                    if (this.sections.length > 0) {
+                        var section_nav = jQuery('<div class="section-nav"><ul class="inner"></ul></div>').appendTo('body').find('.inner');
+                        this.sections.css('height', jQuery(window).height() + 'px');
+                        jQuery(document).on('scrolling-resize', function() {
+                            me.sections.css('height', jQuery(window).height() + 'px');
+                        });
+                        this.sections.each(function(index, section) {
+                            section_nav.append('<li data-index="' + index + '">' + index + '</li>');
+                        });
+                        var section_nav_handler = function(index) {
+                            section_nav.find('li').each(function(i, item) {
+                                if (i == index) {
+                                    jQuery(item).addClass('active');
+                                } else {
+                                    jQuery(item).removeClass('active');
+                                }
+                            });
+                        }
+
+                        var fullPage = function(selector) {
+                            var current_index = 0,
+                                direction = 'up';
+                            jQuery(selector).fullpage({
+                                sectionSelector: section_selector,
+                                afterLoad: function(anchorLink, index) {
+                                    section_nav_handler(index - 1);
+                                    jQuery(document).trigger('section-start', [jQuery(me.sections[index - 1]), index - 1]);
+                                    current_index = index - 1;
+                                    reach = 1;
+                                },
+                                onLeave: function(index, nextIndex, direction) {
+                                    // reach =
+                                    section = jQuery(me.sections[index - 1]);
+                                    section_nav_handler(nextIndex - 1);
+                                    if (nextIndex > 1) {
+                                        jQuery('body').addClass('scrolling');
+                                    } else {
+                                        jQuery('body').removeClass('scrolling');
+                                    }
+                                    section.removeClass('in');
+                                    section = jQuery(me.sections[nextIndex - 1]);
+                                    section.addClass('in');
+                                    jQuery(document).trigger('section-in', [section, nextIndex - 1]);
+                                }
                             });
                             jQuery(section_nav).on('click', 'li', function() {
                                 var index = jQuery(this).data('index');
-                                jQuery('html,body').animate({
-                                        scrollTop: jQuery(sections[index]).offset().top
-                                    },
-                                    'slow'
-                                );
+                                jQuery.fn.fullpage.moveTo(index + 1);
                             });
-                            var section_nav_handler = function(index) {
-                                section_nav.find('li').each(function(i, item) {
-                                    if (i == index) {
-                                        jQuery(item).addClass('active');
-                                    } else {
-                                        jQuery(item).removeClass('active');
-                                    }
-                                });
-                            }
-                            let offset = -20; //in percentage
-                            jQuery(window).on('scroll', function() {
-                                sections.each(function(index, section) {
-                                    section = jQuery(section);
-                                    var height = section.outerHeight(true);
-                                    var top = section.position().top + offset * height / 100;
-                                    if (jQuery(window).scrollTop() >= top) {
-                                        section.addClass('in-once');
-                                        if (jQuery(window).scrollTop() <= top + height) {
-                                            section_nav_handler(index);
-                                            section.addClass('in');
-                                        } else {
-                                            section.removeClass('in');
-                                        }
-                                    } else {
-                                        section.removeClass('in');
-                                    }
-                                })
-
+                            jQuery(document).on('scrolling-disable', function() {
+                                jQuery.fn.fullpage.destroy();
                             });
                         }
+                        fullPage(scroll_selector);
+                        this.fullpage = true;
+
                         break;
-                }
+                    }
             }
         }
         var current = null;
 
 
-        var mobileHandler = function(section){
+        var mobileHandler = function(section) {
             jQuery('html, body').animate({
                 scrollTop: jQuery(section).offset().top - jQuery('.navbar').height()
             }, 1000);
             return true;
         }
-        var desktopHandler = function(section){
+        var desktopHandler = function(section) {
             if (me.scene) {
                 var offset = me.scene.scrollOffset();
                 var index = section.data('index');
-                if(index){
+                if (index) {
                     jQuery("html, body").animate({
-                        scrollTop: offset*(index+1)
+                        scrollTop: offset * (index + 1)
                     }, 2000);
                 }
                 // me.controller.scrollTo('#section-' + hash.replace('#', ''));
                 return true;
             }
+            else if (me.fullpage && me.sections) {
+                var index = jQuery(me.sections).index(jQuery(section));
+                if (index >= 0) jQuery.fn.fullpage.moveTo(index + 1);
+            }else{
+                var index = jQuery(me.sections).index(jQuery(section));
+                jQuery('html, body').animate({
+                    scrollTop: jQuery(section).offset().top - jQuery('.navbar').height()
+                }, 1000);
+            }
             return false;
         }
 
-        var handler = jQuery(window).width() > 768 ? desktopHandler: mobileHandler;
-        if(jQuery(window).width() <= 768){
+        var handler = jQuery(window).width() > 768 ? desktopHandler : mobileHandler;
+        if (jQuery(window).width() <= 768) {
             jQuery('body').addClass('no-scrolling-style');
         }
-        this.scrollHandler = function(){
+        this.scrollHandler = function() {
             var hash = location.hash;
-            if(hash.replace('#', '').trim() == '' || hash.indexOf('#!') >= 0){
+            if (hash.replace('#', '').trim() == '' || hash.indexOf('#!') >= 0) {
                 return false;
             }
             jQuery(".content").removeClass('active');
@@ -235,6 +284,11 @@ function theme(options) {
             if (menu_item.length > 0) {
                 jQuery("#menu-main-menu li a").removeClass('active');
                 menu_item.addClass('active');
+            }else{
+                var item = jQuery('a[href^="' + me.escapeRegExp(hash) + '"]');
+                if(item.length > 0 && item.get(0).hasAttribute('no-hash')){
+                    location.hash = '';
+                }
             }
             var section = jQuery('#section-' + hash.replace('#', ''));
             if (section.length == 0) {
@@ -245,7 +299,7 @@ function theme(options) {
         }
         if ("onhashchange" in window) {
             jQuery(window).hashchange(function(event) {
-                if(me.scrollHandler()){
+                if (me.scrollHandler()) {
                     event.stopPropagation();
                     event.preventDefault();
                 }
@@ -253,7 +307,7 @@ function theme(options) {
             jQuery(window).hashchange();
         } else {
             jQuery('#menu-main-menu li a[href^=\\/\\#]').click(function(event) {
-                if(me.scrollHandler()){
+                if (me.scrollHandler()) {
                     event.stopPropagation();
                     event.preventDefault();
                 }
@@ -287,17 +341,19 @@ function theme(options) {
         var menuItems = jQuery('#navbar ul li a');
         var scrollItems = jQuery('#wrapper > section');
         jQuery(window).on('resize', function() {
-            if(jQuery(window).width() <= 768){
-                if(me.controller){
-                    if(me.scene){
+            if (jQuery(window).width() <= 768) {
+                if (me.controller) {
+                    if (me.scene) {
                         me.scene.destroy(true);
                     }
                     me.controller.destroy(true);
                     jQuery('body').addClass('no-scrolling-style');
+                    jQuery(document).trigger('scrolling-disable');
                 }
                 handler = mobileHandler;
-            }else{
+            } else {
                 handler = desktopHandler;
+                jQuery(document).trigger('scrolling-resize');
             }
         });
         jQuery(window).scroll(function() {

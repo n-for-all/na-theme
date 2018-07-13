@@ -26,49 +26,18 @@ class Na_Team extends NA_METABOXES
         wp_enqueue_style('team-shortcode', get_template_directory_uri() . '/inc/team/css/team.css', array(), '1.0.0', 'screen');
         wp_enqueue_script('wp-util');
         wp_enqueue_script('underscore');
+        wp_enqueue_script('case-studies-shortcode', get_template_directory_uri() . '/inc/team/js/scripts.js', array('wp-util', 'underscore'), '1.0.0', 'screen');
     }
     public function inline_scripts()
     {
         ?>
-<script id="tmpl-team-member" type="text/template">
-<?php include('template/popup.php'); ?>
-</script>
-<script type="text/javascript">
-jQuery(document).on("click", ".team-button", function(){
-  jQuery("body").addClass("na-team-overlay");
-  event.preventDefault();
-	jQuery.ajax({
-		url: "<?php echo admin_url('admin-ajax.php'); ?>",
-		type: 'post',
-    //dataType: "jsonp",
-		data: {
-			action: 'team_member',
-      id: jQuery(this).data("id")
-		},
-		success: function( result ) {
-      result = eval('(' + result.trim() +')');
-			if(result && result.status == "success"){
-        var post_template = wp.template( 'team-member' );
-        jQuery("body").append("<div id='na-team-member-template'><a class='close-team' href='#'></a>"+post_template(result.post)+"</div>");
-        jQuery('#na-team-member-template').fadeIn();
-      }
-		},
-    error: function(){
-      jQuery("body").removeClass("na-team-overlay");
-    }
-	})
-  return false;
-});
-jQuery(document).on("click", ".close-team", function(){
-  event.preventDefault();
-  jQuery('#na-team-member-template').fadeOut(function(){
-    jQuery(this).remove();
-    jQuery("body").removeClass("na-team-overlay");
-  });
-
-});
-
-</script><?php
+        <script id="tmpl-team-member" type="text/template">
+        <?php include('template/popup.php'); ?>
+        </script>
+        <script type="text/javascript">
+            var TeamSettings = <?php echo json_encode(array('url' => admin_url('admin-ajax.php'))); ?>;
+        </script>
+        <?php
     }
     public function get_team_member()
     {
@@ -167,11 +136,13 @@ jQuery(document).on("click", ".close-team", function(){
     {
         $atts = shortcode_atts(array(
             'category' => '',
+            'outer' => false,
             'columns' => '3'
         ), $atts, 'team-shortcode');
         $categories = (array)explode(",", $atts['category']);
         $args = array(
             'post_type' => 'team-member',
+            'posts_per_page' => '-1',
             'orderby' => 'menu_order',
             'order' => 'ASC'
         );
@@ -179,6 +150,7 @@ jQuery(document).on("click", ".close-team", function(){
         if (!empty($atts['category'])) {
             $args = array(
                 'post_type' => 'team-member',
+                'posts_per_page' => '-1',
                 'tax_query' => array(
                     array(
                         'taxonomy' => 'team',
@@ -202,14 +174,25 @@ jQuery(document).on("click", ".close-team", function(){
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
                     $style[] = "background-image:url($image[0])";
                 }
+                $inner = '';
+                $outer = '';
+                if($atts['outer']){
+                    $outer = '<span class="team-header">
+                        <span class="team-title">'.get_the_title().'</span>
+                        <span class="team-position">'.$meta['position'].'</span>
+                    </span>';
+                }else{
+                    $inner = '<span class="team-header">
+                        <span class="team-title">'.get_the_title().'</span>
+                        <span class="team-position">'.$meta['position'].'</span>
+                    </span>';
+                }
                 $output .= '<li>
                 <div class="team-inner">
-                    <a data-id="'.get_the_ID().'" class="team-image team-button" style="'.implode(";", $style).'" href="'.get_the_permalink().'">
-                        <span class="team-header">
-                            <span class="team-title">'.get_the_title().'</span>
-                            <span class="team-position">'.$meta['position'].'</span>
-                        </span>
+                    <a href="#!team/'.get_the_ID().'" data-id="'.get_the_ID().'" class="team-image team-button" style="'.implode(";", $style).'">
+                        '.$inner.'
                     </a>
+                    '.$outer.'
                     <div class="team-content">'.get_the_excerpt().'</div>
                 </div>
                 </li>';

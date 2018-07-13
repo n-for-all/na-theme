@@ -27,6 +27,7 @@ get_header(); ?>
 			);
 			$_children = get_posts( $args );
 			$i = 0;
+            $start_scroller = false;
 			global $_class, $theme;
 			foreach($_children as $post){
 				//print_r($post);
@@ -43,36 +44,35 @@ get_header(); ?>
                 }
                 ?>
                 <?php if($theme->homepage_scrolling != ""): //scrollmagic manual
-                    if($i == 1):
+                    if(($i == 1 || $theme->homepage_scrolling == 1) && !$start_scroller):
+                        $start_scroller = true;
                     ?>
                     <div id="scroll-container" class="scrolling-container--<?php echo $theme->homepage_scrolling; ?>">
                     <div id="inner-scroll" class="scrolling-style-<?php echo $theme->homepage_scrolling; ?>">
                     <?php endif; ?>
                 <?php endif; ?>
                 <section data-index="<?php echo $i; ?>" id="section-<?php echo $theme->get_section_id($post->ID, $post->post_name); ?>" class="<?php echo $_class; ?>" style="<?php echo $background ? 'background-image:url('.$background.');': '' ?>">
-                    <div class="<?php echo $theme->get_template_layout($post->ID, 'container'); ?>">
+                    <div class="full-height <?php echo $theme->get_template_layout($post->ID, 'container'); ?>">
                         <?php get_template_part( 'template-parts/'.$theme->get_template_part($post->ID, 'content-page-notitle'));
-                        if($i == 0 && $theme->show_scroll_icon == 1){
-                            ?>
-                            <span class="mouse"><span class="scroll" title=""></span></span>
-                            <?php
-                        }
                         ?>
                     </div>
                 </section>
-                <?php if($theme->homepage_scrolling != "" || false): //scrollmagic manual
-                    if($i == sizeof($_children)-1 && $i > 1):
-                        if($theme->homepage_scrolling == 4):
-                    ?>
-                        <section class="section-placeholder"></section>
-                        <?php endif; ?>
-                    </div>
-                    </div>
-                    <?php endif; ?>
-                <?php endif; ?>
-            <?php
+                <?php
                 $i ++;
 			}
+            if($start_scroller):
+                if($theme->homepage_scrolling == 4):
+                    ?>
+                    <section class="section-placeholder"></section>
+                <?php endif; ?>
+                </div>
+                </div>
+            <?php endif;
+            if($theme->show_scroll_icon == 1){
+                ?>
+                <span class="mouse"><span class="scroll" title=""></span></span>
+                <?php
+            }
 			wp_reset_postdata();
 			//get_template_part( 'content', 'home' );
 

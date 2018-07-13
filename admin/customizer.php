@@ -424,9 +424,9 @@ class Na_Theme_Admin
             );
         $setting = 'instagram_key';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
         $wp_customize->add_control($setting, array(
             'type' => 'textarea',
             'default' => '',
@@ -437,9 +437,9 @@ class Na_Theme_Admin
         ));
         $setting = 'instagram_secret';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
         $wp_customize->add_control($setting, array(
             'type' => 'textarea',
             'default' => '',
@@ -461,9 +461,9 @@ class Na_Theme_Admin
             );
         $setting = 'copyright';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
 
         $wp_customize->add_control($setting, array(
             'type' => 'textarea',
@@ -492,24 +492,48 @@ class Na_Theme_Admin
               );
         $setting = 'homepage_scrolling';
         $wp_customize->add_setting($setting, array(
-                  'default' => '',
-              'type' => 'theme_mod',
-              ));
+            'default' => '',
+            'type' => 'theme_mod',
+        ));
         $wp_customize->add_control($setting, array(
-              'type' => 'radio',
-              'default' => '',
-              'priority' => 1, // Within the section.
-              'section' => $section, // Required, core or custom.
-              'label' => __('Scrolling'),
-              'description' => __(''),
-              'choices' => array(
-                  '' => 'Normal',
-                  '1' => 'Full Screen',
-                  '2' => 'Slides Manual',
-                  '3' => 'Slides Natural',
-                  '4' => 'Slides Left and Right',
-              ),
-          ));
+            'type' => 'radio',
+            'default' => '',
+            'priority' => 1, // Within the section.
+            'section' => $section, // Required, core or custom.
+            'label' => __('Scrolling'),
+            'description' => __(''),
+            'choices' => array(
+              '' => 'Normal',
+              '1' => 'Full Screen',
+              '2' => 'Slides Manual',
+              '3' => 'Slides Natural',
+              '4' => 'Slides Left and Right',
+              '5' => 'Normal Sections',
+            ),
+        ));
+        $section = 'mobile_behaviour';
+        $wp_customize->add_section(
+            $section,
+             array(
+                  'title' => 'Mobile',
+                  'description' => '',
+                  'priority' => 1,
+                  'panel' => $social_panel,
+             )
+        );
+        $setting = 'mobile_breakpoint';
+        $wp_customize->add_setting($setting, array(
+            'default' => '',
+            'type' => 'theme_mod',
+        ));
+        $wp_customize->add_control($setting, array(
+            'type' => 'text',
+            'default' => '',
+            'priority' => 5, // Within the section.
+            'section' => $section, // Required, core or custom.
+            'label' => __('Mobile Media Query'),
+            'description' => __('This will switch to mobile as soon as it reaaches a specific size, usually 768px, keep empty for 768px media query'),
+        ));
     }
 }
 global $theme_admin;

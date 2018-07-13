@@ -79,13 +79,18 @@ class Na_Slider
     public function slider($atts)
     {
         $atts = shortcode_atts(array(
+            'id' => 0,
             'category' => 0,
+            'container' => 'container',
             'height' => '100%',
             'type' => '',
             'vertical' => 0,
             'autoplay' => 0,
             'columns' => 1
         ), $atts);
+        if($atts['id'] != 0){
+            $atts['category'] = $atts['id'];
+        }
         $slides = get_posts(
             array(
             'post_type' => 'slide',
@@ -106,6 +111,7 @@ class Na_Slider
         if (count($slides) > 0) {
             $settings = array(
                 'autoplay' => $atts['autoplay'],
+                'container' => $atts['container'],
                 'columns' => $atts['columns'],
                 'vertical' => $atts['vertical'],
                 'type' => $atts['type'],
@@ -141,7 +147,7 @@ class Na_Slider
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id($slide->ID), "full")[0];
                 }
 				$_slides[] = array('content' => '<div style="background-image:url('.$image.')" class="na-slide-inner">
-                    <div class="container">
+                    <div class="'.$settings['container'].'">
     					<div class="na-slide-text">
     						'.apply_filters('the_content', $slide->post_content).'
     					</div>
@@ -168,7 +174,7 @@ class Na_Slider
 			}
 			slider_settings['<?php echo $id; ?>'] = <?php echo json_encode((array)$settings); ?>;
 		</script>
-		<div id="<?php echo $id; ?>" class="na-slider-wrapper na-slider-<?php echo $settings['vertical'] != 0 ? 'vertical': 'horizontal'; ?> na-<?php echo $settings['type'] != '' ? $settings['type']: 'normal'; ?>" data-slider="<?php echo $id; ?>" style="height:<?php echo $settings['height']; ?>">
+		<div id="<?php echo $id; ?>" class="na-slider-wrapper na-slider-<?php echo $settings['vertical'] != 0 ? 'vertical': 'horizontal'; ?> na-<?php echo $settings['type'] != '' ? $settings['type']: 'normal'; ?>" data-slider="<?php echo $id; ?>">
             <?php if($settings['type'] == 'circular'): ?>
                 <div id="circular-nav">
                     <div class="svg-wrap">
@@ -196,7 +202,7 @@ class Na_Slider
                     </div>
                 </div>
             <?php endif; ?>
-        	<div class="na-slider">
+        	<div style="height:<?php echo $settings['height']; ?>" class="na-slider">
 				<ul class="na-slides">
 					<?php
                     foreach ($slides as $slide):
@@ -208,12 +214,21 @@ class Na_Slider
                      ?>
 				</ul>
 			</div>
-			<?php if (count($slides) > 1) {
-                        ?>
+			<?php if (count($slides) > 1) { ?>
 				<a href="#" class="na-slider-actions prev"><span>&nbsp;</span></a>
 				<a href="#" class="na-slider-actions next"><span>&nbsp;</span></a>
 			<?php
-                    } ?>
+            }
+            $total = count($slides)/$settings['columns'];
+            ?>
+			<?php if (isset($settings['bullets']) && $settings['bullets']  && count($slides) > 1) { ?>
+				<ul class="na-slider-bullets">
+                    <?php for ($index = 0; $index < $total; $index ++):?>
+                        <li><a data-index="<?php echo $index; ?>" class="na-slider-bullet-actions <?php echo $index == 0 ? 'active': ''; ?>" href="#"></a></li>
+                    <?php endfor; ?>
+                </ul>
+			<?php
+            } ?>
 		</div>
 		<?php
             return ob_get_clean();

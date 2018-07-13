@@ -3,7 +3,7 @@ class Carousels_Shortcode extends NA_METABOXES
 {
     public function __construct()
     {
-        parent::__construct(array('carousel'), 'Item', 'normal', 'high');
+        // parent::__construct(array('carousel'), 'Item', 'normal', 'high');
 
         $this->actions();
         $this->shortcodes();
@@ -106,7 +106,9 @@ class Carousels_Shortcode extends NA_METABOXES
     {
         global $slider;
         $atts = shortcode_atts(array(
+            'bullets' => false,
             'category' => '',
+            'pagination' => '0',
             'height' => 'auto',
             'type' => '',
             'vertical' => 0,
@@ -144,27 +146,35 @@ class Carousels_Shortcode extends NA_METABOXES
                 $query->the_post();
                 $meta = $this->get_meta(get_the_ID(), 'carousels');
                 $style = array();
+                $inner = '';
                 if (has_post_thumbnail()) {
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
-                    $style[] = "background-image:url($image[0])";
+                    if($image && isset($image[0])){
+                        $inner = '<div class="carousels-inner"><img src="'.$image[0].'" /></div>';
+                    }
                 }
-                $slides[] = array('content' => '<div class="carousels-inner"><img src="'.$image[0].'" /></div>', 'post' => $post);
+                if(trim($post->post_content) != ''){
+                    $inner .= '<div class="carousels-content">'.get_the_content().'</div>';
+                }
+                $slides[] = array('content' => $inner, 'post' => $post);
             }
         }
         wp_reset_postdata();
         $settings = array(
             'autoplay' => $atts['autoplay'],
+            'bullets' => $atts['bullets'],
+            'pagination' => $atts['pagination'],
             'columns' => $atts['columns'],
             'vertical' => $atts['vertical'],
             'type' => 'carousel',
             'height' => $atts['height']
         );
-
         return $slider->addSlider($slides, $settings);
     }
 
     public function show_metabox($post)
     {
+        return;
         ?>
 		<table class="form-table">
 			<tbody>

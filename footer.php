@@ -9,10 +9,9 @@
  * @since Na_Theme 1.0
  */
 ?>
-    </div>
-    <!-- .site-content -->
+
     <!-- Start footer -->
-    <footer class="site-footer">
+    <footer class="site-footer fp-auto-height">
         <?php include('inc/sidebars/footer.php'); ?>
         <section class="subfooter">
             <div class="container">
@@ -30,6 +29,8 @@
             </div>
         </section>
     </footer>
+</div>
+<!-- end #wrapper -->
     <div id="searchform"> <a href="#" class="search-close">&#215; close</a>
         <?php echo get_search_form(); ?>
     </div>

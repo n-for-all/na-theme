@@ -1,7 +1,6 @@
 jQuery(document).ready(function() {
     var last = null;
     function showCaseStudy(id) {
-        event.preventDefault();
         var inner = jQuery('.case-studies-inner');
         var clone = jQuery('<div class="case-studies-inner-clone"></div>');
         last = inner;
