@@ -19,13 +19,6 @@
                 opacity: 1
             }, 500);
         }, timeout);
-        var pos = jQuery(this).scrollTop();
-        if (pos < 10) {
-            jQuery('body').removeClass('scrolling');
-        } else {
-            jQuery('body').addClass('scrolling');
-        }
-
     });
     /*
     menu animation

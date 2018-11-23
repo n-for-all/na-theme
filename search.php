@@ -27,9 +27,9 @@ get_header(); ?>
 			<div class="row">
 				<div class="col-md-12">
 					<?php if (have_posts()) : ?>
-						<h1 class="entry-title search-title"><?php printf(__('Search Results for: %s', 'twentyseventeen'), '<span>' . get_search_query() . '</span>'); ?></h1>
+						<h1 class="entry-title search-title"><?php printf(__('Search Results for: %s', 'na-theme'), '<span>' . get_search_query() . '</span>'); ?></h1>
 					<?php else : ?>
-						<h1 class="entry-title search-title"><?php _e('Nothing Found', 'twentyseventeen'); ?></h1>
+						<h1 class="entry-title search-title"><?php _e('Sorry we couldn\'t find what you are looking for.', 'na-theme'); ?></h1>
 					<?php endif; ?>
 				</div>
 			</div>
@@ -52,7 +52,7 @@ get_header(); ?>
 
 			$post_types = get_post_types( $args, $output, $operator );
 			foreach( $post_types as $type => $post_type ){
-				if(!in_array($type, array('post', 'page', 'product'))){
+				if(!in_array($type, array('product'))){
 					continue;
 				}
 				if(have_posts()){

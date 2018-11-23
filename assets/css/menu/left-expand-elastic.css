@@ -8,7 +8,9 @@
 .navbar>.container {
     width: 100%;
 }
-
+.navbar .navbar-toggle {
+    display: inline-block;
+}
 /*.collapse.in .navbar-collapse>ul {
     transform: translateX(0%);
 }*/
@@ -56,7 +58,7 @@
     text-align: center;
     margin: 0 auto;
     z-index: 8;
-    max-height: none;
+    max-height: 0;
     top: 50%;
     transform: translateY(-50%);
     opacity: 0;
@@ -80,6 +82,7 @@ body:before {
 
 body.menu-open #main-navbar-collapse {
     opacity: 1;
+    max-height: 200px
 }
 
 body.menu-open:before {
@@ -118,7 +121,7 @@ body svg.particles {
 }
 
 .navbar-toggle .icon-bar {
-    height: 3px;
+    height: 2px;
     border-radius: 1px;
 }
 
@@ -129,6 +132,13 @@ body svg.particles {
 .navbar-toggle .icon-bar {
     width: 27px;
     transition: all ease 0.5s;
+}
+
+.navbar-toggle.toggle-style-2 .icon-bar:nth-child(2), .navbar-toggle.toggle-style-2 .icon-bar:nth-child(3){
+    width: 20px;
+}
+.navbar-toggle.toggle-style-2[aria-expanded="true"] .icon-bar:nth-child(2), .navbar-toggle.toggle-style-2[aria-expanded="true"] .icon-bar:nth-child(3){
+    width: 30px;
 }
 
 
@@ -182,7 +192,6 @@ body svg.particles {
         transition: all ease 0.5s;
     }
     .scrolling .navbar-nav>li a {
-        padding: 25px 10px;
         transition: all ease 0.5s;
     }
     .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {

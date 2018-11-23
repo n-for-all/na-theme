@@ -126,6 +126,7 @@ footer .widget {
 
 .navbar-header {
     background: #fff;
+    float: none;
 }
 
 #searchform {

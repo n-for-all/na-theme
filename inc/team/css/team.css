@@ -304,9 +304,3 @@ ul.na-team.na-team-columns-2 li {
         width: 49%;
     }
 }
-
-@media all and (max-width: 450px) {
-    .na-team>li {
-        width: 99%;
-    }
-}

@@ -1,20 +1,18 @@
 <?php
-if (! function_exists('woocommerce_template_loop_product_thumbnail')) {
+if (!function_exists('woocommerce_template_loop_product_thumbnail')) {
     /**
      * Get the product thumbnail for the loop.
-     *
-     * @subpackage	Loop
      */
     function woocommerce_template_loop_product_thumbnail()
     {
         global $post;
         if (has_post_thumbnail()) {
             $props = wc_get_product_attachment_props(get_post_thumbnail_id(), $post);
-            echo sprintf('<div class="woocommerce-list-image" style="background-image:url(%s)" title="%s"></div>', $props['url'], $props['title']
-            ) ;
+            echo sprintf('<a href="%s" class="woocommerce-list-image" style="background-image:url(%s)" title="%s"></a>', get_the_permalink(), $props['src'], $props['title']
+            );
         } elseif (wc_placeholder_img_src()) {
             echo sprintf('<div class="woocommerce-list-image" style="background-image:url(%s)" title="%s"></div>', wc_placeholder_img_src(), ''
-            ) ;
+            );
         }
     }
 }
@@ -23,34 +21,34 @@ add_filter('single_product_large_thumbnail_size', function ($size) {
     return 'full';
 });
 
-add_filter( 'default_checkout_billing_country',function ($_fields) {
+add_filter('default_checkout_billing_country', function ($_fields) {
     return 'AE';
-} );
-add_filter( 'default_checkout_shipping_country',function ($_fields) {
+});
+add_filter('default_checkout_shipping_country', function ($_fields) {
     return 'AE';
-} );
+});
 add_filter('woocommerce_checkout_fields', function ($_fields) {
     $fields = &$_fields['billing'];
     $fields['billing_country'] = array_replace($fields['billing_country'], array(
         'type' => 'select',
         'options' => array(
-	    	'AE'		=> __( 'United Arab Emirates' )
-	    ),
-        'class' => array( 'form-row-first', 'address-field', 'update_totals_on_change' )
+            'AE' => __('United Arab Emirates'),
+        ),
+        'class' => array('form-row-first', 'address-field', 'update_totals_on_change'),
     ));
     $billing_city = $fields['billing_city'] = array_replace($fields['billing_city'], array(
         'type' => 'select',
         'options' => array(
-	    	'Dubai'		=> __( 'Dubai' ),
-	        'Abu Dhabi'	=> __( 'Abu Dhabi', 'wps' ),
-	        'Ajman'	=> __( 'Ajman', 'wps' ),
-	        'Fujairah' 	=> __( 'Fujairah', 'wps' ),
-	        'Ras al-Khaimah' 	=> __( 'Ras al-Khaimah', 'wps' ),
-	        'Sharjah' 	=> __( 'Sharjah', 'wps' ),
-	        'Umm al-Quwain' 	=> __( 'Umm al-Quwain', 'wps' )
-	    ),
+            'Dubai' => __('Dubai'),
+            'Abu Dhabi' => __('Abu Dhabi', 'wps'),
+            'Ajman' => __('Ajman', 'wps'),
+            'Fujairah' => __('Fujairah', 'wps'),
+            'Ras al-Khaimah' => __('Ras al-Khaimah', 'wps'),
+            'Sharjah' => __('Sharjah', 'wps'),
+            'Umm al-Quwain' => __('Umm al-Quwain', 'wps'),
+        ),
         'priority' => 45,
-        'class'        => array( 'form-row-last', 'address-field' ),
+        'class' => array('form-row-last', 'address-field'),
     ));
     unset($fields['billing_city']);
     $fields = array_insert($fields, array('billing_city' => $billing_city), 'billing_country');
@@ -63,12 +61,13 @@ add_filter('woocommerce_checkout_fields', function ($_fields) {
 
     $shipping_fields = &$_fields['shipping'];
     unset($shipping_fields['shipping_state']);
-    return $_fields;
 
+    return $_fields;
 });
 
-function array_insert($arr, $insert, $_position) {
-    if(is_string($_position)){
+function array_insert($arr, $insert, $_position)
+{
+    if (is_string($_position)) {
         $position = array_search($_position, array_keys($arr));
     }
     $i = 0;
@@ -77,11 +76,11 @@ function array_insert($arr, $insert, $_position) {
         if ($i == $position) {
             $ret = array_merge($ret, $insert);
         }
-        $i++;
+        ++$i;
     }
+
     return $ret;
 }
-
 
 /*add_action('woocommerce_product_thumbnails', function () {
     global $product;
@@ -165,16 +164,6 @@ function array_insert($arr, $insert, $_position) {
         }
     }
 });*/
-add_action('woocommerce_before_main_content', function () {
-    ?>
-                <div class="container">
-                    <?php
-});
-add_action('woocommerce_after_main_content', function () {
-    ?>
-                </div>
-                <?php
-});
 // add_filter('woocommerce_product_tabs', function ($tabs) {
 //     unset($tabs['additional_information']);    // Remove the additional information tab
 //     $tabs['description']['title'] = "Ingredients";    // Remove the additional information tab
@@ -185,45 +174,49 @@ add_filter('woocommerce_currency_symbol', function ($currency_symbol, $currency)
     switch ($currency) {
           case 'AED': $currency_symbol = 'AED'; break;
      }
+
     return $currency_symbol;
 }, 10, 2);
-add_filter( 'loop_shop_per_page', 'new_loop_shop_per_page', 20 );
+add_filter('loop_shop_per_page', 'new_loop_shop_per_page', 20);
 
-function new_loop_shop_per_page( $cols ) {
-  // $cols contains the current number of products per page based on the value stored on Options -> Reading
-  // Return the number of products you wanna show per page.
-  $cols = 32;
-  return $cols;
+function new_loop_shop_per_page($cols)
+{
+    // $cols contains the current number of products per page based on the value stored on Options -> Reading
+    // Return the number of products you wanna show per page.
+    $cols = 32;
+
+    return $cols;
 }
 
-remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart');
+remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart');
 
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart');
+remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart');
 // remove_action('woocommerce_before_shop_loop', 'woocommerce_result_count', 20);
-remove_action('woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30);
 // remove_action('woocommerce_before_main_content', 'woocommerce_breadcrumb', 20);
 // add_filter( 'woocommerce_get_breadcrumb', '__return_false' );
-function exclude_product_cat_children($wp_query) {
-if ( isset ( $wp_query->query_vars['product_cat'] ) && $wp_query->is_main_query()) {
-    $wp_query->set('tax_query', array(
-                                    array (
+function exclude_product_cat_children($wp_query)
+{
+    if (isset($wp_query->query_vars['product_cat']) && $wp_query->is_main_query()) {
+        $wp_query->set('tax_query', array(
+                                    array(
                                         'taxonomy' => 'product_cat',
                                         'field' => 'slug',
                                         'terms' => $wp_query->query_vars['product_cat'],
-                                        'include_children' => false
-                                    )
+                                        'include_children' => false,
+                                    ),
                                  )
     );
-  }
+    }
 }
 add_filter('pre_get_posts', 'exclude_product_cat_children');
 
 // Change number or products per row to 3
 add_filter('loop_shop_columns', 'loop_columns');
 if (!function_exists('loop_columns')) {
-	function loop_columns() {
-		return 3; // 3 products per row
-	}
+    function loop_columns()
+    {
+        return 3; // 3 products per row
+    }
 }
 //add_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_single_excerpt', 5);
 

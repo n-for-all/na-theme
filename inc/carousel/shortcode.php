@@ -111,6 +111,8 @@ class Carousels_Shortcode extends NA_METABOXES
             'pagination' => '0',
             'height' => 'auto',
             'type' => '',
+            'min-height' => false,
+            'min-width' => 200,
             'vertical' => 0,
             'autoplay' => 0,
             'columns' => 4,
@@ -150,7 +152,7 @@ class Carousels_Shortcode extends NA_METABOXES
                 if (has_post_thumbnail()) {
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
                     if($image && isset($image[0])){
-                        $inner = '<div class="carousels-inner"><img src="'.$image[0].'" /></div>';
+                        $inner = sprintf('<div class="carousels-inner" style="%s"><img src="%s" /></div>', $atts['min-height'] ? 'min-height:'.$atts['min-height']: '', $image[0]);
                     }
                 }
                 if(trim($post->post_content) != ''){
@@ -165,6 +167,7 @@ class Carousels_Shortcode extends NA_METABOXES
             'bullets' => $atts['bullets'],
             'pagination' => $atts['pagination'],
             'columns' => $atts['columns'],
+            'minWidth' => $atts['min-width'],
             'vertical' => $atts['vertical'],
             'type' => 'carousel',
             'height' => $atts['height']

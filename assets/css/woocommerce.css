@@ -1,11 +1,3 @@
-body.single-product #wrapper, body.post-type-archive-product #wrapper, body.archive #wrapper {
-    background: #fff;
-}
-
-body.single-product, body.post-type-archive-product, body.archive {
-    background: #23282d;
-}
-
 .woocommerce .woocommerce-tabs {
     float: right;
     width: 48%;
@@ -200,6 +192,7 @@ section.related.products {
     width: 35px;
     border-width: 0;
     border-radius: 0 2px 2px 0;
+    padding:0;
 }
 
 .woocommerce ul.cart_list li:first-child, .woocommerce ul.product_list_widget li:first-child {
@@ -241,6 +234,7 @@ ul.products .product .woocommerce-list-image {
     padding-top: 66%;
     background-position: center center;
     background-repeat: no-repeat;
+        display: block;
 }
 
 .woocommerce ul.products li.product .woocommerce-loop-category__title, .woocommerce ul.products li.product .woocommerce-loop-product__title, .woocommerce ul.products li.product h3, .woocommerce ul.products li.product .price {

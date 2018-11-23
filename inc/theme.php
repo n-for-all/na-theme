@@ -31,6 +31,8 @@ class Na_Theme {
 		add_action( 'admin_enqueue_scripts', array(&$this, 'admin_scripts') );
 		add_action( 'credits', array(&$this, 'credits') );
 		add_action('woocommerce_before_shop_loop', array( &$this,'woocommerce_before_shop_loop'), 10);
+		add_action('woocommerce_before_main_content', array( &$this,'woocommerce_before_main_content'), 10);
+		add_action('woocommerce_after_main_content', array( &$this,'woocommerce_after_main_content'), 10);
 		add_action('woocommerce_after_shop_loop', array( &$this,'woocommerce_after_shop_loop'), 10);
 		add_action('template_redirect', array( &$this, 'disable_author_page'));
 		if(is_admin()){
@@ -316,25 +318,25 @@ class Na_Theme {
 
 		//$font_variants = (array)get_theme_mod('font_variants', array());
 		wp_enqueue_style(
-        'custom-fonts',
-        get_template_directory_uri() . '/assets/css/fonts.css'
-    );
+	        'custom-fonts',
+	        get_template_directory_uri() . '/assets/css/fonts.css'
+	    );
 		$fonts = array();
-		if(trim($font) != ""){
+		if(trim($font, " 0") != ""){
 			$fonts = array_merge($fonts, (array)($font.":".implode(",", $font_variants)));
 			$custom_css = "
-			html, body, div, p, a, *{
-				font-family: {$font}, Arial, tahoma, sans-serif;
-			}";
-      wp_add_inline_style( 'custom-fonts', $custom_css );
+				html, body, div, p, a, *{
+					font-family: {$font}, Arial, tahoma, sans-serif;
+				}";
+	      	wp_add_inline_style( 'custom-fonts', $custom_css );
 		}
 		if(trim($header_font) != "" && false){
 			$fonts = array_merge($fonts, (array)($header_font.":".implode(",", $header_variants)));
 			$custom_css = "
-			h1, h2, h3, h4, h5, h6, .entry-title{
-				font-family: {$header_font}, Arial, tahoma, sans-serif;
-			}";
-      wp_add_inline_style( 'custom-fonts', $custom_css );
+				h1, h2, h3, h4, h5, h6, .entry-title{
+					font-family: {$header_font}, Arial, tahoma, sans-serif;
+				}";
+      		wp_add_inline_style( 'custom-fonts', $custom_css );
 		}
 		if ( $fonts ) {
 			$fonts_url = add_query_arg( array(
@@ -422,12 +424,13 @@ class Na_Theme {
 
 		wp_enqueue_script( 'na_theme-custom', get_template_directory_uri() . '/assets/js/custom.js', array( 'jquery' ), '1.0.0', true );
 		wp_enqueue_script( 'na_theme-script', get_template_directory_uri() . '/assets/js/functions.js', array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'na_theme-fastclick', get_template_directory_uri() . '/assets/js/plugins/fastclick.min.js', array( 'jquery' ), '1.0.0', true );
 		wp_enqueue_script( 'na_theme-scripts', get_template_directory_uri() . '/assets/js/scripts.js', array( 'jquery' ), '1.0.0', true );
-		wp_add_inline_script('na_theme-script', 'var options = {};options.ajax = "'.admin_url('admin-ajax.php').'"');
+		wp_add_inline_script('na_theme-script', 'var options = {ajax: "'.admin_url('admin-ajax.php').'", mobile: '.($this->mobile_breakpoint != '' ? strval(intval($this->mobile_breakpoint)): '767').'}');
 		// wp_enqueue_script( 'na_theme-waypoints', get_template_directory_uri() . '/assets/js/plugins/jquery.waypoints.min.js', array( 'jquery' ), '1.0.0', true );
 
 		if($this->homepage_scrolling != ""){
-			wp_add_inline_script('na_theme-scripts', 'options["scrolling"] = "'.$this->homepage_scrolling.'";');
+			wp_add_inline_script('na_theme-scripts', 'options.scrolling = '.strval($this->homepage_scrolling).';');
 
 			if($this->homepage_scrolling == 1){
 				wp_enqueue_script( 'na_theme-tweenmax', get_template_directory_uri() . '/assets/js/plugins/fullpage/javascript.fullPage.min.js', array( 'jquery' ), '1.0.0', true );
@@ -791,6 +794,17 @@ class Na_Theme {
 			</div>
 		<?php
 
+	}
+
+	public function woocommerce_before_main_content() {
+	    ?>
+	                <div class="container">
+	                    <?php
+	}
+	public function woocommerce_after_main_content() {
+	    ?>
+	                </div>
+	                <?php
 	}
 	public function enable($module){
 		if(is_array($module)){

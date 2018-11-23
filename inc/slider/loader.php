@@ -73,6 +73,7 @@ class Na_Slider
     }
     public function scripts()
     {
+        wp_enqueue_script('na-slider-swipe', get_template_directory_uri() . '/inc/slider/js/hammer.min.js', array( 'jquery' ), '1.0.0', true);
         wp_enqueue_script('na-slider', get_template_directory_uri() . '/inc/slider/js/slider.js', array( 'jquery' ), '1.0.0', true);
         wp_enqueue_style('na-slider', get_template_directory_uri() . '/inc/slider/css/slider.css', array(), '1.0');
     }
@@ -86,6 +87,7 @@ class Na_Slider
             'type' => '',
             'vertical' => 0,
             'autoplay' => 0,
+            'min-width' => 0,
             'columns' => 1
         ), $atts);
         if($atts['id'] != 0){
@@ -114,6 +116,7 @@ class Na_Slider
                 'container' => $atts['container'],
                 'columns' => $atts['columns'],
                 'vertical' => $atts['vertical'],
+                'minWidth' => $atts['min-width'] > 0 ? $atts['min-width'] : 200,
                 'type' => $atts['type'],
                 'height' => $atts['height']
             );
