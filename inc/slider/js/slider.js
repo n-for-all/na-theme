@@ -363,6 +363,13 @@ function Na_Slider(element, settings) {
         });
     };
     this.has3d = function() {
+        var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' ');
+        var div = document.createElement('div');
+        for(var i = 0; i < prefixes.length; i++) {
+            if(div && div.style[prefixes[i]] !== undefined) {
+                return true;
+            }
+        }
         return "WebKitCSSMatrix" in window && "m11" in new WebKitCSSMatrix();
     };
     this.inform = function() {

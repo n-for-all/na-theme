@@ -838,15 +838,7 @@ h5 {
     max-width: 800px;
     margin: 0 auto;
     font-size: 18px;
-    font-family: "Work Sans";
     line-height: 30px;
-}
-
-.single article.post .entry-content,
-.single article.post .entry-content span,
-.single article.post .entry-content p {
-    font-weight: 300 !important;
-    font-family: "Work Sans";
 }
 
 .single article.post .entry-content p {
