@@ -1,59 +1,69 @@
 .popup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    height: auto;
-    z-index: 99999;
-    background: #fff;
-    max-width: 90%;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+	display: none;
+	position: fixed;
+	top: 10%;
+	left: 50%;
+	transform: translate(-50%, 0%);
+	width: 90%;
+	height: auto;
+	z-index: 99999;
+	background: #fff;
+	max-width: 90%;
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+	max-height: 80%;
+	flex-direction: column;
 }
-.na-popup-active::before{
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.83);
-    z-index: 9998;
+.na-popup-active::before {
+	content: '';
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.83);
+	z-index: 9998;
 }
-
+.popup > h3 {
+	padding-left: 20px;
+	margin-top: 10px;
+	border-bottom: 1px solid #ececec;
+	padding-bottom: 15px;
+	margin-bottom: 0px;
+}
 .popup .popup-content {
-    overflow: auto;
-    max-height: 100%;
-    padding: 15px;
+	overflow: auto;
+	max-height: 100%;
+	padding: 20px;
 }
 
 .popup.active {
-    display: block;
+	display: block;
+	display: flex;
+	flex: 0 1 auto;
 }
 
 .popup .close-popup:hover {
-    color: #fff;
-    text-decoration: none;
+	color: #fff;
+	text-decoration: none;
 }
 
 .popup .close-popup {
-    position: absolute;
-    top: 0%;
-    right: 0%;
-    margin-right: -12px;
-    margin-top: -12px;
-    background: #d46060;
-    opacity: 1;
-    color: rgba(255, 255, 255, 0.68);
-    border-radius: 30px;
-    width: 25px;
-    line-height: 22px;
-    text-align: center;
-    font-size: 18px;
-    font-family: verdana;
-    text-decoration: none;
-    transition: all ease 0.3s;
-    font-weight: normal;
-    height: 25px;
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	margin-right: -12px;
+	margin-top: -12px;
+	background: #d46060;
+	opacity: 1;
+	color: rgba(255, 255, 255, 0.68);
+	border-radius: 30px;
+	width: 25px;
+	line-height: 22px;
+	text-align: center;
+	font-size: 18px;
+	font-family: verdana;
+	text-decoration: none;
+	transition: all ease 0.3s;
+	font-weight: normal;
+	height: 25px;
 }

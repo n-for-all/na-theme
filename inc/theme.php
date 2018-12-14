@@ -4,6 +4,7 @@
  * Sets up theme defaults and registers support for various WordPress features.
  *
  */
+
 class Na_Theme {
 
 	private $search = [];
@@ -480,15 +481,24 @@ class Na_Theme {
 			);
 		return $link;
 	}
-	function get_excerpt( $output ) {
+	function get_excerpt_limited_words($string, $limit){
+	    $stripped_string =strip_tags($string); // if there are HTML or PHP tags
+	    $string_array =explode(' ',$stripped_string);
+	    $truncated_array = array_splice($string_array,0,$limit);
+	    $truncated_string=implode(' ',$truncated_array);
+
+	    return $truncated_string;
+	}
+	function get_excerpt( $excerpt ) {
 		global $post;
-		if ( has_excerpt() && ! is_attachment() && ! is_admin() ) {
-			$output .= sprintf( '<div class="excerpt-actions"><a href="%1$s" class="btn btn-default more-link">%2$s &raquo;</a></div>',
+		if ( has_excerpt() && ! is_attachment() && ! is_admin() || trim($excerpt) != '') {
+			$excerpt = $this->get_excerpt_limited_words($excerpt, 40);
+			$excerpt .= sprintf( '<div class="excerpt-actions"><a href="%1$s" class="btn btn-default more-link">%2$s &raquo;</a></div>',
 				esc_url( get_permalink( get_the_ID() ) ),
 				__('Read More', 'na_theme')
 				);
 		}
-		return $output;
+		return $excerpt;
 	}
 	function shortcode_permalinks( $atts ) {
 

@@ -1,4 +1,5 @@
 <?php
+
 class Posts_Shortcode
 {
     public function __construct()
@@ -6,28 +7,30 @@ class Posts_Shortcode
         $this->actions();
         $this->shortcodes();
     }
+
     public function actions()
     {
-        add_filter('widget_text','do_shortcode');
-
+        add_filter('widget_text', 'do_shortcode');
     }
+
     public function shortcodes()
     {
         add_shortcode('posts', array($this, 'shortcode'));
     }
+
     public function shortcode($atts)
     {
         $atts = shortcode_atts(array(
             'category' => '',
-            'per_page' => -1
+            'per_page' => -1,
         ), $atts, 'services-shortcode');
-        $categories = (array)explode(",", $atts['category']);
+        $categories = (array) explode(',', $atts['category']);
         $args = array(
             'post_type' => 'post',
             'posts_per_page' => $atts['per_page'],
             'orderby' => 'menu_order',
             'post_status' => 'publish',
-            'order' => 'ASC'
+            'order' => 'ASC',
         );
         $field_type = is_numeric($categories[0]) ? 'term_id' : 'slug';
         if (!empty($atts['category'])) {
@@ -42,11 +45,12 @@ class Posts_Shortcode
                     ),
                 ),
                 'orderby' => 'menu_order',
-                'order' => 'ASC'
+                'order' => 'ASC',
             );
         }
-        $output = "";
+        $output = '';
         $query = new WP_Query($args);
+        $template = '<li class="post-list-item %s"><a data-id="%d" class="posts-image" style="%s" href="%s"><dt>%s</dt></a><div class="posts-header"><h3><a href="%s">%s</a></h3></div><div class="posts-content">%s</div></li>';
         if ($query->have_posts()) {
             $output = '<ul class="na-posts">';
             while ($query->have_posts()) {
@@ -56,13 +60,13 @@ class Posts_Shortcode
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
                     $style[] = "background-image:url($image[0])";
                 }
-                $output .= '<li><a data-id="'.get_the_ID().'" class="posts-image" style="'.implode(";", $style).'" href="'.get_the_permalink().'"><dt>'.get_the_date('M<b>d</b>', '', '').'</dt></a><div class="posts-header"><h3>'.get_the_title().'</h3></div><div class="posts-content">'.get_the_excerpt().'</div></li>';
+                $output .= sprintf($template, has_post_thumbnail() ? 'has-thumbnail' : '', get_the_ID(), implode(';', $style), get_the_permalink(), get_the_date('M<b>d</b>', '', ''), get_the_permalink(), get_the_title(), get_the_excerpt());
             }
             $output .= '</ul>';
         }
         wp_reset_postdata();
+
         return $output;
     }
 }
 new Posts_Shortcode();
-?>

@@ -79,7 +79,7 @@
     height: 100%;
     width: 100px;
     overflow: hidden;
-    z-index: 9;
+    z-index: 6;
     transition: all ease 0.3s;
 }
 

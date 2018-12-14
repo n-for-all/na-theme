@@ -786,12 +786,6 @@ h5 {
     color: #0b1739;
 }
 
-.blog .entry-content {
-    padding: 15px;
-    font-size: 16px;
-    line-height: 25px;
-}
-
 .blog .entry-content .row {
     width: 100%;
 }
@@ -891,13 +885,6 @@ h5 {
 
 .blog article.post {
     margin-top: 40px;
-}
-
-.blog .entry-content {
-    padding: 15px;
-    font-size: 16px;
-    line-height: 25px;
-    background: #f9f9f9;
 }
 
 .blog article .entry-header h1.entry-title {
@@ -1917,6 +1904,82 @@ Search Form
     background-position: center;
     background-size: auto 100%;
 }
+.na-posts{
+    padding:0;
+}
+.na-posts:after{
+    content:'';
+    display: table;
+    clear: both;
+}
+.na-posts .post-list-item a.posts-image dt b{
+    display: block;
+    font-size: 40px;
+    line-height: 40px;
+}
+.na-posts .post-list-item a.posts-image dt{
+    font-size: 16px;
+    text-transform: uppercase;
+    position: absolute;
+    top: 30px;
+    text-align: center;
+    padding: 5px;
+    background: #00b8ea;
+    color: #fff;
+    border-radius: 0 5px 5px 0;
+}
+.na-posts .post-list-item a.posts-image{
+    padding-top: 75%;
+    display: block;
+    background-color: #f8f8f8;
+        background-size: cover;
+        position: relative;
+}
+.na-posts .post-list-item .posts-content .excerpt-actions{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    z-index: 9;
+}
+.na-posts .post-list-item .posts-content{
+    position: relative;
+    min-height: 150px;
+}
+.na-posts .post-list-item .posts-content:after{
+    position: absolute;
+        content: "";
+        bottom: 0;
+        background-color: red;
+        height: 100px;
+        display: block;
+        width: 100%;
+
+
+        background: rgba(246,246,246,0);
+        background: -moz-linear-gradient(top, rgba(246,246,246,0) 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 60%);
+        background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(246,246,246,0)), color-stop(0%, rgba(255,255,255,0)), color-stop(60%, rgba(255,255,255,1)));
+        background: -webkit-linear-gradient(top, rgba(246,246,246,0) 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 60%);
+        background: -o-linear-gradient(top, rgba(246,246,246,0) 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 60%);
+        background: -ms-linear-gradient(top, rgba(246,246,246,0) 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 60%);
+        background: linear-gradient(to bottom, rgba(246,246,246,0) 0%, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 60%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f6f6', endColorstr='#ffffff', GradientType=0 );
+}
+.na-posts .post-list-item:nth-child(4n + 1){
+    clear: left;
+}
+.na-posts .post-list-item{
+    width: 24%;
+    float: left;
+    list-style: none;
+    padding: 30px;
+    background: #fff;
+    margin:0.5%;
+}
+.excerpt-actions a.btn{
+    padding: 4px 10px;
+    font-size: 12px;
+    letter-spacing: 0.6px;
+}
 
 @keyframes noise-anim {
     0% {
@@ -2470,6 +2533,13 @@ div.wpcf7-acceptance-missing {
     }
 }
 
+@media (max-width: 768px) {
+    .na-posts .post-list-item{
+        width: 100%;
+        padding:0;
+        margin: 10px 0;
+    }
+}
 @media (max-width: 500px) {
     .search-products block-content {
         margin-left: 0;
