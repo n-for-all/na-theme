@@ -464,6 +464,7 @@ function Na_Slider(element, settings) {
                         return false;
                     }
                 }
+                return true;
             });
         });
         var hammertime = new Hammer(this.wrapper.get(0), {});
