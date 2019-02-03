@@ -1,25 +1,6 @@
 (function(jQuery) {
     'use strict';
 
-    var threshold = 5;
-    var seconds = new Date().getTime() / 1000;
-    jQuery(window).load(function() {
-        var nseconds = new Date().getTime() / 1000;
-        var timeout = 10;
-        if (nseconds - seconds < threshold) {
-            timeout = Math.floor(threshold - (nseconds - seconds)) * 1000;
-        }
-        setTimeout(function() {
-            //jQuery(".loading-lines").css('margin-bottom', jQuery('.navbar').outerHeight(true) -5);
-            jQuery(".loading-lines").removeClass('loaded');
-            jQuery(".loading-logo").removeClass('loaded');
-            jQuery(".loading-slogan").removeClass('loaded');
-            jQuery("#loading").fadeOut(1500);
-            jQuery('.slider2_container').animate({
-                opacity: 1
-            }, 500);
-        }, timeout);
-    });
     /*
     menu animation
     */

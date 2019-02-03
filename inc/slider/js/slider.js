@@ -361,6 +361,9 @@ function Na_Slider(element, settings) {
                 jQuery(item).removeClass("active");
             }
         });
+        if(this.bullet_nav){
+            this.bullet_nav.removeClass('active').eq(i).addClass('active');
+        }
     };
     this.has3d = function() {
         var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' ');

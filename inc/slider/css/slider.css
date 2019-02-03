@@ -257,6 +257,9 @@
     background-color: rgba(255, 255, 255, 0.8);
 }
 
+.na-slider-bullets li a .bullet-title{
+    display: none;
+}
 .na-slider-bullets li a {
     display: block;
     height: 8px;

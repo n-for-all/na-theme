@@ -219,5 +219,39 @@ if (!function_exists('loop_columns')) {
     }
 }
 //add_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_single_excerpt', 5);
+/**
+ *
+ * Action to show all products under product cat if the product category is the parent
+ *
+ * @var [type]
+ */
+
+add_action('parse_query', function (&$query) {
+    if (!is_admin() || !is_home() || !is_single()) {
+        if ($query->is_main_query() && $query->is_archive()) {
+            $queried_object = get_queried_object();
+            $term_id = $queried_object->term_id;
+            $tax_query = [];
+            if ($queried_object && 0 == $queried_object->parent) {
+                $query->set('posts_per_page', 9);
+                $query->query_vars['product_cat'] = '';
+                unset($query->query_vars['product_cat']);
+
+                $tax_query[] =
+                    array(
+                        'taxonomy' => 'product_cat',
+                        'field' => 'id',
+                        'terms' => [1],
+                        'operator' => 'NOT IN',
+                        'include_children' => true,
+                    )
+                ;
+
+                $query->set('tax_query', $tax_query);
+                $query->set('post_type', 'product');
+            }
+        }
+    }
+}, 1);
 
 ?>

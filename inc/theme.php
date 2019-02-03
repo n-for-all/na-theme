@@ -385,6 +385,7 @@ class Na_Theme {
 
 		// font awesome icons
 		wp_enqueue_style( 'font-awesome', get_template_directory_uri() . '/assets/css/font-awesome.min.css', array(), '3.2' );
+		wp_enqueue_style( 'font-na-theme', get_template_directory_uri() . '/assets/fonts/na-theme/stylesheet.css', array(), '3.2' );
 
 		// Load the Internet Explorer specific stylesheet.
 		wp_enqueue_style( 'na_theme-ie', get_template_directory_uri() . '/assets/css/ie.css', array( 'na_theme-main' ), '20141010' );
@@ -414,6 +415,7 @@ class Na_Theme {
 		if ( is_singular() && wp_attachment_is_image() ) {
 			wp_enqueue_script( 'na_theme-keyboard-image-navigation', get_template_directory_uri() . '/assets/js/keyboard-image-navigation.js', array( 'jquery' ), '20141010' );
 		}
+
 		//main scripts
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-hashchange', get_template_directory_uri() . '/assets/js/plugins/jquery.hashchange.js', array('jquery' ), '1.0.0', true );
@@ -737,6 +739,7 @@ class Na_Theme {
 		$part = get_post_meta($post->ID, '_wp_page_template_part', true);
 		$layout = get_post_meta($post->ID, '_wp_page_template_layout', true);
 		$id = get_post_meta($post->ID, '_wp_section_id', true);
+		$class = get_post_meta($post->ID, '_wp_section_class', true);
 		?>
 		<b>Part</b><br/>
 		<small class="help">Select the template part, this applies to sections and inner content area.</small>
@@ -746,9 +749,13 @@ class Na_Theme {
 				<option <?php echo $part == $key ? 'selected': ''; ?> value="<?php echo $key; ?>"><?php echo $value; ?></option>
 			<?php } ?>
 		</select>
-		<p class="post-attributes-label-wrapper"><label class="post-attributes-label">Section ID</label><small class="help">Overrides the section id.</small>
+		<p class="post-attributes-label-wrapper"><label class="post-attributes-label">Section ID</label><div><small class="help">Overrides the section id.</small></div>
 		<input name="section_id" type="text" value="<?php echo $id; ?>" />
 		<div><small class="help">Applies on to sections, if empty it will use the page slug.</small></div>
+		</p>
+		<p class="post-attributes-label-wrapper"><label class="post-attributes-label">Section Class</label><div><small class="help">Adds a section class.</small></div>
+		<input name="section_class" type="text" value="<?php echo $class; ?>" />
+		<div><small class="help">Applies on to sections.</small></div>
 		</p>
 		<p class="post-attributes-label-wrapper"><label class="post-attributes-label">Template</label></p>
 		<p class="post-attributes-label-wrapper"><label class="post-attributes-label">Layout</label>
@@ -772,6 +779,9 @@ class Na_Theme {
 		}
 		if(isset($_POST['section_id'])){
 			update_post_meta($post_ID, '_wp_section_id', $_POST['section_id']);
+		}
+		if(isset($_POST['section_class'])){
+			update_post_meta($post_ID, '_wp_section_class', $_POST['section_class']);
 		}
 	}
 	function get_template_part($post_id, $default){

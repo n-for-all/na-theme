@@ -565,7 +565,6 @@ Featured Overlay
 }
 
 .page-template-page-cover .inner-section {
-    padding-top: 100px;
     padding-bottom: 30px;
     position: relative;
 }
@@ -2218,13 +2217,13 @@ ul.na-services-category:after {
 
 .mouse {
     position: fixed;
-    width: 24px;
-    height: 42px;
+    width: 20px;
+    height: 34px;
     bottom: 30px;
     left: 50%;
-    margin-left: -12px;
+    margin-left: -11px;
     border-radius: 15px;
-    border: 2px solid rgba(255, 255, 255, 1);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     -webkit-animation: intro 1s;
     animation: intro 1s;
     transition: transform 1s ease, opacity 1s ease;
@@ -2233,11 +2232,11 @@ ul.na-services-category:after {
 
 .scroll {
     display: block;
-    width: 3px;
-    height: 3px;
+    width: 4px;
+    height: 2px;
     margin: 6px auto;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.72);
     -webkit-animation: finger 1s infinite;
     animation: finger 1s infinite;
 }

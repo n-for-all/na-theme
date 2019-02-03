@@ -4,7 +4,7 @@
  *
  * @package WordPress
  */
-?><div class="row"><?php
+?><?php
 if ( is_active_sidebar( 'shop' )  ) : ?>
 	<div class="sidebar-shop col-md-3 col-sm-3 col-xs-12">
 		<?php if ( is_active_sidebar( 'shop' ) ) : ?>

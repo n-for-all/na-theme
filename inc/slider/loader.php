@@ -87,6 +87,7 @@ class Na_Slider
             'type' => '',
             'vertical' => 0,
             'autoplay' => 0,
+            'bullets' => 0,
             'min-width' => 0,
             'columns' => 1
         ), $atts);
@@ -114,6 +115,7 @@ class Na_Slider
             $settings = array(
                 'autoplay' => $atts['autoplay'],
                 'container' => $atts['container'],
+                'bullets' => $atts['bullets'],
                 'columns' => $atts['columns'],
                 'vertical' => $atts['vertical'],
                 'minWidth' => $atts['min-width'] > 0 ? $atts['min-width'] : 200,
@@ -227,7 +229,7 @@ class Na_Slider
 			<?php if (isset($settings['bullets']) && $settings['bullets']  && count($slides) > 1) { ?>
 				<ul class="na-slider-bullets">
                     <?php for ($index = 0; $index < $total; $index ++):?>
-                        <li><a data-index="<?php echo $index; ?>" class="na-slider-bullet-actions <?php echo $index == 0 ? 'active': ''; ?>" href="#"></a></li>
+                        <li><a data-index="<?php echo $index; ?>" class="na-slider-bullet-actions <?php echo $index == 0 ? 'active': ''; ?>" href="#"><span class="bullet-title"><?php echo $slides[$index]['post']->post_title; ?></span></a></li>
                     <?php endfor; ?>
                 </ul>
 			<?php

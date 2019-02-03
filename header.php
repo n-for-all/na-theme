@@ -64,6 +64,7 @@ global $theme;
                                 <?php if($theme->menu != 'left-expand-logo.css') include('inc/menu/logo.php'); ?>
                                 <button type="button" class="navbar-toggle <?php echo $theme->menu_expanded == 1 ? 'collapsed' : ''; ?> <?php echo $theme->btn_menu_style; ?>" data-toggle="collapse" data-target="#main-navbar-collapse">  <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span><span class="icon-bar"></span> <span class="sr-only">Menu</span></button>
                                 <?php if($theme->menu == 'left-expand-logo.css') include('inc/menu/logo.php'); ?>
+                                <?php do_action('na-theme.navbar.header'); ?>
                             </div>
                             <?php include('inc/menu/header.php'); ?>
                             <!-- End navbar-header -->

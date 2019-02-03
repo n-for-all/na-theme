@@ -38,6 +38,10 @@ get_header(); ?>
 				$_class .= " ".$theme->get_template_part($post->ID, 'content-page-notitle');
 				$_class .= " subsection";
 
+                $extraClass = get_post_meta($post->ID, '_wp_section_class', true);
+                if($extraClass){
+                    $_class .= " ".$extraClass;
+                }
                 $background = $theme->get_post_thumbnail($post, 'full');
                 if($background){
                     $_class .= " has-post-thumbnail";

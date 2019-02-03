@@ -7,6 +7,7 @@ function theme(options) {
 	this.scrollHandler = null;
 	this.load = function() {
 		var me = this;
+		this.tabs();
 		if (this.options.scrolling && jQuery(window).width() > this.options.mobile) {
 			// jQuery("#inner-scroll>section").height(jQuery(window).height());
 			// jQuery("#inner-scroll>.inner-scroll-inner").width((100 * count + "%"));
@@ -213,11 +214,11 @@ function theme(options) {
 									jQuery(document).trigger('section-start', [jQuery(me.sections[index - 1]), index - 1]);
 									current_index = index - 1;
 									reach = 1;
-                                    if(index > 1){
-                                        setTimeout(function() {
-                                            jQuery('body').addClass('scrolling');
-                                        }, 500);
-                                    }
+									if (index > 1) {
+										setTimeout(function() {
+											jQuery('body').addClass('scrolling');
+										}, 500);
+									}
 								},
 								onLeave: function(index, nextIndex, direction) {
 									// reach =
@@ -412,22 +413,62 @@ function theme(options) {
 			}
 		});
 	};
+	this.tabs = function() {
+		var showTab = function(id) {
+			if (jQuery('#' + id).length > 0) {
+				var tab = jQuery('#' + id);
+				var tabs = tab.closest('.na-tabs');
+				tabs.find('.tab-content, .tab-nav').removeClass('active');
+				setTimeout(function() {
+					tab.addClass('active')
+						.closest('li')
+						.addClass('active');
+					jQuery('a[href="#' + id + '"]').addClass('active');
+				}, 400);
+			}
+		};
+		jQuery(window).on('hashchange', function(e) {
+			var hash = window.location.hash.replace(/^#!/, '');
+			if (hash) {
+				var path = hash.split('/');
+				if (path[0] == 'tabs') {
+					showTab(path[1]);
+				}
+			}
+		});
+	};
 	this.escapeRegExp = function(str) {
 		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
 	};
 	this.load();
 }
+
+var threshold = 5;
+var seconds = new Date().getTime() / 1000;
+
 jQuery(window).load(function() {
+	var nseconds = new Date().getTime() / 1000;
+	var timeout = 10;
+	if (nseconds - seconds < threshold) {
+		timeout = Math.floor(threshold - (nseconds - seconds)) * 1000;
+	}
 	setTimeout(function() {
 		jQuery('body').removeClass('loading');
 		setTimeout(function() {
 			jQuery('body').addClass('loaded');
+			jQuery('.loading-overlay').remove();
 		}, 2000);
-	}, 2000);
-    var pos = jQuery(window).scrollTop();
-    if (pos > 10) {
-        jQuery('body').addClass('scrolling');
-    }
+	}, timeout);
+	// setTimeout(function() {
+	// 	jQuery('body').removeClass('loading');
+	// setTimeout(function() {
+	// 	jQuery('body').addClass('loaded');
+	// }, 2000);
+	// }, 2000);
+	var pos = jQuery(window).scrollTop();
+	if (pos > 10) {
+		jQuery('body').addClass('scrolling');
+	}
 });
 jQuery(document).ready(function() {
 	var n = new theme(options);
