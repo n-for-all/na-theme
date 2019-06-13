@@ -14,7 +14,6 @@ global $theme, $post;
  */
 $featured_image = $theme->get_post_thumbnail(null, 'full');
 ?>
-<h3 class="fixed page-fixed-title">THE ART OF LIVING, WELL</h3>
 <div class="inner-section <?php echo $featured_image? 'has-featured-image': ''; ?>">
 	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
 		<?php
@@ -31,7 +30,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 	<?php
 	$args = array(
 		'post_parent' => get_the_ID(),
-		'post_type'   => 'page',
+		'post_type'   => get_post_type(),
 		'posts_per_page' => -1,
 		'post_status' => 'publish',
 		'orderby'			=> 'menu_order',

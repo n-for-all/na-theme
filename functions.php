@@ -25,6 +25,40 @@
  * @since Twenty Fifteen 1.0
  */
 
+add_filter('pb-import-fields', function($fields) {
+	$xfields = [];
+	$xfields['_ignore'] = array(
+  	);
+	$xfields['_3d_url'] = array(
+      'title' => 'Product 3d Link',
+      'name' => '_3d_url',
+      'map_values' => array(
+      ),
+      'save' => function ($value, $product) {
+          update_post_meta($product->ID, '_3d_url', trim($value));
+      },
+  );
+	$xfields['_prescription_required'] = array(
+      'title' => 'Prescription Required',
+      'name' => '_prescription_required',
+      'map_values' => array(
+      ),
+      'save' => function ($value, $product) {
+          update_post_meta($product->ID, '_prescription_required', intval($value));
+      },
+  );
+	$xfields['_product_image_id'] = array(
+      'title' => 'Product Image ID',
+      'name' => '_product_image_id',
+      'map_values' => array(
+      ),
+      'save' => function ($value, $product) {
+          update_post_meta($product->ID, '_product_image_id', trim($value));
+      },
+  );
+	return array_merge($xfields, $fields);
+});
+
 define('NA_THEME_TEXT_DOMAIN', 'na_theme');
 
 /* Remove Extra <p> injection from wordpress */

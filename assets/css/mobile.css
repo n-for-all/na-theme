@@ -114,10 +114,6 @@ footer .widget {
     padding-top: 1px;
 }
 
-.navbar-default {
-    background-color: #fff !important;
-}
-
 .navbar-toggle, .navbar-default .navbar-toggle {
     margin-right: 0px;
     margin-bottom: 0px;
@@ -125,7 +121,6 @@ footer .widget {
 }
 
 .navbar-header {
-    background: #fff;
     float: none;
 }
 

@@ -6,6 +6,9 @@ class Na_Slider
         add_action('init', array(&$this, 'init'));
         add_action('wp_enqueue_scripts', array(&$this, 'scripts'));
         add_shortcode('slider', array(&$this, 'slider'));
+
+        add_filter('manage_slide_posts_columns', array(&$this, 'add_img_column'));
+        add_filter('manage_slide_posts_custom_column', array(&$this, 'manage_img_column'), 10, 2);
     }
     public function init()
     {
@@ -71,6 +74,16 @@ class Na_Slider
             $args
         );
     }
+    public function add_img_column($columns) {
+        $columns['img'] = 'Image';
+        return $columns;
+    }
+    public function manage_img_column($column_name, $post_id) {
+        if( $column_name == 'img' ) {
+            echo get_the_post_thumbnail($post_id, 'thumbnail');
+        }
+        return $column_name;
+    }
     public function scripts()
     {
         wp_enqueue_script('na-slider-swipe', get_template_directory_uri() . '/inc/slider/js/hammer.min.js', array( 'jquery' ), '1.0.0', true);
@@ -85,8 +98,10 @@ class Na_Slider
             'container' => 'container',
             'height' => '100%',
             'type' => '',
+            'max' => false,
             'vertical' => 0,
             'autoplay' => 0,
+            'thumbnails' => 0,
             'bullets' => 0,
             'min-width' => 0,
             'columns' => 1
@@ -116,6 +131,7 @@ class Na_Slider
                 'autoplay' => $atts['autoplay'],
                 'container' => $atts['container'],
                 'bullets' => $atts['bullets'],
+                'thumbnails' => $atts['thumbnails'],
                 'columns' => $atts['columns'],
                 'vertical' => $atts['vertical'],
                 'minWidth' => $atts['min-width'] > 0 ? $atts['min-width'] : 200,
@@ -125,39 +141,42 @@ class Na_Slider
             if ($atts['type'] == 'mosaic') {
                 for ($i = 0; $i < count($slides);  $i = $i + 2):
                     $slide1 = $slides[$i];
-                $slide2 = $slides[$i+1];
-                $image1 = '';
-                $image2 = '';
-                if (has_post_thumbnail($slide1->ID)) {
-                    $image1 = wp_get_attachment_image_src(get_post_thumbnail_id($slide1->ID), "full")[0];
-                }
-                if (has_post_thumbnail($slide2->ID)) {
-                    $image2 = wp_get_attachment_image_src(get_post_thumbnail_id($slide2->ID), "full")[0];
-                }
-			    $_slides[] = array('content' => '<div class="na-slide-inner na-slider-inner1" style="background:url('.$image1.') no-repeat top center / cover;width:100%">
-						<div class="na-slide-text">
-							'.apply_filters('the_content', $slide1->post_content).'
-						</div>
-					</div>
-					<div class="na-slide-inner na-slider-inner2" style="background:url('.$image2.') no-repeat top center / cover;width:100%">
-						<div class="na-slide-text">
-						     '.apply_filters('the_content', $slide2->post_content).'
-						</div>
-					</div>', 'post' => $slide);
+                    $slide2 = $slides[$i+1];
+                    $image1 = '';
+                    $image2 = '';
+                    if (has_post_thumbnail($slide1->ID)) {
+                        $image1 = wp_get_attachment_image_src(get_post_thumbnail_id($slide1->ID), "full")[0];
+                    }
+                    if (has_post_thumbnail($slide2->ID)) {
+                        $image2 = wp_get_attachment_image_src(get_post_thumbnail_id($slide2->ID), "full")[0];
+                    }
+    			    $_slides[] = array('content' => '<div class="na-slide-inner na-slider-inner1" style="background:url('.$image1.') no-repeat top center / cover;width:100%">
+    						<div class="na-slide-text">
+    							'.apply_filters('the_content', $slide1->post_content).'
+    						</div>
+    					</div>
+    					<div class="na-slide-inner na-slider-inner2" style="background:url('.$image2.') no-repeat top center / cover;width:100%">
+    						<div class="na-slide-text">
+    						     '.apply_filters('the_content', $slide2->post_content).'
+    						</div>
+    					</div>', 'post' => $slide);
 				endfor;
             } else {
                 foreach ($slides as $slide):
-                $image = '';
-                if (has_post_thumbnail($slide->ID)) {
-                    $image = wp_get_attachment_image_src(get_post_thumbnail_id($slide->ID), "full")[0];
-                }
-				$_slides[] = array('content' => '<div style="background-image:url('.$image.')" class="na-slide-inner">
-                    <div class="'.$settings['container'].'">
-    					<div class="na-slide-text">
-    						'.apply_filters('the_content', $slide->post_content).'
+                    $image = '';
+                    if (has_post_thumbnail($slide->ID)) {
+                        $image = wp_get_attachment_image_src(get_post_thumbnail_id($slide->ID), "full")[0];
+                    }
+    				$_slides[] = array('content' => '<div style="background-image:url('.$image.')" class="na-slide-inner">
+                        <div class="'.$settings['container'].'">
+        					<div class="na-slide-text">
+        						'.apply_filters('the_content', $slide->post_content).'
+        					</div>
     					</div>
-					</div>
-				</div>', 'post' => $slide);
+    				</div>', 'post' => $slide);
+                    if($atts['max'] && $atts['max'] < count($_slides)){
+                        break;
+                    }
                 endforeach;
             }
         }
@@ -172,12 +191,16 @@ class Na_Slider
             if($settings['type'] == 'circular'){
                 $settings['autoplay'] = false;
             }
+            if (isset($settings['thumbnails']) && $settings['thumbnails']){
+                $settings['sync'] = $id.'_thumbnails';
+            }
             ?>
 		<script>
 			if(typeof(slider_settings) == 'undefined'){
 				var slider_settings = [];
 			}
 			slider_settings['<?php echo $id; ?>'] = <?php echo json_encode((array)$settings); ?>;
+			slider_settings['<?php echo $id; ?>_thumbnails'] = <?php echo json_encode(array('columns' => 6, 'minWidth' => 50, 'height' => 'w15%')); ?>;
 		</script>
 		<div id="<?php echo $id; ?>" class="na-slider-wrapper na-slider-<?php echo $settings['vertical'] != 0 ? 'vertical': 'horizontal'; ?> na-<?php echo $settings['type'] != '' ? $settings['type']: 'normal'; ?>" data-slider="<?php echo $id; ?>">
             <?php if($settings['type'] == 'circular'): ?>
@@ -234,7 +257,27 @@ class Na_Slider
                 </ul>
 			<?php
             } ?>
+
 		</div>
+        <?php if (isset($settings['thumbnails']) && $settings['thumbnails']  && count($slides) > 1) { ?>
+            <div class="na-slider-thumbnails">
+                <div id="<?php echo $id; ?>_thumbnails" class="na-slider-wrapper na-slider-<?php echo $settings['vertical'] != 0 ? 'vertical': 'horizontal'; ?> na-<?php echo $settings['type'] != '' ? $settings['type']: 'normal'; ?>" data-slider="<?php echo $id; ?>_thumbnails">
+                    <div style="height:50px" class="na-slider">
+                        <ul class="na-slides">
+                            <?php
+                            foreach ($slides as $slide):
+                                 ?>
+                                <li class="na-slide na-slide-<?php echo $slide['post']->ID; ?>">
+                                     <?php echo $slide['content']; ?>
+                                </li>
+                            <?php endforeach;
+                             ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        <?php
+        } ?>
 		<?php
             return ob_get_clean();
         }

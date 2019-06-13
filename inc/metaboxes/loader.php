@@ -418,7 +418,7 @@ abstract class NA_METABOXES {
 			$meta_name = "_meta_na_{$name}";
 		}
 		if($a = get_post_meta($post_id, $meta_name, true)){
-			if($group != ""){
+			if($group != "" &&  isset($a[$name])){
 				$a = $a[$name];
 			}
 			if(is_array($a)){

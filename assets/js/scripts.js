@@ -452,19 +452,18 @@ jQuery(window).load(function() {
 	if (nseconds - seconds < threshold) {
 		timeout = Math.floor(threshold - (nseconds - seconds)) * 1000;
 	}
-	setTimeout(function() {
-		jQuery('body').removeClass('loading');
-		setTimeout(function() {
-			jQuery('body').addClass('loaded');
-			jQuery('.loading-overlay').remove();
-		}, 2000);
-	}, timeout);
+
 	// setTimeout(function() {
 	// 	jQuery('body').removeClass('loading');
 	// setTimeout(function() {
 	// 	jQuery('body').addClass('loaded');
 	// }, 2000);
 	// }, 2000);
+	jQuery('body').removeClass('loading');
+	setTimeout(function() {
+		jQuery('body').addClass('loaded');
+		jQuery('.loading-overlay').remove();
+	}, 2000);
 	var pos = jQuery(window).scrollTop();
 	if (pos > 10) {
 		jQuery('body').addClass('scrolling');
@@ -472,4 +471,11 @@ jQuery(window).load(function() {
 });
 jQuery(document).ready(function() {
 	var n = new theme(options);
+	setTimeout(function() {
+		jQuery('body').removeClass('loading');
+		setTimeout(function() {
+			jQuery('body').addClass('loaded');
+			jQuery('.loading-overlay').remove();
+		}, 2000);
+	}, 4000);
 });

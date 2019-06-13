@@ -230,9 +230,9 @@ add_action('parse_query', function (&$query) {
     if (!is_admin() || !is_home() || !is_single()) {
         if ($query->is_main_query() && $query->is_archive()) {
             $queried_object = get_queried_object();
-            $term_id = $queried_object->term_id;
+            $term_id = isset($queried_object->term_id) ? $queried_object->term_id: 0;
             $tax_query = [];
-            if ($queried_object && 0 == $queried_object->parent) {
+            if ($queried_object && isset($queried_object->parent) && 0 == $queried_object->parent) {
                 $query->set('posts_per_page', 9);
                 $query->query_vars['product_cat'] = '';
                 unset($query->query_vars['product_cat']);
@@ -253,5 +253,4 @@ add_action('parse_query', function (&$query) {
         }
     }
 }, 1);
-
 ?>

@@ -60,6 +60,7 @@ function Na_Slider(element, settings) {
         var defaults = {
             type: "normal",
             pagination: 0,
+            initial: 0,
             columns: 1,
             autoplay: 0,
             vertical: 0,
@@ -94,6 +95,7 @@ function Na_Slider(element, settings) {
         this.slides = this.wrapper.find(".na-slider>ul>li");
         this.nav = this.wrapper.find(".na-slider-nav li > a");
         this.bullet_nav = this.wrapper.find(".na-slider-bullets li > a");
+        this.check3d();
         if (this.slides.length >= 1) {
             if (this.settings.columns > this.slides.length) {
                 this.settings.columns = this.slides.length;
@@ -105,6 +107,8 @@ function Na_Slider(element, settings) {
             this.active(0);
         }
         this.navClass();
+        var _this = this;
+        setTimeout(function() { _this.wrapper.trigger('ready') }, 100);
     };
     this.circularNav = function() {
         var nav = this.wrapper.find("#circular-nav");
@@ -175,10 +179,20 @@ function Na_Slider(element, settings) {
                 height = jQuery(window).height();
                 break;
             default:
-                height = this.settings.height.replace("px", "");
+                if(this.settings.height.indexOf('%') > 0){
+                    if(this.settings.height.indexOf('w') == 0){
+                        height = Math.floor(parseInt(this.settings.height.replace("%", "").replace("w", ""), 10)/100 * jQuery(window).width());
+                    }else{
+                        height = Math.floor(parseInt(this.settings.height.replace("%", ""), 10)/100 * jQuery(window).height());
+                    }
+                }else{
+                    height = this.settings.height.replace("px", "");
+                }
                 break;
         }
         var width = Math.round(((this.wrapper.width() / this.columns) * 10) / 10);
+        var aspect = height/width;
+        var oColumns = this.columns;
         if (this.settings.minWidth > 0 && this.columns > 1) {
             while (width < this.settings.minWidth) {
                 this.columns = this.columns - 1;
@@ -276,7 +290,7 @@ function Na_Slider(element, settings) {
         // this.scroll = this.slider.scroller.scrollLeft;
         this.direction = -1;
         this.current.index = 0;
-        this.to(0);
+        this.to(this.settings.initial);
         //trigger the events, this can be used to create thubnail slider
         this.wrapper.trigger("load-slides", [this.slides, this.current.index]);
     };
@@ -315,6 +329,7 @@ function Na_Slider(element, settings) {
         this.scroll = true;
         this.direction = this.current.index >= i ? -1 : 1;
         this.current.index = i;
+        this.pause = true;
         this.navClass();
     };
 
@@ -327,7 +342,7 @@ function Na_Slider(element, settings) {
             this.to(this.current.index + 1);
         } else if (this.settings.loop) {
             this.fade = true;
-            this.to(0);
+            this.to(this.settings.initial);
         }
     };
     this.prevPage = function() {
@@ -352,10 +367,14 @@ function Na_Slider(element, settings) {
         this.navClass();
     };
     this.active = function(i) {
+        if(typeof i == 'undefined'){
+            return this.current.index;
+        }
         var _this = this;
+        _this.wrapper.trigger("active-slide", [i, _this.slides[i]]);
         this.nav.each(function(index, item) {
             if (i == index) {
-                _this.wrapper.trigger("active-slide", [index, _this.slides[index]]);
+
                 jQuery(item).addClass("active");
             } else {
                 jQuery(item).removeClass("active");
@@ -366,14 +385,18 @@ function Na_Slider(element, settings) {
         }
     };
     this.has3d = function() {
+        return this._has3d;
+    };
+    this.check3d = function() {
         var prefixes = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' ');
         var div = document.createElement('div');
         for(var i = 0; i < prefixes.length; i++) {
             if(div && div.style[prefixes[i]] !== undefined) {
-                return true;
+                this._has3d = true;
+                return;
             }
         }
-        return "WebKitCSSMatrix" in window && "m11" in new WebKitCSSMatrix();
+        this._has3d = "WebKitCSSMatrix" in window && "m11" in new WebKitCSSMatrix();
     };
     this.inform = function() {
         window.requestAnimationFrame(this.draw.bind(this));
@@ -407,6 +430,19 @@ function Na_Slider(element, settings) {
                 if (!this.slider || !this.slider.transform) {
                     return;
                 }
+                if (this.fade) {
+                    this.wrapper.addClass("fade-slider");
+                    setTimeout(function() {
+                        _this.inform();
+                        setTimeout(function() {
+                        _this.wrapper.removeClass("fade-slider");
+                        }, 300);
+                    }, 200);
+                    this.fade = false;
+
+                    return;
+                }
+                this.fade = false;
                 if (this.settings.vertical == 1) {
                     for (var t in transforms) {
                         this.slider.transform.style[t] = "translate3d(0px," + -1 * this.slide.height * this.current.index + "px,0px)";
@@ -416,15 +452,6 @@ function Na_Slider(element, settings) {
                         this.slider.transform.style[t] = "translate3d(" + -1 * this.slide.width * this.current.index + "px,0px,0px)";
                     }
                 }
-                for (var t in transitions) {
-                    if (this.fade) {
-                        this.slider.transform.style[t] = "none";
-                    } else {
-                        this.slider.transform.style[t] = "transform 1s ease";
-                    }
-                }
-                this.fade = false;
-                this.slider.transform.style[t];
                 this.visibility();
             } else {
                 if (this.slide.width - this.threshold > 0) {
@@ -445,9 +472,11 @@ function Na_Slider(element, settings) {
             clientY: 0
         };
         jQuery(document).ready(function() {
+            var keyhandle = false;
             _this.wrapper.mouseover(function(mouseMoveEvent) {
                 mousePosition.clientX = mouseMoveEvent.pageX;
                 mousePosition.clientY = mouseMoveEvent.pageY;
+                keyhandle = true;
             });
             jQuery(document).on("keydown", function(event) {
                 var divRect = _this.wrapper.get(0).getBoundingClientRect();
@@ -455,7 +484,8 @@ function Na_Slider(element, settings) {
                     mousePosition.clientX >= divRect.left &&
                     mousePosition.clientX <= divRect.right &&
                     mousePosition.clientY >= divRect.top &&
-                    mousePosition.clientY <= divRect.bottom
+                    mousePosition.clientY <= divRect.bottom &&
+                    keyhandle
                 ) {
                     // Mouse is inside element.
                     event.preventDefault();
@@ -468,6 +498,9 @@ function Na_Slider(element, settings) {
                     }
                 }
                 return true;
+            });
+            _this.wrapper.mouseout(function(mouseMoveEvent) {
+                keyhandle = false;
             });
         });
         var hammertime = new Hammer(this.wrapper.get(0), {});
@@ -491,6 +524,14 @@ function Na_Slider(element, settings) {
             _this.next();
             return false;
         });
+        this.wrapper.find(".na-slide .inner-image, .na-slide .na-slide-inner").on("mouseover", function() {
+            _this.pause = true;
+            return false;
+        });
+        this.wrapper.find(".na-slide .inner-image, .na-slide .na-slide-inner").on("mouseleave", function() {
+            _this.pause = false;
+            return false;
+        });
         this.wrapper.find(".na-slider-bullets li a").on("click", function() {
             _this.pause = true;
             _this.to(jQuery(this).data("index"));
@@ -502,19 +543,26 @@ function Na_Slider(element, settings) {
             return false;
         });
 
-        if (this.settings.sync) {
-            var slider = jQuery("#" + this.settings.sync).data("na-slider");
-            if (slider) {
-                this.wrapper.on("active-slide", function(event, index) {
-                    console.log(slider);
-                    slider.to(index);
+        this.wrapper.find(">.na-slider>ul>li").on("click", function() {
+            _this.wrapper.trigger('click-slide', [jQuery(this).index()]);
+        });
+
+        if (this.settings.sync && this.settings.sync != '') {
+            jQuery("#" + _this.settings.sync).on('ready', function(){
+                var slider = jQuery("#" + _this.settings.sync).data("na-slider");
+                _this.wrapper.on("active-slide", function(event, index) {
+                    if(slider && slider.active() != index) slider.to(index);
                     return false;
                 });
-                this.wrapper.find(">li").on("click", function() {
-                    slider.to(jQuery(this).index());
+                jQuery(this).on("active-slide", function(event, index) {
+                    if(_this.active() != index) _this.to(index);
                     return false;
                 });
-            }
+                jQuery(this).on("click-slide", function(event, index) {
+                    if(_this.active() != index) _this.to(index);
+                    return false;
+                });
+            });
         }
 
         if (this.nav.length > 0) {
@@ -548,6 +596,7 @@ function Na_Slider(element, settings) {
         me: this
     };
     jQuery(window).resize(function() {
+        _this.me.fade = true;
         _this.me.load();
     });
     this.initialize();

@@ -12,7 +12,7 @@
 
     <!-- Start footer -->
     <footer class="site-footer fp-auto-height">
-        <?php include('inc/sidebars/footer.php'); ?>
+        <?php include(locate_template('/inc/sidebars/footer.php')); ?>
         <section class="subfooter">
             <div class="container">
                 <div class="row">
