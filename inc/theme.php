@@ -564,7 +564,7 @@ class Na_Theme {
 			$category = $cat->term_id;
 		}
 	    // get the thumbnail id using the queried category term_id
-	    $thumbnail_id = get_woocommerce_term_meta( $cat->term_id, $size, true );
+	    $thumbnail_id = get_term_meta( $cat->term_id, $size, true );
 		if(!$thumbnail_id){
 			return $default;
 		}
