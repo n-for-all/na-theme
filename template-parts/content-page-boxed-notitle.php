@@ -6,13 +6,13 @@
  * @subpackage Twenty_Sixteen
  * @since Twenty Sixteen 1.0
  */
-global $theme, $post;
+global $naTheme, $post;
 ?>
 <?php
 /**
  * Featured Image
  */
-$featured_image = $theme->get_post_thumbnail(null, 'full');
+$featured_image = $naTheme->get_post_thumbnail(null, 'full');
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -24,7 +24,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 
 
 
-	<div class="<?php $theme->classes('content', 'entry-content'); ?>  <?php echo $theme->get_template_layout(get_the_ID(), 'container'); ?>">
+	<div class="<?php $naTheme->classes('content', 'entry-content'); ?>  <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
 		<div class="entry-inner-content">
 			<?php
 			the_content();

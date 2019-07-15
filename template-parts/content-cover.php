@@ -6,8 +6,8 @@
  * @subpackage Twenty_Sixteen
  * @since Twenty Sixteen 1.0
  */
-global $theme;
-$featured_image = $theme->get_post_thumbnail(null, 'full');
+global $naTheme;
+$featured_image = $naTheme->get_post_thumbnail(null, 'full');
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<?php if(function_exists('bcn_display') && false){ ?>
@@ -16,7 +16,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 		</div>
 	<?php } ?>
 
-	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
 		<?php
 		if($featured_image):
 		?>

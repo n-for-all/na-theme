@@ -14,15 +14,15 @@
  * @since Twenty Fifteen 1.0
  */
 
-global $theme, $post;
+global $naTheme, $post;
 
 $page = get_option( 'page_for_posts' );
-$featured_image = $theme->get_post_thumbnail($page ?$page:null , 'full');
+$featured_image = $naTheme->get_post_thumbnail($page ?$page:null , 'full');
 get_header(); ?>
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main blog-list" role="main">
-			<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+			<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
 				<?php
 				if($featured_image):
 				?>

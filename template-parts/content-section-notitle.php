@@ -7,8 +7,8 @@
  * @since Twenty Fifteen 1.0
  */
 
-global $theme, $_class, $post;
-$background = $theme->get_post_thumbnail(null, 'full');
+global $naTheme, $_class, $post;
+$background = $naTheme->get_post_thumbnail(null, 'full');
 ?>
 
 

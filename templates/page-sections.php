@@ -8,12 +8,12 @@
  *
  * @package WordPress
  */
-global $theme;
-$featured_image = $theme->get_post_thumbnail(null, 'full');
+global $naTheme;
+$featured_image = $naTheme->get_post_thumbnail(null, 'full');
 get_header(); ?>
     <div id="primary" class="content-area ">
         <main id="main" class="site-main" role="main">
-            <header class="<?php $theme->classes('header', 'entry-header'); ?>">
+            <header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
                 <?php
                 if($featured_image):
                 ?>
@@ -42,23 +42,23 @@ get_header(); ?>
 			);
 			$_children = get_posts( $args );
 			$i = 0;
-			global $_class, $theme;
+			global $_class, $naTheme;
 			foreach($_children as $post){
 				//print_r($post);
 				setup_postdata($post);
 				$_class = 'section ';
 				$_class .= $i % 2 == 0 ? 'even' : 'odd';
 				$_class .= " section-".$post->post_type;
-				$_class .= " ".$theme->get_template_part($post->ID, 'content-page-notitle');
+				$_class .= " ".$naTheme->get_template_part($post->ID, 'content-page-notitle');
 				$_class .= " subsection";
 
-                $background = $theme->get_post_thumbnail($post, 'full');
+                $background = $naTheme->get_post_thumbnail($post, 'full');
                 if($background){
                     $_class .= " has-post-thumbnail";
                 }
                 ?><section id="section-<?php echo $post->post_name; ?>" class="<?php echo $_class; ?>" style="<?php echo $background ? 'background-image:url('.$background.');': '' ?>">
-                    <div class="<?php echo $theme->get_template_layout($post->ID, 'container'); ?>">
-                        <?php get_template_part( 'template-parts/'.$theme->get_template_part($post->ID, 'content-page-notitle'));
+                    <div class="<?php echo $naTheme->get_template_layout($post->ID, 'container'); ?>">
+                        <?php get_template_part( 'template-parts/'.$naTheme->get_template_part($post->ID, 'content-page-notitle'));
                         if($i == 0){
                             ?>
                             <span class="scroll" title=""></span>

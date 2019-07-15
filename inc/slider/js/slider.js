@@ -372,8 +372,9 @@ function Na_Slider(element, settings) {
         }
         var _this = this;
         _this.wrapper.trigger("active-slide", [i, _this.slides[i]]);
+        var columns = this.columns;
         this.nav.each(function(index, item) {
-            if (i == index) {
+            if (index == Math.floor(i/columns)) {
 
                 jQuery(item).addClass("active");
             } else {
@@ -381,7 +382,7 @@ function Na_Slider(element, settings) {
             }
         });
         if(this.bullet_nav){
-            this.bullet_nav.removeClass('active').eq(i).addClass('active');
+            this.bullet_nav.removeClass('active').eq(Math.floor(i/columns)).addClass('active');
         }
     };
     this.has3d = function() {

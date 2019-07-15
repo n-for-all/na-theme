@@ -53,7 +53,7 @@ foreach ( array( 'term_description' ) as $filter ) {
     remove_filter( $filter, 'wp_kses_data' );
 }
 
-// initialize the main theme class @global $theme;
+// initialize the main theme class @global $naTheme;
 require get_template_directory() . '/inc/theme.php';
 
 //if( is_admin() ){

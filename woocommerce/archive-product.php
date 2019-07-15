@@ -16,22 +16,22 @@
  * @version     2.0.0
  */
 
-global $theme;
+global $naTheme;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 if(is_shop()){
 	$id = wc_get_page_id('shop');
-	$featured_image = $theme->get_post_thumbnail($id, 'full');
+	$featured_image = $naTheme->get_post_thumbnail($id, 'full');
 }else{
 	$id = wc_get_page_id('shop');
-	$featured_image = $theme->get_post_thumbnail($id, 'full');
-	$featured_image = $theme->get_woocommerce_archive_thumbnail(null, 'full', $featured_image);
+	$featured_image = $naTheme->get_post_thumbnail($id, 'full');
+	$featured_image = $naTheme->get_woocommerce_archive_thumbnail(null, 'full', $featured_image);
 }
 get_header( 'shop' ); ?>
 
 
-	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
 		<?php
 		if($featured_image):
 		?>

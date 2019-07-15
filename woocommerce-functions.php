@@ -11,7 +11,7 @@ if (!function_exists('woocommerce_template_loop_product_thumbnail')) {
             echo sprintf('<a href="%s" class="woocommerce-list-image" style="background-image:url(%s)" title="%s"></a>', get_the_permalink(), $props['src'], $props['title']
             );
         } elseif (wc_placeholder_img_src()) {
-            echo sprintf('<div class="woocommerce-list-image" style="background-image:url(%s)" title="%s"></div>', wc_placeholder_img_src(), ''
+            echo sprintf('<a href="%s" class="woocommerce-list-image no-image" style="background-image:url(%s)"></a>', get_the_permalink(), wc_placeholder_img_src()
             );
         }
     }
@@ -19,50 +19,6 @@ if (!function_exists('woocommerce_template_loop_product_thumbnail')) {
 
 add_filter('single_product_large_thumbnail_size', function ($size) {
     return 'full';
-});
-
-add_filter('default_checkout_billing_country', function ($_fields) {
-    return 'AE';
-});
-add_filter('default_checkout_shipping_country', function ($_fields) {
-    return 'AE';
-});
-add_filter('woocommerce_checkout_fields', function ($_fields) {
-    $fields = &$_fields['billing'];
-    $fields['billing_country'] = array_replace($fields['billing_country'], array(
-        'type' => 'select',
-        'options' => array(
-            'AE' => __('United Arab Emirates'),
-        ),
-        'class' => array('form-row-first', 'address-field', 'update_totals_on_change'),
-    ));
-    $billing_city = $fields['billing_city'] = array_replace($fields['billing_city'], array(
-        'type' => 'select',
-        'options' => array(
-            'Dubai' => __('Dubai'),
-            'Abu Dhabi' => __('Abu Dhabi', 'wps'),
-            'Ajman' => __('Ajman', 'wps'),
-            'Fujairah' => __('Fujairah', 'wps'),
-            'Ras al-Khaimah' => __('Ras al-Khaimah', 'wps'),
-            'Sharjah' => __('Sharjah', 'wps'),
-            'Umm al-Quwain' => __('Umm al-Quwain', 'wps'),
-        ),
-        'priority' => 45,
-        'class' => array('form-row-last', 'address-field'),
-    ));
-    unset($fields['billing_city']);
-    $fields = array_insert($fields, array('billing_city' => $billing_city), 'billing_country');
-
-    unset($fields['billing_state']);
-    unset($fields['billing_postcode']);
-    unset($fields['billing_company']);
-
-    $fields['billing_phone']['required'] = true;
-
-    $shipping_fields = &$_fields['shipping'];
-    unset($shipping_fields['shipping_state']);
-
-    return $_fields;
 });
 
 function array_insert($arr, $insert, $_position)
@@ -253,4 +209,21 @@ add_action('parse_query', function (&$query) {
         }
     }
 }, 1);
+
+remove_action( 'woocommerce_shop_loop_item_title','woocommerce_template_loop_product_title', 10 );
+add_action('woocommerce_shop_loop_item_title', function () {
+    echo sprintf('<h2 class="woocommerce-loop-product__title" title="%s"><a href="%s">%s</a></h2>', esc_html(get_the_title()), get_the_permalink(), get_the_title());
+}, 10 );
+
+// a fix for photswipe when the image data is not read correctly
+add_filter('woocommerce_gallery_image_html_attachment_image_params', function($imageParams, $attachment_id, $image_size, $main_image){
+    if($imageParams['data-large_image_width'] == 0 || $imageParams['data-large_image_height'] == 0){
+        list( $width, $height ) = @getimagesize( $imageParams['data-src'] );
+        $imageParams['data-large_image_width'] = $width > 0 ? $width: 1000;
+        $imageParams['data-large_image_height'] = $height > 0 ? $height: 1000;
+    }
+    return $imageParams;
+}, 10, 4);
+
+
 ?>

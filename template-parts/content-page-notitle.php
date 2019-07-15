@@ -6,13 +6,13 @@
  * @subpackage Twenty_Sixteen
  * @since Twenty Sixteen 1.0
  */
-global $theme, $post;
+global $naTheme, $post;
 ?>
 <?php
 /**
  * Featured Image
  */
-$featured_image = $theme->get_post_thumbnail(null, 'full');
+$featured_image = $naTheme->get_post_thumbnail(null, 'full');
 
 
 

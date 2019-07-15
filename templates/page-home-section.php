@@ -28,36 +28,36 @@ get_header(); ?>
 			$_children = get_posts( $args );
 			$i = 0;
             $start_scroller = false;
-			global $_class, $theme;
+			global $_class, $naTheme;
 			foreach($_children as $post){
 				//print_r($post);
 				setup_postdata($post);
 				$_class = 'section ';
 				$_class .= $i % 2 == 0 ? 'even' : 'odd';
 				$_class .= " section-scroll section-".$post->post_type;
-				$_class .= " ".$theme->get_template_part($post->ID, 'content-page-notitle');
+				$_class .= " ".$naTheme->get_template_part($post->ID, 'content-page-notitle');
 				$_class .= " subsection";
 
                 $extraClass = get_post_meta($post->ID, '_wp_section_class', true);
                 if($extraClass){
                     $_class .= " ".$extraClass;
                 }
-                $background = $theme->get_post_thumbnail($post, 'full');
+                $background = $naTheme->get_post_thumbnail($post, 'full');
                 if($background){
                     $_class .= " has-post-thumbnail";
                 }
                 ?>
-                <?php if($theme->homepage_scrolling != ""): //scrollmagic manual
-                    if(($i == 1 || $theme->homepage_scrolling == 1) && !$start_scroller):
+                <?php if($naTheme->homepage_scrolling != ""): //scrollmagic manual
+                    if(($i == 1 || $naTheme->homepage_scrolling == 1) && !$start_scroller):
                         $start_scroller = true;
                     ?>
-                    <div id="scroll-container" class="scrolling-container--<?php echo $theme->homepage_scrolling; ?>">
-                    <div id="inner-scroll" class="scrolling-style-<?php echo $theme->homepage_scrolling; ?>">
+                    <div id="scroll-container" class="scrolling-container--<?php echo $naTheme->homepage_scrolling; ?>">
+                    <div id="inner-scroll" class="scrolling-style-<?php echo $naTheme->homepage_scrolling; ?>">
                     <?php endif; ?>
                 <?php endif; ?>
-                <section data-index="<?php echo $i; ?>" id="section-<?php echo $theme->get_section_id($post->ID, $post->post_name); ?>" class="<?php echo $_class; ?>" style="<?php echo $background ? 'background-image:url('.$background.');': '' ?>">
-                    <div class="full-height <?php echo $theme->get_template_layout($post->ID, 'container'); ?>">
-                        <?php get_template_part( 'template-parts/'.$theme->get_template_part($post->ID, 'content-page-notitle'));
+                <section data-index="<?php echo $i; ?>" id="section-<?php echo $naTheme->get_section_id($post->ID, $post->post_name); ?>" class="<?php echo $_class; ?>" style="<?php echo $background ? 'background-image:url('.$background.');': '' ?>">
+                    <div class="full-height <?php echo $naTheme->get_template_layout($post->ID, 'container'); ?>">
+                        <?php get_template_part( 'template-parts/'.$naTheme->get_template_part($post->ID, 'content-page-notitle'));
                         ?>
                     </div>
                 </section>
@@ -65,14 +65,14 @@ get_header(); ?>
                 $i ++;
 			}
             if($start_scroller):
-                if($theme->homepage_scrolling == 4):
+                if($naTheme->homepage_scrolling == 4):
                     ?>
                     <section class="section-placeholder"></section>
                 <?php endif; ?>
                 </div>
                 </div>
             <?php endif;
-            if($theme->show_scroll_icon == 1){
+            if($naTheme->show_scroll_icon == 1){
                 ?>
                 <span class="mouse"><span class="scroll" title=""></span></span>
                 <?php

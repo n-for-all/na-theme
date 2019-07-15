@@ -6,7 +6,7 @@
  * @subpackage Twenty_Fifteen
  * @since Twenty Fifteen 1.0
  */
-global $theme;
+global $naTheme;
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>

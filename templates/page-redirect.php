@@ -9,7 +9,7 @@
  *
  * @package WordPress
  */
-global $theme, $post;
+global $naTheme, $post;
 while ( have_posts() ) : the_post();
     $parent = get_the_ID();
     $args = array(

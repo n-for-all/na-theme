@@ -1,0 +1,7 @@
+.woocommerce-column--billing-address{
+    display: none;
+}
+
+.woocommerce .col2-set .col-2.woocommerce-column--shipping-address, .woocommerce-page .col2-set .col-2.woocommerce-column--shipping-address{
+        float: none;
+}

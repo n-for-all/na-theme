@@ -215,8 +215,8 @@ class TwitterClient
         }
     }
     public function twitter_shortcode($atts){
-        global $theme;
-        if($theme->twitter_key == "" || $theme->twitter_secret == ""){
+        global $naTheme;
+        if($naTheme->twitter_key == "" || $naTheme->twitter_secret == ""){
             throw new Exception('Twitter must be configured before using the shortcode, Please go to Appearence->Customize->Social API\'s to configure twitter');
         }
         ob_start();
@@ -346,9 +346,9 @@ class TwitterClient
         return ob_get_clean();
     }
 }
-global $theme;
-if($theme->twitter_key != "" && $theme->twitter_secret != ""){
-    $client = new TwitterClient($theme->twitter_key, $theme->twitter_secret, function($tokens){
+global $naTheme;
+if($naTheme->twitter_key != "" && $naTheme->twitter_secret != ""){
+    $client = new TwitterClient($naTheme->twitter_key, $naTheme->twitter_secret, function($tokens){
         update_option('twitter_tokens', $tokens);
         return $tokens;
     });

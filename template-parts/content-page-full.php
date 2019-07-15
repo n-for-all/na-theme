@@ -6,16 +6,16 @@
  * @subpackage Twenty_Sixteen
  * @since Twenty Sixteen 1.0
  */
-global $theme, $post;
+global $naTheme, $post;
 ?>
 <?php
 /**
  * Featured Image
  */
-$featured_image = $theme->get_post_thumbnail(null, 'full');
+$featured_image = $naTheme->get_post_thumbnail(null, 'full');
 ?>
 <div class="inner-section <?php echo $featured_image? 'has-featured-image': ''; ?>">
-	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
 		<?php
 		if($featured_image):
 		?>
@@ -39,7 +39,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 	$_children = get_posts( $args );
 	$i = 0;
 	$start_scroller = false;
-	global $_class, $theme;
+	global $_class, $naTheme;
 	if($_children && sizeof($_children) > 0){
 	foreach($_children as $post){
 		//print_r($post);
@@ -47,21 +47,21 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 		$_class = 'section ';
 		$_class .= $i % 2 == 0 ? 'even' : 'odd';
 		$_class .= " section-scroll section-".$post->post_type;
-		$_class .= " ".$theme->get_template_part($post->ID, 'content-page-notitle');
+		$_class .= " ".$naTheme->get_template_part($post->ID, 'content-page-notitle');
 		$_class .= " subsection";
 
 		$extraClass = get_post_meta($post->ID, '_wp_section_class', true);
 		if($extraClass){
 			$_class .= " ".$extraClass;
 		}
-		$background = $theme->get_post_thumbnail($post, 'full');
+		$background = $naTheme->get_post_thumbnail($post, 'full');
 		if($background){
 			$_class .= " has-post-thumbnail";
 		}
 		?>
-		<section data-index="<?php echo $i; ?>" id="section-<?php echo $theme->get_section_id($post->ID, $post->post_name); ?>" class="<?php echo $_class; ?>" style="<?php echo $background ? 'background-image:url('.$background.');': '' ?>">
-			<div class="full-height <?php echo $theme->get_template_layout($post->ID, 'container'); ?>">
-				<?php get_template_part( 'template-parts/'.$theme->get_template_part($post->ID, 'content-page-notitle'));
+		<section data-index="<?php echo $i; ?>" id="section-<?php echo $naTheme->get_section_id($post->ID, $post->post_name); ?>" class="<?php echo $_class; ?>" style="<?php echo $background ? 'background-image:url('.$background.');': '' ?>">
+			<div class="full-height <?php echo $naTheme->get_template_layout($post->ID, 'container'); ?>">
+				<?php get_template_part( 'template-parts/'.$naTheme->get_template_part($post->ID, 'content-page-notitle'));
 				?>
 			</div>
 		</section>
@@ -78,7 +78,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 				<?php  bcn_display(); ?>
 			</div>
 		<?php } ?>
-		<div class="entry-content <?php echo $theme->get_template_layout(get_the_ID(), 'container'); ?>">
+		<div class="entry-content <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
 			<div class="entry-inner-content">
 				<?php
 				the_content();

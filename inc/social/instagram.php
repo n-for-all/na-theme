@@ -137,7 +137,7 @@ class InstagramClient
     }
     public function setup( $wp_query )
     {
-        global $theme;
+        global $naTheme;
         if (get_query_var('instagram') == 1) {
             if (isset($_GET['code'])) {
                 $this->setCode($_GET['code']);
@@ -311,9 +311,9 @@ class InstagramClient
     }
     public function shortcode($atts)
     {
-        global $theme;
+        global $naTheme;
         $user_id = $atts['user_id'] ? $atts['user_id']: 'self';
-        if ($theme->instagram_key == "" || $theme->instagram_secret == "") {
+        if ($naTheme->instagram_key == "" || $naTheme->instagram_secret == "") {
             throw new Exception('Instagram must be configured before using the shortcode, Please go to Appearence->Customize->Social API\'s to configure instagram');
         }
         ob_start();
@@ -405,12 +405,12 @@ class InstagramClient
         return ob_get_clean();
     }
 }
-if ($theme->instagram_key != "" && $theme->instagram_secret != "") {
-    $theme->instagram = new InstagramClient($theme->instagram_key, $theme->instagram_secret, home_url('instagram/auth'), function ($tokens) {
+if ($naTheme->instagram_key != "" && $naTheme->instagram_secret != "") {
+    $naTheme->instagram = new InstagramClient($naTheme->instagram_key, $naTheme->instagram_secret, home_url('instagram/auth'), function ($tokens) {
         // print_r($tokens);
         $tokens->access_token = '2240657935.3a81a9f.78ce0fd7d2b54be6863b04f6ed0d09a2';
         update_option('instagram_tokens', $tokens);
         return $tokens;
     });
-    $theme->instagram->setAccessToken(get_option('instagram_tokens'));
+    $naTheme->instagram->setAccessToken(get_option('instagram_tokens'));
 }

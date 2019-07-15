@@ -9,13 +9,13 @@
  * @since 1.0
  * @version 1.0
  */
- global $theme, $post;
+ global $naTheme, $post;
 
- $featured_image = $theme->get_post_thumbnail(null , 'full');
+ $featured_image = $naTheme->get_post_thumbnail(null , 'full');
 get_header(); ?>
 
 <div class="wrap">
-	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
 		<?php
 		if($featured_image):
 		?>

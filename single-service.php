@@ -1,6 +1,6 @@
 <?php
 
-global $theme;
+global $naTheme;
 get_header(); ?>
 
 <div id="primary" class="content-area">

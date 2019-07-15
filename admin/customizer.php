@@ -35,8 +35,8 @@ class Na_Theme_Admin
 
     public function list_all_menu_css()
     {
-        $theme_root = get_template_directory();
-        $files_array = glob("$theme_root/assets/css/menu/*.css");
+        $naTheme_root = get_template_directory();
+        $files_array = glob("$naTheme_root/assets/css/menu/*.css");
         $x = array();
         foreach ($files_array as $key => &$value) {
             $x[basename($value)] = basename($value);
@@ -536,5 +536,5 @@ class Na_Theme_Admin
         ));
     }
 }
-global $theme_admin;
-$theme_admin = new Na_Theme_Admin();
+global $naTheme_admin;
+$naTheme_admin = new Na_Theme_Admin();

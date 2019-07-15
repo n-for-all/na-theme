@@ -16,8 +16,8 @@ function theme(options) {
 			var flip = false;
 			var widthPercent = 100 / count;
 			// console.log(this.options.scrolling);
-			switch (this.options.scrolling) {
-				case '2':
+			switch (parseInt(this.options.scrolling, 10)) {
+				case 2:
 					var slides = jQuery('#inner-scroll>section');
 					var count = slides.length;
 					if (count > 0) {
@@ -73,7 +73,7 @@ function theme(options) {
 						});
 					}
 					break;
-				case '3':
+				case 3:
 					var slides = jQuery('#inner-scroll>section');
 					var count = slides.length;
 					if (count > 0) {
@@ -88,16 +88,17 @@ function theme(options) {
 						// get all slides
 						// console.log(slides.get(i));
 						// create scene for every slide
+
 						for (var i = 0; i < slides.length; i++) {
 							new ScrollMagic.Scene({
 								triggerElement: slides.get(i),
 							})
-								.setPin(slides.get(i))
+								.setPin(slides.get(i), { pushFollowers: false })
 								.addTo(me.controller);
 						}
 					}
 					break;
-				case '4':
+				case 4:
 					var slides = jQuery('#inner-scroll>section');
 					var count = slides.length;
 					if (count > 0) {
@@ -164,7 +165,7 @@ function theme(options) {
 							.addTo(me.controller);
 					}
 					break;
-				case '5':
+				case 5:
 					var slides = jQuery('section.section');
 					var count = slides.length;
 					if (count > 0) {
@@ -217,7 +218,9 @@ function theme(options) {
 									if (index > 1) {
 										setTimeout(function() {
 											jQuery('body').addClass('scrolling');
-										}, 500);
+										}, 100);
+									}else {
+										jQuery('body').removeClass('scrolling');
 									}
 								},
 								onLeave: function(index, nextIndex, direction) {

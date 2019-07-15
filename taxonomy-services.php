@@ -24,7 +24,7 @@ $image = get_term_meta($term->term_id, 'image', true);
 get_header(); ?>
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main blog-list" role="main">
-				<header class="<?php $theme->classes('header', 'entry-header entry-header-main'); ?>">
+				<header class="<?php $naTheme->classes('header', 'entry-header entry-header-main'); ?>">
 					<?php
                     if ($image):
                         $src= wp_get_attachment_image_src($image, 'full');

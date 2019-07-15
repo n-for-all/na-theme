@@ -729,8 +729,8 @@ class Na_Theme {
 		echo $class;
 	}
     public function page_attributes_meta_box_template( $template, $post ){
-		$theme_root = get_template_directory() ;
-		$files_array = glob("$theme_root/template-parts/*.php");
+		$naTheme_root = get_template_directory() ;
+		$files_array = glob("$naTheme_root/template-parts/*.php");
 		$x = array();
 		foreach($files_array as $key => &$value){
 			$name = str_replace('.php', '', basename($value));
@@ -840,6 +840,11 @@ class Na_Theme {
 	public function enable_search($post_type){
 		$this->search[] = $post_type;
 	}
+	public function enable_preset($name){
+		if(file_exists(get_template_directory() . '/preset/'.$name.'/loader.php')){
+			require get_template_directory() . '/preset/'.$name.'/loader.php';
+		}
+	}
 	public function search_filter($query) {
 		if ($query->is_search && !is_admin() && !empty($this->search)) {
 			$query->set('post_type', $this->search);
@@ -891,25 +896,25 @@ class Na_Theme {
 	    return $title;
 	}
 }
-global $theme;
-$theme = new Na_Theme();
-
+global $naTheme;
+$naTheme = new Na_Theme();
 require get_template_directory() . '/inc/metaboxes/loader.php';
+require get_template_directory() . '/inc/user/loader.php';
 
-$theme->register('shortcodes', get_template_directory() . '/inc/shortcodes/shortcodes.php');
-$theme->register('twitter', get_template_directory() . '/inc/social/twitter.php');
-$theme->register('services', get_template_directory() . '/inc/services/loader.php');
-$theme->register('slider', get_template_directory() . '/inc/slider/loader.php');
-$theme->register('instagram', get_template_directory() . '/inc/social/instagram.php');
-$theme->register('team', get_template_directory() . '/inc/team/loader.php');
-$theme->register('case-studies', get_template_directory() . '/inc/case-studies/shortcode.php');
-$theme->register('carousel', get_template_directory() . '/inc/carousel/shortcode.php');
-$theme->register('testimonials', get_template_directory() . '/inc/testimonials/shortcode.php');
-$theme->register('posts', get_template_directory() . '/inc/posts/shortcodes.php');
-$theme->register('events', get_template_directory() . '/inc/events/loader.php');
-$theme->register('attachment', get_template_directory() . '/inc/attachment/loader.php');
-$theme->register('switcher', get_template_directory() . '/inc/switcher/loader.php');
-$theme->register('popup', get_template_directory() . '/inc/popup/loader.php');
+$naTheme->register('shortcodes', get_template_directory() . '/inc/shortcodes/shortcodes.php');
+$naTheme->register('twitter', get_template_directory() . '/inc/social/twitter.php');
+$naTheme->register('services', get_template_directory() . '/inc/services/loader.php');
+$naTheme->register('slider', get_template_directory() . '/inc/slider/loader.php');
+$naTheme->register('instagram', get_template_directory() . '/inc/social/instagram.php');
+$naTheme->register('team', get_template_directory() . '/inc/team/loader.php');
+$naTheme->register('case-studies', get_template_directory() . '/inc/case-studies/shortcode.php');
+$naTheme->register('carousel', get_template_directory() . '/inc/carousel/shortcode.php');
+$naTheme->register('testimonials', get_template_directory() . '/inc/testimonials/shortcode.php');
+$naTheme->register('posts', get_template_directory() . '/inc/posts/shortcodes.php');
+$naTheme->register('events', get_template_directory() . '/inc/events/loader.php');
+$naTheme->register('attachment', get_template_directory() . '/inc/attachment/loader.php');
+$naTheme->register('switcher', get_template_directory() . '/inc/switcher/loader.php');
+$naTheme->register('popup', get_template_directory() . '/inc/popup/loader.php');
 
-do_action('theme_init', $theme);
+do_action('theme_init', $naTheme);
 ?>

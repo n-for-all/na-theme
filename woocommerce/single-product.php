@@ -16,16 +16,16 @@
  * @version     1.6.4
  */
 
-global $theme;
+global $naTheme;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 $id = wc_get_page_id('shop');
-$featured_image = $theme->get_post_thumbnail($id, 'full');
+$featured_image = $naTheme->get_post_thumbnail($id, 'full');
 get_header( 'shop' ); ?>
 
-	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
 		<?php
 		if($featured_image):
 		?>

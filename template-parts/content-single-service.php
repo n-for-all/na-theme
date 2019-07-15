@@ -6,13 +6,13 @@
  * @subpackage Twenty_Sixteen
  * @since Twenty Sixteen 1.0
  */
-global $theme, $post;
+global $naTheme, $post;
 ?>
 <?php
 /**
  * Featured Image
  */
-$featured_image = $theme->get_post_thumbnail(null, 'full');
+$featured_image = $naTheme->get_post_thumbnail(null, 'full');
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -24,7 +24,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 	<?php
 } ?>
 
-	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
 		<?php
         if ($featured_image):
         ?>
@@ -35,7 +35,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 
 	</header><!-- .entry-header -->
 
-	<div class="<?php $theme->classes('content', 'entry-content'); ?> <?php echo $theme->get_template_layout(get_the_ID(), 'container'); ?>">
+	<div class="<?php $naTheme->classes('content', 'entry-content'); ?> <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
 			<div class="col-md-8 col-sm-8 col-xs-12">

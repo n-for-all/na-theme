@@ -7,13 +7,13 @@
  * @since Twenty Sixteen 1.0
  */
 
-global $theme, $post;
+global $naTheme, $post;
 ?>
 <?php
 /**
  * Featured Image
  */
-$featured_image = $theme->get_post_thumbnail(null, 'full');
+$featured_image = $naTheme->get_post_thumbnail(null, 'full');
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -23,7 +23,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 		</div>
 	<?php } ?>
 
-	<header class="<?php $theme->classes('header', 'entry-header'); ?>">
+	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
 		<?php
 		if($featured_image):
 		?>
@@ -34,7 +34,7 @@ $featured_image = $theme->get_post_thumbnail(null, 'full');
 		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 	</header><!-- .entry-header -->
 
-	<div class="<?php $theme->classes('content', 'entry-content'); ?>">
+	<div class="<?php $naTheme->classes('content', 'entry-content'); ?>">
 		<div class="entry-inner-content">
 			<?php
 			the_excerpt();
