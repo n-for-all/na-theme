@@ -21,7 +21,7 @@ class NaPreset_UAE{
     {
         add_filter( 'woocommerce_customer_meta_fields', array($this, 'woocommerce_customer_meta_fields'), 10, 1);
         add_filter( 'woocommerce_checkout_fields', array($this, 'woocommerce_checkout_fields'), 10, 1);
-        add_filter( 'woocommerce_address_to_edit', array($this, 'woocommerce_address_to_edit'), 10, 2);
+        add_filter( 'woocommerce_shipping_fields', array($this, 'woocommerce_shipping_fields'), 10, 2);
 
         add_filter( 'woocommerce_ship_to_different_address_checked', '__return_true');
         add_filter( 'woocommerce_checkout_posted_data' , array($this, 'woocommerce_checkout_posted_data'), 20 );
@@ -56,6 +56,7 @@ class NaPreset_UAE{
         ]);
 
         $defaults = [ 'label' => '', 'placeholder' => '', 'required' => 1 ,'class' => 'regular-text', 'description' => '' ];
+        $address['shipping_phone'] = array_replace($defaults, ['label' => 'Phone', 'description' => 'Phone number']);
         $address['shipping_building'] = array_replace($defaults, ['label' => 'House / Building', 'description' => 'House / Building Number']);
         $address['shipping_floor'] = array_replace($defaults, ['label' => 'Floor', 'description' => 'Floor number']);
         $address['shipping_directions'] = array_replace($defaults, ['type' => 'textarea', 'label' => 'Extra Directions for Delivery', 'description' => 'Extra Directions for Delivery', 'required' => false]);
@@ -65,6 +66,7 @@ class NaPreset_UAE{
     public function woocommerce_customer_object_updated_props($customer, $updated_props) {
         update_user_meta( $customer->get_id(), 'shipping_building', trim($_POST['shipping_building']) ) ;
         update_user_meta( $customer->get_id(), 'shipping_floor', trim($_POST['shipping_floor']) ) ;
+        update_user_meta( $customer->get_id(), 'shipping_phone', trim($_POST['shipping_phone']) ) ;
         update_user_meta( $customer->get_id(), 'shipping_directions', trim($_POST['shipping_directions']) ) ;
     }
     public function woocommerce_checkout_fields( $fields ) {
@@ -84,6 +86,7 @@ class NaPreset_UAE{
         ]);
 
         $defaults = [ 'label' => '', 'placeholder' => '', 'required' => 1 ,'class' => array ( 'form-row-wide','address-field') ];
+        $fields['shipping']['shipping_phone'] = array_replace($defaults, ['label' => '', 'placeholder' => 'Phone']);
         $fields['shipping']['shipping_building'] = array_replace($defaults, ['label' => '', 'placeholder' => 'House / Building']);
         $fields['shipping']['shipping_floor'] = array_replace($defaults, ['label' => '', 'placeholder' => 'Floor']);
         $fields['shipping']['shipping_directions'] = array_replace($defaults, ['type' => 'textarea', 'label' => 'Extra Directions for Delivery', 'placeholder' => 'Extra Directions for Delivery', 'required' => false]);
@@ -119,6 +122,7 @@ class NaPreset_UAE{
         $shipping_building = get_user_meta( wp_get_current_user()->ID, 'shipping_building', true);
         $shipping_floor = get_user_meta( wp_get_current_user()->ID, 'shipping_floor', true);
         $shipping_directions = get_user_meta( wp_get_current_user()->ID, 'shipping_directions', true);
+        $shipping_phone = get_user_meta( wp_get_current_user()->ID, 'shipping_phone', true);
 
         $address['shipping_address_1'] = array_replace($address['shipping_address_1'], ['label' => 'Address']);
         $address['shipping_city'] = array_replace($address['shipping_city'], [
@@ -135,8 +139,50 @@ class NaPreset_UAE{
                 'Umm al-Quwain' => 'Umm al-Quwain'
             ]
         ]);
+        $defaults = [ 'label' => '', 'placeholder' => '', 'required' => true,'class' => array ( 'form-row-wide','address-field') ];
+        $address['shipping_phone'] =  array_replace($defaults, ['label' => 'Phone', 'placeholder' => 'Phone', 'value' => $shipping_phone, 'validate'     => array( 'phone' )]);
+        $address['shipping_first_name'] =  array_replace($address['shipping_first_name'], ['placeholder' => $address['shipping_first_name']['label']]);
+        $address['shipping_last_name'] =  array_replace($address['shipping_last_name'], ['placeholder' => $address['shipping_last_name']['label']]);
 
-        $defaults = [ 'label' => '', 'placeholder' => '', 'required' => 1 ,'class' => array ( 'form-row-wide','address-field') ];
+        $address['shipping_building'] = array_replace($defaults, ['label' => 'House / Building', 'placeholder' => 'House / Building', 'value' => $shipping_building]);
+        $address['shipping_floor'] = array_replace($defaults, ['label' => 'Floor', 'placeholder' => 'Floor', 'value' => $shipping_floor]);
+        $address['shipping_directions'] = array_replace($defaults, ['type' => 'textarea', 'label' => 'Extra Directions for Delivery', 'placeholder' => 'Extra Directions for Delivery', 'required' => false, 'value' => $shipping_directions]);
+        // foreach($address as $key => &$value){
+        //     $value['placeholder'] = $value['label'];
+        //     $value['label'] = '';
+        // }
+        return $address;
+    }
+    public function woocommerce_shipping_fields( $address, $country ) {
+        unset($address['shipping_state']);
+        unset($address['shipping_postcode']);
+        unset($address['shipping_address_2']);
+
+        $shipping_building = get_user_meta( wp_get_current_user()->ID, 'shipping_building', true);
+        $shipping_floor = get_user_meta( wp_get_current_user()->ID, 'shipping_floor', true);
+        $shipping_directions = get_user_meta( wp_get_current_user()->ID, 'shipping_directions', true);
+        $shipping_phone = get_user_meta( wp_get_current_user()->ID, 'shipping_phone', true);
+
+        $address['shipping_address_1'] = array_replace($address['shipping_address_1'], ['label' => 'Address']);
+        $address['shipping_city'] = array_replace($address['shipping_city'], [
+            'type' => 'select',
+            'label' => 'City',
+            'options' => [
+                'dubai' => 'Dubai',
+                'Abu Dhabi' => 'Abu Dhabi',
+                'Sharjah' => 'Sharjah',
+                'Ajman' => 'Ajman',
+                'Ras al-Khaimah' =>
+                'Ras al-Khaimah',
+                'Fujairah' => 'Fujairah',
+                'Umm al-Quwain' => 'Umm al-Quwain'
+            ]
+        ]);
+        $defaults = [ 'label' => '', 'placeholder' => '', 'required' => true,'class' => array ( 'form-row-wide','address-field') ];
+        $address['shipping_phone'] =  array_replace($defaults, ['label' => 'Phone', 'placeholder' => 'Phone', 'value' => $shipping_phone, 'validate'     => array( 'phone' )]);
+        $address['shipping_first_name'] =  array_replace($address['shipping_first_name'], ['placeholder' => $address['shipping_first_name']['label']]);
+        $address['shipping_last_name'] =  array_replace($address['shipping_last_name'], ['placeholder' => $address['shipping_last_name']['label']]);
+
         $address['shipping_building'] = array_replace($defaults, ['label' => 'House / Building', 'placeholder' => 'House / Building', 'value' => $shipping_building]);
         $address['shipping_floor'] = array_replace($defaults, ['label' => 'Floor', 'placeholder' => 'Floor', 'value' => $shipping_floor]);
         $address['shipping_directions'] = array_replace($defaults, ['type' => 'textarea', 'label' => 'Extra Directions for Delivery', 'placeholder' => 'Extra Directions for Delivery', 'required' => false, 'value' => $shipping_directions]);
