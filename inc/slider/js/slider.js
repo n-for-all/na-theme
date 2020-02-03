@@ -596,7 +596,7 @@ function Na_Slider(element, settings) {
     var _this = {
         me: this
     };
-    jQuery(window).resize(function() {
+    jQuery(window).on(("onorientationchange" in window)? "orientationchange" : "resize", function() {
         _this.me.fade = true;
         _this.me.load();
     });
