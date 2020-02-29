@@ -3,7 +3,7 @@ class Na_Team extends NA_METABOXES
 {
     public function __construct()
     {
-        parent::__construct(array('team-member'), 'Team Member', 'normal', 'high') ;
+        parent::__construct(array('team-member'), 'Team Member', 'normal', 'high');
 
         $this->actions();
         $this->shortcodes();
@@ -30,14 +30,14 @@ class Na_Team extends NA_METABOXES
     }
     public function inline_scripts()
     {
-        ?>
+?>
         <script id="tmpl-team-member" type="text/template">
-        <?php include('template/popup.php'); ?>
+            <?php include(locate_template('/inc/team/template/popup.php')); ?>
         </script>
         <script type="text/javascript">
             var TeamSettings = <?php echo json_encode(array('url' => admin_url('admin-ajax.php'))); ?>;
         </script>
-        <?php
+    <?php
     }
     public function get_team_member()
     {
@@ -91,12 +91,12 @@ class Na_Team extends NA_METABOXES
             'show_ui'            => true,
             'show_in_menu'       => true,
             'query_var'          => true,
-            'rewrite'            => array( 'slug' => 'team-member' ),
+            'rewrite'            => array('slug' => 'team-member'),
             'capability_type'    => 'post',
             'has_archive'        => true,
             'hierarchical'       => true,
             'menu_position'      => null,
-            'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'page-attributes')
+            'supports'           => array('title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'page-attributes')
         );
 
         register_post_type('team-member', $args);
@@ -127,7 +127,7 @@ class Na_Team extends NA_METABOXES
             'show_admin_column'     => true,
             'update_count_callback' => '_update_post_term_count',
             'query_var'             => true,
-            'rewrite'               => array( 'slug' => 'team' ),
+            'rewrite'               => array('slug' => 'team'),
         );
 
         register_taxonomy('team', 'team-member', $args);
@@ -135,11 +135,20 @@ class Na_Team extends NA_METABOXES
     public function shortcode($atts)
     {
         $atts = shortcode_atts(array(
+            'autoplay' => false,
+            'bullets' => true,
+            'pagination' => false,
+            'columns' => '4',
+            'minWidth' => '0',
+            'vertical' => false,
+            'type' => 'carousel',
+            'height' => 'auto',
+            'slider' => '',
             'category' => '',
             'outer' => false,
             'columns' => '3'
         ), $atts, 'team-shortcode');
-        $categories = (array)explode(",", $atts['category']);
+        $categories = (array) explode(",", $atts['category']);
         $args = array(
             'post_type' => 'team-member',
             'posts_per_page' => '-1',
@@ -160,12 +169,12 @@ class Na_Team extends NA_METABOXES
                 ),
                 'orderby' => 'menu_order',
                 'order' => 'ASC'
-             );
+            );
         }
-        $output = "";
+        $output = [];
         $query = new WP_Query($args);
         if ($query->have_posts()) {
-            $output = '<ul class="na-team na-team-columns-'.$atts['columns'].'">';
+
             while ($query->have_posts()) {
                 $query->the_post();
                 $meta = $this->get_meta(get_the_ID(), 'team');
@@ -176,45 +185,61 @@ class Na_Team extends NA_METABOXES
                 }
                 $inner = '';
                 $outer = '';
-                if($atts['outer']){
+                if ($atts['outer']) {
                     $outer = '<span class="team-header">
-                        <span class="team-title">'.get_the_title().'</span>
-                        <span class="team-position">'.$meta['position'].'</span>
+                        <span class="team-title">' . get_the_title() . '</span>
+                        <span class="team-position">' . $meta['position'] . '</span>
                     </span>';
-                }else{
+                } else {
                     $inner = '<span class="team-header">
-                        <span class="team-title">'.get_the_title().'</span>
-                        <span class="team-position">'.$meta['position'].'</span>
+                        <span class="team-title">' . get_the_title() . '</span>
+                        <span class="team-position">' . $meta['position'] . '</span>
                     </span>';
                 }
-                $output .= '<li>
-                <div class="team-inner">
-                    <a href="#!team/'.get_the_ID().'" data-id="'.get_the_ID().'" class="team-image team-button" style="'.implode(";", $style).'">
-                        '.$inner.'
-                    </a>
-                    '.$outer.'
-                    <div class="team-content">'.get_the_excerpt().'</div>
-                </div>
-                </li>';
+                $has_content = trim(get_the_content()) != '';
+                $link =  sprintf('<a href="%s" data-id="%s" class="team-image team-button" style="%s">%s</a>', $has_content ? '#!team/' . get_the_ID() : '#!', get_the_ID(), implode(";", $style), $inner);
+                $output[] = sprintf('
+                <div class="team-inner %s">%s%s
+                    <div class="team-content">%s</div>
+                </div>', $has_content ? '' : 'no-content', $link, $outer, get_the_excerpt());
             }
-            $output .= '</ul>';
         }
         wp_reset_postdata();
-        return $output;
+        if ($atts['slider'] == 1) {
+            global $slider;
+            $settings = array(
+                'autoplay' => $atts['autoplay'],
+                'bullets' => $atts['bullets'],
+                'pagination' => $atts['pagination'],
+                'columns' => $atts['columns'],
+                'minWidth' => $atts['min-width'],
+                'vertical' => $atts['vertical'],
+                'class' => sprintf("na-team na-team-columns-%s", $atts['columns']),
+                'type' => 'carousel',
+                'height' => $atts['height']
+            );
+            $slides = [];
+            foreach ($output as $value) {
+                $slides[] = ['content' => $value];
+            }
+            return $slider->addSlider($slides, $settings);
+        }
+        return $output = sprintf('<ul class="na-team na-team-columns-%s">%s</ul>', $atts['columns'], '<li>' . implode('</li><li>', $output) . '</li>');
     }
     public function show_metabox($post)
     {
-        ?>
-		<table class="form-table">
-			<tbody>
-				<tr class="form-field form-required term-name-wrap">
-					<th scope="row"><label for="name">Position</label></th>
-					<td><?php $this->_metabox_text($post->ID, 'position', 'team'); ?>
-					<p class="description">The team member position.</p></td>
-				</tr>
-			</tbody>
-		</table>
-		<?php
+    ?>
+        <table class="form-table">
+            <tbody>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Position</label></th>
+                    <td><?php $this->_metabox_text($post->ID, 'position', 'team'); ?>
+                        <p class="description">The team member position.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+<?php
     }
 }
 new Na_Team();

@@ -146,8 +146,6 @@ class Carousels_Shortcode extends NA_METABOXES
         if ($query->have_posts()) {
             while ($query->have_posts()) {
                 $query->the_post();
-                $meta = $this->get_meta(get_the_ID(), 'carousels');
-                $style = array();
                 $inner = '';
                 if (has_post_thumbnail()) {
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');

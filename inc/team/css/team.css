@@ -36,7 +36,11 @@ ul.na-team:after {
     position: relative;
 }
 
-.na-team>li>.team-inner:hover:after {
+.na-team>li>.team-inner.no-content a{
+    cursor: default;
+}
+
+.na-team>li>.team-inner:not(.no-content):hover:after {
     color: rgba(25, 39, 55, 0.3);
 }
 .na-team>li>.team-inner:after {
@@ -70,7 +74,7 @@ ul.na-team:after {
     padding-bottom: 5px;
 }
 
-.na-team>li:hover>.team-inner {
+.na-team>li:hover>.team-inner:not(.no-content) {
     transform: translateY(-2px);
     box-shadow: 0px 1px 10px #eee;
 }

@@ -93,8 +93,8 @@ class Na_Theme_Admin
             'type' => 'radio',
             'choices' => array(
                 '' => 'Normal',
-                'navbar-fixed-top' => 'Fixed Top',
-                'navbar-fixed-bottom' => 'Fixed Bottom',
+                'fixed-top' => 'Fixed Top',
+                'fixed-bottom' => 'Fixed Bottom',
             ),
             'default' => '',
             'priority' => 5, // Within the section.

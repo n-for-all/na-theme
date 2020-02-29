@@ -225,7 +225,7 @@ class Events_Shortcode extends NA_METABOXES
                 'tax_query' => array(
                     array(
                         'taxonomy' => 'events',
-                        'field' => $field_type,
+                        'field' => 'term_id',
                         'terms' => $categories,
                     ),
                 ),

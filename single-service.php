@@ -19,8 +19,8 @@ get_header(); ?>
 
 			// End of the loop.
 
-			$category = get_the_terms( get_the_ID(), 'services' );
-			if($category && sizeof($category) > 0){
+            $category = get_the_terms( get_the_ID(), 'services' );
+			if(!is_wp_error($category) && $category && sizeof($category) > 0){
 				$args = array(
 					'exclude' => get_the_ID(),
 					'post_type' => 'service',

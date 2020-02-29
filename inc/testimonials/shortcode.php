@@ -3,7 +3,7 @@ class Testimonials_Shortcode extends NA_METABOXES
 {
     public function __construct()
     {
-        parent::__construct(array('testimonial'), 'Testimonials Member', 'normal', 'high') ;
+        parent::__construct(array('testimonial'), 'Testimonials Member', 'normal', 'high');
 
         $this->actions();
         $this->shortcodes();
@@ -43,11 +43,11 @@ class Testimonials_Shortcode extends NA_METABOXES
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
                 }
                 $pst = array(
-            'title' => get_the_title(),
-            'content' => get_the_content(),
-            'image' => $image ? $image[0] : '',
-            'meta'  => $this->get_meta(get_the_ID(), 'testimonials')
-          );
+                    'title' => get_the_title(),
+                    'content' => get_the_content(),
+                    'image' => $image ? $image[0] : '',
+                    'meta'  => $this->get_meta(get_the_ID(), 'testimonials')
+                );
                 $output = array('status' => 'success', 'post' => $pst);
             }
         }
@@ -81,12 +81,12 @@ class Testimonials_Shortcode extends NA_METABOXES
             'show_ui'            => true,
             'show_in_menu'       => true,
             'query_var'          => true,
-            'rewrite'            => array( 'slug' => 'testimonial' ),
+            'rewrite'            => array('slug' => 'testimonial'),
             'capability_type'    => 'post',
             'has_archive'        => true,
             'hierarchical'       => true,
             'menu_position'      => null,
-            'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'page-attributes')
+            'supports'           => array('title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'page-attributes')
         );
 
         register_post_type('testimonial', $args);
@@ -117,7 +117,7 @@ class Testimonials_Shortcode extends NA_METABOXES
             'show_admin_column'     => true,
             'update_count_callback' => '_update_post_term_count',
             'query_var'             => true,
-            'rewrite'               => array( 'slug' => 'testimonials' ),
+            'rewrite'               => array('slug' => 'testimonials'),
         );
 
         register_taxonomy('testimonials', 'testimonial', $args);
@@ -127,18 +127,18 @@ class Testimonials_Shortcode extends NA_METABOXES
         global $slider;
         $atts = shortcode_atts(array(
             'category' => '',
-            'height' => '100%',
+            'height' => 'auto',
             'type' => '',
             'vertical' => 1,
             'autoplay' => 0,
             'columns' => 1
         ), $atts, 'testimonials-shortcode');
-        $categories = (array)explode(",", $atts['category']);
+        $categories = (array) explode(",", $atts['category']);
         $args = array(
             'post_type' => 'testimonial',
             'orderby' => 'menu_order',
-          'order' => 'ASC'
-         );
+            'order' => 'ASC'
+        );
         $field_type = is_numeric($categories[0]) ? 'term_id' : 'slug';
         if (!empty($atts['category'])) {
             $args = array(
@@ -150,25 +150,25 @@ class Testimonials_Shortcode extends NA_METABOXES
                         'terms' => $categories,
                     ),
                 ),
-                        'orderby' => 'menu_order',
-              'order' => 'ASC'
-             );
+                'orderby' => 'menu_order',
+                'order' => 'ASC'
+            );
         }
         $output = "";
         $query = new WP_Query($args);
-        $id = time() + rand(1,100);
+        $id = time() + rand(1, 100);
         $slides = array();
         global $post;
         if ($query->have_posts()) {
             while ($query->have_posts()) {
                 $query->the_post();
                 $meta = $this->get_meta(get_the_ID(), 'testimonials');
-                $style = array();
+                $slide_image = '';
                 if (has_post_thumbnail()) {
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
-                    $style[] = "background-image:url($image[0])";
+                    $slide_image = sprintf('<div class="testimonials-image" style="%s"></div>', "background-image:url($image[0])");
                 }
-                $slides[] = array('content' => '<div class="testimonials-header"><h3>'.get_the_title().'</h3><span class="testimonials-position">'.$meta['position'].'</span></div><div class="testimonials-content">'.get_the_content().'</div>', 'post' => $post);
+                $slides[] = array('content' => sprintf('%s<div class="testimonials-inner"><div class="testimonials-header"><h3>%s</h3><span class="testimonials-position">%s</span></div><div class="testimonials-content">%s</div></div>', $slide_image, get_the_title(), $meta['position'], get_the_content()), 'post' => $post);
             }
         }
         wp_reset_postdata();
@@ -177,23 +177,25 @@ class Testimonials_Shortcode extends NA_METABOXES
             'columns' => $atts['columns'],
             'vertical' => $atts['vertical'],
             'type' => $atts['type'],
-            'height' => $atts['height']
+            'class' => 'testimonials-slider',
+            'height' => $atts['height'] ? $atts['height']: '50vh'
         );
         return $slider->addSlider($slides, $settings);
     }
     public function show_metabox($post)
     {
-        ?>
-		<table class="form-table">
-			<tbody>
-				<tr class="form-field form-required term-name-wrap">
-					<th scope="row"><label for="name">Position</label></th>
-					<td><?php $this->_metabox_text($post->ID, 'position', 'testimonials'); ?>
-					<p class="description">The person position.</p></td>
-				</tr>
-			</tbody>
-		</table>
-		<?php
+?>
+        <table class="form-table">
+            <tbody>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Position</label></th>
+                    <td><?php $this->_metabox_text($post->ID, 'position', 'testimonials'); ?>
+                        <p class="description">The person position.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+<?php
 
     }
 }

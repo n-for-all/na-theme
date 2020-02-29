@@ -219,7 +219,7 @@ function theme(options) {
 										setTimeout(function() {
 											jQuery('body').addClass('scrolling');
 										}, 100);
-									}else {
+									} else {
 										jQuery('body').removeClass('scrolling');
 									}
 								},
@@ -298,7 +298,7 @@ function theme(options) {
 					1000
 				);
 			}
-			return false;
+			return true;
 		};
 
 		var handler = jQuery(window).width() > this.options.mobile ? desktopHandler : mobileHandler;
@@ -307,10 +307,27 @@ function theme(options) {
 		}
 		this.scrollHandler = function() {
 			var hash = location.hash;
-			if (hash.replace('#', '').trim() == '' || hash.indexOf('#!') >= 0) {
+			if (hash.replace('#!', '').trim() == '' || hash.replace('#', '').trim() == '' || hash.split('/').length > 1) {
 				return false;
 			}
+			var newHash = hash.replace('#!', '').replace('#', '');
+			if (newHash.indexOf('section-') >= 0) {
+				if (jQuery('#' + newHash).length > 0) {
+					return handler(jQuery('#' + newHash));
+				} else {
+					console.warn('#' + newHash + ' was not found, did you forget to enable permalinks?');
+					return false;
+				}
+			} else {
+				var section = jQuery('#section-' + newHash);
+				if (section.length > 0) {
+					return handler(jQuery('#' + hash.replace('#', '')));
+				} else if (jQuery('#' + newHash).length > 0) {
+					return handler(jQuery('#' + newHash));
+				}
+			}
 			jQuery('.content').removeClass('active');
+
 			var menu_item = jQuery('#menu-main-menu li a[href^="' + me.escapeRegExp(hash) + '"]');
 			if (menu_item.length > 0) {
 				jQuery('#menu-main-menu li a').removeClass('active');
@@ -321,24 +338,19 @@ function theme(options) {
 					location.hash = '';
 				}
 			}
-			var section = jQuery('#section-' + hash.replace('#', ''));
-			if (section.length == 0) {
-				if (jQuery('#' + hash.replace('#', '')).length > 0) {
-					return handler(jQuery('#' + hash.replace('#', '')));
-				}
-				console.warn('#section-' + hash.replace('#', '') + ' was not found, did you forget to enable permalinks?');
-				return false;
-			}
+
 			return handler(section);
 		};
 		if ('onhashchange' in window) {
-			jQuery(window).hashchange(function(event) {
+			window.addEventListener('hashchange', function(event) {
 				if (me.scrollHandler()) {
 					event.stopPropagation();
 					event.preventDefault();
 				}
 			});
-			jQuery(window).hashchange();
+			try {
+				window.dispatchEvent(new Event('hashchange'));
+			} catch (e) {}
 		} else {
 			jQuery('#menu-main-menu li a[href^=\\/\\#]').click(function(event) {
 				if (me.scrollHandler()) {
@@ -415,6 +427,14 @@ function theme(options) {
 				jQuery('body').addClass('scrolling');
 			}
 		});
+
+		//widgets
+		jQuery('.na-posts-dropdown > a').click(function(e) {
+			e.preventDefault();
+			jQuery(this)
+				.parent()
+				.toggleClass('active');
+		});
 	};
 	this.tabs = function() {
 		var showTab = function(id) {
@@ -472,6 +492,7 @@ jQuery(window).load(function() {
 		jQuery('body').addClass('scrolling');
 	}
 });
+
 jQuery(document).ready(function() {
 	var n = new theme(options);
 	setTimeout(function() {
