@@ -270,6 +270,7 @@
     transform-origin: 0 100%;
     z-index: 8;
     position: relative;
+    float: left;
 }
 
 .na-slider-bullets {

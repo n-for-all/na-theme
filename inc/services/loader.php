@@ -16,8 +16,8 @@ class Na_Services extends NA_METABOXES
 {
     public function __construct()
     {
-        parent::__construct(array('service'), 'Service', 'normal', 'high') ;
-
+        parent::__construct(array('service'), 'Service', 'normal', 'high');
+        $this->add_term_metabox('services');
         $this->actions();
         $this->shortcodes();
     }
@@ -29,12 +29,7 @@ class Na_Services extends NA_METABOXES
         add_action('wp_ajax_service', array($this, 'get_service'));
         add_action('wp_ajax_nopriv_service', array($this, 'get_service'));
         add_action('wp_footer', array($this, 'inline_scripts'));
-        add_action('services_add_form_fields', array($this, 'services_fields'));
-        add_action('services_edit_form_fields', array($this, 'services_fields_edit'), 10, 1);
-        add_action('create_services', array($this, 'services_save'), 10, 2);
-        add_action('edit_services', array($this, 'services_save'), 10, 2);
-        add_filter('widget_text','do_shortcode');
-
+        add_filter('widget_text', 'do_shortcode');
     }
     public function shortcodes()
     {
@@ -44,24 +39,16 @@ class Na_Services extends NA_METABOXES
     }
     public function inline_scripts()
     {
-        ?>
+?>
         <script id="tmpl-service" type="text/template">
-        <?php include('template/popup.php'); ?>
+            <?php include('template/popup.php'); ?>
         </script>
-        <?php
+    <?php
     }
     public function scripts()
     {
         wp_enqueue_script('services-shortcode', get_template_directory_uri() . '/inc/services/js/scripts.js', array(), '1.0.0', 'screen');
         wp_enqueue_style('services-shortcode', get_template_directory_uri() . '/inc/services/css/styles.css', array(), '1.0.0', 'screen');
-    }
-    public function services_save($term_id, $tt_id)
-    {
-        if (isset($_POST['image']) && !empty($_POST['image'])) {
-            update_term_meta($term_id, 'image', $_POST['image']);
-        } else {
-            update_term_meta($term_id, 'image', false);
-        }
     }
     public function get_service()
     {
@@ -88,25 +75,37 @@ class Na_Services extends NA_METABOXES
         echo json_encode($output);
         die();
     }
-    public function services_fields()
+    public function on_term_add($taxonomy)
     {
-        ?>
+    ?>
         <div class="form-field term-image-wrap">
-        	<label for="tag-slug">Image/Icon</label>
-        	<input name="image" id="tag-image" type="text" value="" size="40">
-        	<p>Add an image for this taxonomy</p>
+            <label for="tag-slug">Price</label>
+            <?php $this->_term_metabox_custom('text', 'price'); ?>
+            <p>Service Price</p>
         </div>
-        <?php
+        <div class="form-field term-image-wrap">
+            <label for="tag-slug">Image/Icon</label>
+            <?php $this->_term_metabox_image(false, 'image', false); ?>
+            <p>Add an image for this service</p>
+        </div>
+    <?php
 
     }
-    public function services_fields_edit($term)
+    public function on_term_update($term, $taxonomy)
     {
-        $image = get_term_meta($term->term_id, 'image', true); ?>
+    ?>
         <tr class="form-field form-required term-image-wrap">
-			<th scope="row"><label for="name">Image</label></th>
-			<td><?php $this->_term_metabox_image($term->term_id, 'image', false); ?>
-			<p class="description">Add/update an image for this taxonomy.</p></td>
-		</tr>
+            <th scope="row"><label for="name">Price</label></th>
+            <td><?php $this->_term_metabox_custom('text', 'price', '', $term->term_id); ?>
+                <p class="description">Service Price.</p>
+            </td>
+        </tr>
+        <tr class="form-field form-required term-image-wrap">
+            <th scope="row"><label for="name">Image</label></th>
+            <td><?php $this->_term_metabox_image($term->term_id, 'image', false); ?>
+                <p class="description">Add/update an image for this service.</p>
+            </td>
+        </tr>
         <?php
 
     }
@@ -137,12 +136,12 @@ class Na_Services extends NA_METABOXES
             'show_ui'            => true,
             'show_in_menu'       => true,
             'query_var'          => true,
-            'rewrite'            => array( 'slug' => 'service' ),
+            'rewrite'            => array('slug' => 'service'),
             'capability_type'    => 'post',
             'has_archive'        => true,
             'hierarchical'       => true,
             'menu_position'      => null,
-            'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'page-attributes')
+            'supports'           => array('title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'page-attributes')
         );
 
         register_post_type('service', $args);
@@ -173,7 +172,7 @@ class Na_Services extends NA_METABOXES
             'show_admin_column'     => true,
             'update_count_callback' => '_update_post_term_count',
             'query_var'             => true,
-            'rewrite'               => array( 'slug' => 'services' ),
+            'rewrite'               => array('slug' => 'services'),
         );
 
         register_taxonomy('services', 'service', $args);
@@ -182,6 +181,7 @@ class Na_Services extends NA_METABOXES
     {
         $atts = shortcode_atts(array(
             'columns' => '3',
+            'label' => 'Read More &rarr;',
             'category' => '',
             'wrapper' => 'body'
         ), $atts, 'services-shortcode');
@@ -204,14 +204,16 @@ class Na_Services extends NA_METABOXES
                 ),
                 'orderby' => 'menu_order',
                 'order' => 'ASC'
-             );
+            );
         }
         $output = "";
         $query = new WP_Query($args);
         $count = 0;
         $row = 1;
+
+        $label = sprintf('<span class="services-btn btn">%s</span>',  $atts['label']);
         if ($query->have_posts()) {
-            $output = '<ul data-wrapper="'.$atts['wrapper'].'" class="na-services na-services-columns-'.$atts['columns'].'">';
+            $output = sprintf('<ul data-wrapper="%s" class="na-services na-services-columns-%s">', $atts['wrapper'], $atts['columns'] ?? '1');
             global $post;
             while ($query->have_posts()) {
                 $query->the_post();
@@ -221,26 +223,33 @@ class Na_Services extends NA_METABOXES
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
                     $style[] = "background-image:url($image[0])";
                 }
-                $class = array();
+                $class = array('service-inner');
                 $popup = false;
                 //add end class to the last columns
-                if(isset($meta['popup']) && $meta['popup'] == 1){
+                if (isset($meta['popup']) && $meta['popup'] == 1) {
                     $popup = 'services-popup';
                 }
-                if($row >= $query->post_count/$atts['columns']){
+                if ($row >= $query->post_count / $atts['columns']) {
                     $class[] = 'row-end';
                 }
-                if(($count+1)%$atts['columns'] == 0 || $count == $query->post_count - 1){
+                if (($count + 1) % $atts['columns'] == 0 || $count == $query->post_count - 1) {
                     $class[] = 'column-end';
                 }
-                $output .= '<li class="service-inner '.implode(" ", $class).'">
-                <a data-id="'.get_the_ID().'" class="services-image services-button '.$popup.'" style="'.implode(";", $style).'" href="'.($popup ? '#!service/'.get_the_ID() : get_the_permalink()).'">
-                <span class="services-wrapper"><span class="services-header">'.get_the_title().'</span>
-                <span class="services-tagline">'.$meta['tagline'].'</span>
-                <span class="services-content">'.$post->post_excerpt.'</span><span class="services-btn btn">Read More &rarr;</span></span></a></li>';
-                $count ++;
-                if($count%$atts['columns'] == 0){
-                    $row ++;
+                $price = $meta['price'] ?? '';
+                $price = $price ? '<div class="services-price"><span>' . $price . '</span></div>' : '';
+                $tagline = $meta['tagline'] ?? '';
+                if ($tagline != '') {
+                    $tagline = sprintf('<span class="services-tagline">%s</span>', $tagline);
+                }
+
+                $excerpt = sprintf('<span class="services-content">%s</span>', $post->post_excerpt);
+                $output .= sprintf('<li class="%s">
+                <a data-id="%s" class="services-image services-button %s" style="%s" href="%s">
+                <span class="services-wrapper"><span class="services-header">%s</span>
+                %s%s%s%s</span></a></li>', implode(" ", $class), get_the_ID(), $popup, implode(";", $style), ($popup ? '#!service/' . get_the_ID() : get_the_permalink()), get_the_title(), $tagline, $price, $excerpt, $label);
+                $count++;
+                if ($count % $atts['columns'] == 0) {
+                    $row++;
                 }
             }
             $output .= '</ul>';
@@ -250,30 +259,33 @@ class Na_Services extends NA_METABOXES
     }
     public function shortcode_members($atts)
     {
-        $atts = shortcode_atts(array(
-        ), $atts, 'service-members-shortcode');
+        $atts = shortcode_atts(array(), $atts, 'service-members-shortcode');
         ob_start();
         if (is_single()) {
             global $post;
             $meta = get_post_meta(get_the_ID(), '_meta_service', true);
             if (isset($meta['members'])) {
-                ?><div class="service-members"><?php
-                foreach ($meta['members'] as $member) {
-                    $post = get_post($member);
-                    setup_postdata($post); ?>
-  					<div class="service-member">
-						<div class="image">
-							<?php if (has_post_thumbnail()) {
-                                echo get_the_post_thumbnail(get_the_ID(), 'large'); ?>
-							<?php
-                            } ?>
-						</div>
-						<h3><?php the_title(); ?></h3>
-						<div class="excerpt"><?php the_excerpt(); ?></div>
-  					</div>
-  					<?php
+        ?>
+                <div class="service-members">
+                    <?php
+                    foreach ($meta['members'] as $member) {
+                        $post = get_post($member);
+                        setup_postdata($post); ?>
+                        <div class="service-member">
+                            <div class="image">
+                                <?php if (has_post_thumbnail()) {
+                                    echo get_the_post_thumbnail(get_the_ID(), 'large'); ?>
+                                <?php
+                                } ?>
+                            </div>
+                            <h3><?php the_title(); ?></h3>
+                            <div class="excerpt"><?php the_excerpt(); ?></div>
+                        </div>
+                    <?php
 
-                } ?></div><?php
+                    } ?>
+                </div>
+        <?php
             }
         }
         wp_reset_postdata();
@@ -296,8 +308,9 @@ class Na_Services extends NA_METABOXES
                 if ($v) {
                     $style[] = "background-image:url($v[0])";
                 }
-                $output .= '<li><a data-id="'.$term->term_id.'" class="services-image services-button" style="'.implode(";", $style).'" href="'.get_term_link($term, 'services').'"></a><a data-id="'.$term->term_id.'" href="'.get_term_link($term, 'services').'" class="services-button"><div class="content vertical-center"><div class="services-header"><h3>'.$term->name.'</h3></div><div class="services-content">'.$term->description.'</div><span data-id="'.$term->term_id.'" class="services-image services-button btn">Read More &rarr;</span></div></a></li>';
-                $i --;
+
+                $output .= '<li><a data-id="' . $term->term_id . '" class="services-image services-button" style="' . implode(";", $style) . '" href="' . get_term_link($term, 'services') . '"></a><a data-id="' . $term->term_id . '" href="' . get_term_link($term, 'services') . '" class="services-button"><div class="content vertical-center"><div class="services-header"><h3>' . $term->name . '</h3></div><div class="services-content">' . $term->description . '</div><span data-id="' . $term->term_id . '" class="services-image services-button btn">Read More &rarr;</span></div></a></li>';
+                $i--;
             }
             $output .= '</ul>';
         }
@@ -307,21 +320,37 @@ class Na_Services extends NA_METABOXES
     public function show_metabox($post)
     {
         ?>
-		<table class="form-table">
-			<tbody>
-				<tr class="form-field form-required term-name-wrap">
-					<th scope="row"><label for="name">Tagline</label></th>
-					<td><?php $this->_metabox_text($post->ID, 'tagline', 'services'); ?>
-					<p class="description">The services tagline.</p></td>
-				</tr>
-				<tr class="form-field form-required term-name-wrap">
-					<th scope="row"><label for="name">Popup</label></th>
-					<td><?php $this->_metabox_checkbox($post->ID, 'Open as popup', 'popup', 'services'); ?>
-					<p class="description">Opens as popup or seperate page</p></td>
-				</tr>
-			</tbody>
-		</table>
-		<?php
+        <table class="form-table">
+            <tbody>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Tagline</label></th>
+                    <td><?php $this->_metabox_text($post->ID, 'tagline', 'services'); ?>
+                        <p class="description">The services tagline.</p>
+                    </td>
+                </tr>
+
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Price</label></th>
+                    <td><?php $this->_metabox_text($post->ID, 'price', 'services'); ?>
+                        <p class="description">The service price.</p>
+                    </td>
+                </tr>
+
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Currency</label></th>
+                    <td><?php $this->_metabox_text($post->ID, 'currency', 'services'); ?>
+                        <p class="description">The service currency.</p>
+                    </td>
+                </tr>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Popup</label></th>
+                    <td><?php $this->_metabox_checkbox($post->ID, 'Open as popup', 'popup', 'services'); ?>
+                        <p class="description">Opens as popup or seperate page</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+<?php
 
     }
 }

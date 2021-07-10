@@ -16,12 +16,6 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<?php if(function_exists('bcn_display') && false){ ?>
-		<div class="breadcrumb">
-			<?php  bcn_display(); ?>
-		</div>
-	<?php } ?>
-
 	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
 		<?php
 		if($featured_image):

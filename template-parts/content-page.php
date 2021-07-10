@@ -15,12 +15,6 @@ global $naTheme, $post;
  */
 $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 ?>
-<?php if (function_exists('bcn_display') && false) { ?>
-    <div class="breadcrumb">
-        <?php bcn_display(); ?>
-    </div>
-<?php } ?>
-
 <header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
     <?php
     if ($featured_image) :
@@ -36,6 +30,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
     </div>
 </header><!-- .entry-header -->
 <div class="<?php $naTheme->classes('content', 'entry-content'); ?>  <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
+    <?php $naTheme->get_template_layout_before(get_the_ID()); ?>
     <div class="entry-inner-content">
         <?php
         the_content();
@@ -50,6 +45,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
         ));
         ?>
     </div>
+    <?php $naTheme->get_template_layout_after(get_the_ID()); ?>
 </div><!-- .entry-content -->
 
 <?php

@@ -201,7 +201,7 @@ class Na_Slider
 			slider_settings['<?php echo $id; ?>'] = <?php echo json_encode((array)$settings); ?>;
 			slider_settings['<?php echo $id; ?>_thumbnails'] = <?php echo json_encode(array('columns' => 6, 'minWidth' => 50, 'height' => 'w15%')); ?>;
 		</script>
-		<div id="<?php echo $id; ?>" class="na-slider-wrapper na-slider-<?php echo $settings['vertical'] != 0 ? 'vertical': 'horizontal'; ?> na-<?php echo $settings['type'] != '' ? $settings['type']: 'normal'; ?> <?php echo $settings['class'] != '' ? $settings['class']: ''; ?>" data-slider="<?php echo $id; ?>">
+		<div id="<?php echo $id; ?>" class="na-slider-wrapper na-slider-<?php echo $settings['vertical'] != 0 ? 'vertical': 'horizontal'; ?> na-<?php echo $settings['type'] != '' ? $settings['type']: 'normal'; ?> <?php echo $settings['class'] ?? ''; ?>" data-slider="<?php echo $id; ?>">
             <?php if($settings['type'] == 'circular'): ?>
                 <div id="circular-nav">
                     <div class="svg-wrap">
@@ -230,7 +230,7 @@ class Na_Slider
                 </div>
             <?php endif; ?>
         	<div style="height:<?php echo $settings['height']; ?>" class="na-slider">
-				<ul class="na-slides <?php echo $settings['class']; ?>">
+				<ul class="na-slides <?php echo $settings['class'] ?? ''; ?>">
 					<?php
                     foreach ($slides as $slide):
                          ?>

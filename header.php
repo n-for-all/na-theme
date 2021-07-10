@@ -35,6 +35,7 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
                                             bloginfo('description');
                                         }
                                         ?>" />
+    <title><?php bloginfo('name'); ?><?php wp_title(); ?></title>
     <link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
     <link rel="icon" type="image/png" href="<?php echo $naTheme->favicon; ?>" />
     <!--[if lt IE 9]>
@@ -66,8 +67,8 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
             <div id="top-bar">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-<?php echo $main_columns ?> col-6">
-                        <?php echo do_shortcode($naTheme->top_bar); ?>
+                        <div class="col-md-<?php echo $main_columns ?> col-<?php echo $has_social_menu ? 6 : 12 ?>">
+                            <?php echo do_shortcode($naTheme->top_bar); ?>
                         </div>
                         <?php if ($has_social_menu) : ?>
                             <div class="col-md-4 col-6">
@@ -93,11 +94,11 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
             <div class="row">
                 <nav id="main-nav-collapse" class="navbar navbar-light navbar-expand-lg navbar-default <?php echo $naTheme->menu_expanded == 1 ? 'in' : ''; ?> col-12">
 
-                    <?php include(get_template_directory().'/inc/menu/logo.php'); ?>
+                    <?php include(get_template_directory() . '/inc/menu/logo.php'); ?>
                     <button type="button" class="navbar-toggler <?php echo $naTheme->menu_expanded == 1 ? 'collapsed' : ''; ?> <?php echo $naTheme->btn_menu_style; ?>" data-toggle="collapse" data-target="#main-navbar-collapse" aria-expanded="false"> <span class="icon-bar navbar-toggler-icon"></span> <span class="icon-bar"></span> <span class="icon-bar"></span><span class="icon-bar"></span> <span class="sr-only">Menu</span></button>
                     <?php do_action('na-theme.navbar.header'); ?>
 
-                    <?php include(get_template_directory().'/inc/menu/header.php'); ?>
+                    <?php include(get_template_directory() . '/inc/menu/header.php'); ?>
 
                 </nav>
             </div>

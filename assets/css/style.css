@@ -19,20 +19,48 @@ html,
 body {
     overflow-x: hidden;
     overflow-y: auto;
-    overflow-y: overlay;
     -moz-osx-font-smoothing: grayscale;
-    -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased; 
     background-color: #f6f6f6;
 }
 
 .stroke {
     color: #fff;
     /*text-shadow:
-   -1px -1px 0 #fff,
+   -1px -1px 0 #fff, 
     1px -1px 0 #fff,
     -1px 1px 0 #fff,
      1px 1px 0 #fff;*/
 }
+
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    -webkit-box-shadow: none;
+    background-color: transparent;
+    border-radius: 8px;
+    padding-right: 1px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    background-color: transparent;
+    padding-right: 1px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #333333ee;
+    border-radius: 10px;
+    opacity: 0.6;
+
+}
+
+.custom-scrollbar::-webkit-scrollbar-track-piece {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-resizer,
+.custom-scrollbar::-webkit-scrollbar-button,
+.custom-scrollbar::-webkit-scrollbar-corner { display: none; }
 
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
     .stroke {

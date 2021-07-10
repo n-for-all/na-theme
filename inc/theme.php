@@ -5,6 +5,7 @@
  *
  */
 
+
 class Na_Theme
 {
 
@@ -72,8 +73,48 @@ class Na_Theme
             add_action('page_attributes_misc_attributes', array(&$this, 'page_attributes_misc_attributes'), 10, 2);
             add_action('save_post_page', array(&$this, 'save_page_template_part'), 10, 3);
         }
+        add_action('init', array(&$this, 'init'));
     }
+    public function init()
+    {
+        register_meta('post', '_wp_page_template_part', array(
+            'object_subtype'        => 'page',
+            'type'        => 'string',
+            'single'    => true,
+            'show_in_rest'    => true,
+            'auth_callback' => function () {
+                return current_user_can('edit_posts');
+            }
+        ));
+        register_meta('post', '_wp_page_template_layout', array(
+            'object_subtype'        => 'page',
+            'type'        => 'string',
+            'single'    => true,
+            'show_in_rest'    => true,
+            'auth_callback' => function () {
+                return current_user_can('edit_posts');
+            }
+        ));
+        register_meta('post', '_wp_section_class', array(
+            'object_subtype'        => 'page',
+            'type'        => 'string',
+            'single'    => true,
+            'show_in_rest'    => true,
+            'auth_callback' => function () {
+                return current_user_can('edit_posts');
+            }
+        ));
 
+        register_meta('post', '_wp_section_id', array(
+            'object_subtype'        => 'page',
+            'type'        => 'string',
+            'single'    => true,
+            'show_in_rest'    => true,
+            'auth_callback' => function () {
+                return current_user_can('edit_posts');
+            }
+        ));
+    }
     protected function shortcodes()
     {
         add_shortcode('permalink', array(&$this, 'shortcode_permalinks'));
@@ -93,6 +134,11 @@ class Na_Theme
         add_filter('style_loader_src', array(&$this, 'cache'), 10, 2);
         add_filter('tiny_mce_before_init', array(&$this, 'override_mce_options'));
         add_filter('upload_mimes', array($this, 'allow_svg'));
+        add_filter('script_loader_tag', array($this, 'add_type_attribute'), 10, 3);
+
+        add_filter('dynamic_sidebar_params', array($this, 'dynamic_sidebar_params'));
+        add_filter('widget_update_callback', array($this, 'widget_update'), 10, 2);
+        add_filter('widget_form_callback', array($this, 'widget_form_extend'), 10, 2);
     }
 
     public function setup()
@@ -410,8 +456,6 @@ class Na_Theme
      */
     public function scripts()
     {
-
-
         //bootstrap styles for this theme
         wp_enqueue_style('grid', get_template_directory_uri() . '/assets/css/bootstrap.min.css', array(), '1.0');
 
@@ -458,9 +502,6 @@ class Na_Theme
 
         //main scripts
         wp_enqueue_script('jquery');
-        wp_enqueue_script('jquery-hashchange', get_template_directory_uri() . '/assets/js/plugins/jquery.hashchange.js', array('jquery'), '1.0.0', true);
-
-
         wp_enqueue_script('bootstrap', get_template_directory_uri() . '/assets/js/bootstrap.min.js', array('jquery'), '1.0.0', true);
 
 
@@ -494,12 +535,38 @@ class Na_Theme
         // Load our main stylesheet.
         wp_enqueue_style('na_theme-style', get_stylesheet_uri(), array('na_theme-main'));
     }
+
+    public function add_type_attribute($tag, $handle, $src)
+    {
+        // if not your script, do nothing and return original $tag
+        if ('na_theme-admin-scripts' !== $handle) {
+            return $tag;
+        }
+        // change the script tag by adding type="module" and return it.
+        $tag = '<script type="module" src="' . esc_url($src) . '"></script>';
+        return $tag;
+    }
+
     public function admin_scripts()
     {
-
         //admin styles for this theme
         wp_enqueue_style('na_theme-admin', get_template_directory_uri() . '/admin/css/admin.css', array(), '1.0');
         wp_enqueue_script('na_theme-admin-scripts', get_template_directory_uri() . '/admin/js/admin.js', array('jquery'), '1.0.0', true);
+
+        $parts = self::get_template_parts();
+        $x = [];
+        foreach ($parts as $key => $value) {
+            $v = str_replace(['.php', '-'], ['', ' '], basename($value));
+            $key = str_replace('.php', '', basename($value));
+            $x[] = ['label' => ucwords($v), 'value' => $key];
+        }
+
+        wp_enqueue_script('na_theme-blocks-scripts', get_template_directory_uri() . '/admin/js/app.js', array('wp-blocks', 'wp-i18n', 'wp-element', 'jquery'), '1.0.0', true);
+        wp_localize_script(
+            'na_theme-blocks-scripts',
+            'naThemeData',
+            ['templates' => $x]
+        );
     }
     /**
      * Add a `screen-reader-text` class to the search form's submit button.
@@ -740,10 +807,17 @@ class Na_Theme
             case 'logo_footer':
                 $logo = get_theme_mod($name, $default = '');
                 $src = wp_get_attachment_image_src($logo, 'full');
-                return $src[0];
+                return $src ? $src[0] : null;
             default:
-                return get_theme_mod($name, $default = '');
+                return $this->mergeTags(get_theme_mod($name, $default = ''));
         }
+    }
+    public function mergeTags($out)
+    {
+        if (!$out || $out == '') {
+            return $out;
+        }
+        return str_replace(['{{theme_url}}'], [get_stylesheet_directory_uri()], $out);
     }
     public function get($name, $default = '')
     {
@@ -752,7 +826,6 @@ class Na_Theme
 
     public function dynamic_sidebar_before($index, $empty)
     {
-        global $wp_registered_sidebars;
         $sidebars = array('footer-1', 'footer-2', 'footer-3', 'footer-4', 'footer-5', 'footer-6', 'footer-7', 'footer-8');
         //echo $index;
         if (in_array($index, $sidebars)) {
@@ -809,15 +882,31 @@ class Na_Theme
         }
         echo $class;
     }
-    public function page_attributes_misc_attributes($post)
+    public static function get_template_parts()
     {
+        $parts = array();
+        $child_files_array = glob(get_stylesheet_directory() . "/template-parts/*.php");
+        if ($child_files_array && !empty($child_files_array)) {
+            foreach ($child_files_array as $key => &$value) {
+                $name = str_replace('.php', '', basename($value));
+                $parts[$name] = $name;
+            }
+        }
+
         $naTheme_root = get_template_directory();
         $files_array = glob("$naTheme_root/template-parts/*.php");
-        $x = array();
+
         foreach ($files_array as $key => &$value) {
             $name = str_replace('.php', '', basename($value));
-            $x[$name] = $name;
+            $parts[$name] = $name;
         }
+
+        return $parts;
+    }
+
+    public function page_attributes_misc_attributes($post)
+    {
+        $x = self::get_template_parts();
 
         $part = get_post_meta($post->ID, '_wp_page_template_part', true);
         $layout = get_post_meta($post->ID, '_wp_page_template_layout', true);
@@ -833,7 +922,8 @@ class Na_Theme
                 <?php foreach ($x as $key => $value) { ?>
                     <option <?php echo $part == $key ? 'selected' : ''; ?> value="<?php echo $key; ?>"><?php echo $value; ?></option>
                 <?php } ?>
-            </select><small class="help">Select the template part, this applies to sections and inner content area.</small></p>
+            </select><small class="help">Select the template part, this applies to sections and inner content area.</small>
+        </p>
         <hr />
         <?php if ($post->post_parent > 0) : ?>
             <p class="post-attributes-label-wrapper">
@@ -853,6 +943,7 @@ class Na_Theme
                 <select name="page_template_layout">
                     <option <?php echo $layout == 'none' ? 'selected' : ''; ?> value="none">None</option>
                     <option <?php echo $layout == 'container' ? 'selected' : ''; ?> value="container">Boxed</option>
+                    <option <?php echo $layout == 'container boxed-offset' ? 'selected' : ''; ?> value="container boxed-offset">Boxed Offset</option>
                     <option <?php echo $layout == 'container-fluid' ? 'selected' : ''; ?> value="container-fluid">Fluid</option>
                 </select>
                 <small class="help">Select the template layout.</small>
@@ -887,6 +978,36 @@ class Na_Theme
     {
         $part = get_post_meta($post_id, '_wp_page_template_layout', true);
         return $part != '' ? $part : $default;
+    }
+    function get_template_layout_before($post_id)
+    {
+        $part = get_post_meta($post_id, '_wp_page_template_layout', true);
+        switch ($part) {
+            case 'container-fluid':
+            case 'container':
+                echo '<div class="row"><div class="col-md-12">';
+                break;
+            case 'container boxed-offset':
+                echo '<div class="row"><div class="col-md-10 offset-md-1 col-xs-12">';
+                break;
+            default:
+                break;
+        }
+    }
+    function get_template_layout_after($post_id)
+    {
+        $part = get_post_meta($post_id, '_wp_page_template_layout', true);
+        switch ($part) {
+            case 'container-fluid':
+            case 'container':
+                echo '</div></div>';
+                break;
+            case 'boxed-offset':
+                echo '</div></div>';
+                break;
+            default:
+                break;
+        }
     }
     function get_section_id($post_id, $default)
     {
@@ -998,6 +1119,37 @@ class Na_Theme
             $title = '<span class="vcard">' . get_the_author() . '</span>';
         }
         return $title;
+    }
+
+
+    public function  widget_form_extend($instance, $widget)
+    {
+        $row = '';
+        if (!isset($instance['classes']))
+            $instance['classes'] = null;
+        $row .= "<br/>Class:\t<input type='text' name='widget-{$widget->id_base}[{$widget->number}][classes]' id='widget-{$widget->id_base}-{$widget->number}-classes' class='widefat' value='{$instance['classes']}'/>\n";
+        $row .= "</p>\n";
+        echo $row;
+        return $instance;
+    }
+
+
+    public function  widget_update($instance, $new_instance)
+    {
+        $instance['classes'] = $new_instance['classes'];
+        return $instance;
+    }
+
+    public function  dynamic_sidebar_params($params)
+    {
+        global $wp_registered_widgets;
+        $widget_id    = $params[0]['widget_id'];
+        $widget_obj    = $wp_registered_widgets[$widget_id];
+        $widget_opt    = get_option($widget_obj['callback'][0]->option_name);
+        $widget_num    = $widget_obj['params'][0]['number'];
+        if (isset($widget_opt[$widget_num]['classes']) && !empty($widget_opt[$widget_num]['classes']))
+            $params[0]['before_widget'] = preg_replace('/class="/', "class=\"{$widget_opt[$widget_num]['classes']} ", $params[0]['before_widget'], 1);
+        return $params;
     }
 }
 global $naTheme;

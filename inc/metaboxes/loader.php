@@ -51,7 +51,7 @@ abstract class NA_METABOXES {
 		}
 
 		if($this->term_after_save){
-			call_user_func($this->term_after_save, $post_id, $_meta, $_meta_na);
+			call_user_func($this->term_after_save, $term_id, $_meta, $_meta_na);
 		}
 	}
 
@@ -346,11 +346,20 @@ abstract class NA_METABOXES {
 			?><input type="checkbox" <?php echo $p == 1 ? 'checked="checked"': ''; ?> value="1" name="<?php echo $name; ?>" /><?php
 		}
 	}
-	function _term_metabox_image($term_id, $name, $multiple = true){
+	function _term_metabox_image($term_id, $name, $multiple = true, $group = ''){
+        $p = false;
+        if($term_id){
+			$p = $this->_metabox_term_text_value($term_id, $name, $group);
+		}
+		if($group != ""){
+			$name = "_meta[{$group}][{$name}]";
+		}else{
+			$name = "_meta_na[{$name}]";
+		}
 		if($multiple){
 			$name = $name."[]";
 		}
-		$p = get_term_meta($term_id, $name, true);
+		
 		?>
 		<div class="na-meta-image" data-multiple="<?php echo (int)$multiple; ?>" data-name="<?php echo $name; ?>">
 			<div class="na-meta-msg"></div>
@@ -436,7 +445,7 @@ abstract class NA_METABOXES {
 		}else{
 			$meta_name = "_meta_na_{$name}";
 		}
-		if($a = get_post_meta($post_id, $meta_name, true)){
+		if($post_id && $a = get_post_meta($post_id, $meta_name, true)){
 			if($group != ""){
 				$a = isset($a[$name]) ? $a[$name] : '';
 			}

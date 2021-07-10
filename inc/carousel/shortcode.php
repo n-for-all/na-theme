@@ -153,6 +153,9 @@ class Carousels_Shortcode extends NA_METABOXES
                         $inner = sprintf('<div class="carousels-inner" style="%s"><span style="background-image:url(%s)"></span><img src="%s" /></div>', $atts['min-height'] ? 'min-height:'.$atts['min-height']: '', $image[0], $image[0]);
                     }
                 }
+                if(trim($post->post_title) != ''){
+                    $inner .= '<div class="carousels-title">'.get_the_title().'</div>';
+                }
                 if(trim($post->post_content) != ''){
                     $inner .= '<div class="carousels-content">'.get_the_content().'</div>';
                 }

@@ -1,4 +1,5 @@
 <?php
+
 class Testimonials_Shortcode extends NA_METABOXES
 {
     public function __construct()
@@ -154,9 +155,7 @@ class Testimonials_Shortcode extends NA_METABOXES
                 'order' => 'ASC'
             );
         }
-        $output = "";
         $query = new WP_Query($args);
-        $id = time() + rand(1, 100);
         $slides = array();
         global $post;
         if ($query->have_posts()) {
@@ -164,11 +163,15 @@ class Testimonials_Shortcode extends NA_METABOXES
                 $query->the_post();
                 $meta = $this->get_meta(get_the_ID(), 'testimonials');
                 $slide_image = '';
+                $image = null;
                 if (has_post_thumbnail()) {
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
                     $slide_image = sprintf('<div class="testimonials-image" style="%s"></div>', "background-image:url($image[0])");
                 }
-                $slides[] = array('content' => sprintf('%s<div class="testimonials-inner"><div class="testimonials-header"><h3>%s</h3><span class="testimonials-position">%s</span></div><div class="testimonials-content">%s</div></div>', $slide_image, get_the_title(), $meta['position'], get_the_content()), 'post' => $post);
+                $slides[] = array(
+                    'content' => apply_filters('testimonial-shortcode-item', sprintf('%s<div class="testimonials-inner"><div class="testimonials-header"><h3>%s</h3><span class="testimonials-position">%s</span></div><div class="testimonials-content">%s</div></div>', $slide_image, get_the_title(), $meta['position'], get_the_content()), $post, $meta, get_the_content(), $image), 
+                    'post' => $post
+                );
             }
         }
         wp_reset_postdata();

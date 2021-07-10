@@ -246,12 +246,16 @@
 }
 
 .navbar-left {
-    float: left !important
+    float: left !important 
 }
 
 .navbar-right {
     float: right !important;
     margin-right: -15px
+}
+
+.container-fluid .navbar-right {
+    margin-right: 0px;
 }
 
 .navbar-right~.navbar-right {

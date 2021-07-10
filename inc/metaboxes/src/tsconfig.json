@@ -1,0 +1,50 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "target": "es5",
+        "module": "amd",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "isolatedModules": false,
+        "skipLibCheck": true,
+        "lib": ["es6", "es5", "dom", "esnext"],
+        "sourceMap": true,
+        "allowJs": true,
+        "noStrictGenericChecks": false,
+        "jsx": "react",
+        "strictNullChecks": false,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "noUnusedLocals": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": false,
+        "outDir": "../js/",
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "./node_modules/*", "./ts/*", "./tsx/*"
+            ],
+            "@src/*": [
+                "./ts/*", "./tsx/*"
+            ]
+        },
+        "rootDirs": [
+            "./ts/**/*", "./node_modules/**/*", "./tsx/**/*"
+        ]
+    },
+    "exclude": [
+        "build",
+        "./node_modules/*",
+        "acceptance-tests",
+        "webpack",
+        "jest"
+    ],
+    "include": [
+        "./ts", "./tsx"
+    ]
+}

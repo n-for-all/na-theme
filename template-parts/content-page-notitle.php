@@ -54,11 +54,6 @@ else :
         <?php endif; ?>
 
         <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-            <?php if (function_exists('bcn_display')) { ?>
-                <div class="breadcrumb">
-                    <?php bcn_display(); ?>
-                </div>
-            <?php } ?>
             <div class="entry-content">
                 <div class="entry-inner-content">
                     <?php
