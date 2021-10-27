@@ -51,7 +51,6 @@ class Na_Popup
             'width' => '500px'
         ), $atts );
         $output = do_shortcode($content);
-        $id = '#!popup/'.sanitize_title($atts['name']).'/';
         $output = '<div style="width:'.$atts['width'].'" id="popup-'.sanitize_title($atts['name']).'" class="popup"><a class="close-popup" href="#">&times;</a><div class="popup-content">'.$output.'</div></div>';
         $this->popup_shortcodes[] = array($output, $atts['template'] ? sanitize_title($atts['template']): false, sanitize_title($atts['name']));
         return '';
@@ -87,7 +86,7 @@ class Na_Popup
     public function scripts()
     {
         wp_enqueue_style('popup-shortcode', get_template_directory_uri() . '/inc/popup/css/styles.css', array(), '1.0.0', 'screen');
-        wp_enqueue_script('popup-shortcode', get_template_directory_uri() . '/inc/popup/js/scripts.js', array('jquery'));
+        wp_enqueue_script('popup-shortcode', get_template_directory_uri() . '/inc/popup/js/scripts.js', array());
     }
 }
 new Na_Popup();

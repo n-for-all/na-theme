@@ -1,0 +1,94 @@
+@import "parts/symptomchecker";
+
+.divisions-list,
+.departments-list {
+    >ul {
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        margin: 1% -1% !important;
+
+        li {
+            width: 48%;
+            position: relative;
+            margin: 1%;
+            padding-bottom: 0 !important;
+            padding-top: 0 !important;
+
+            a.image {
+                display: block;
+                padding-top: 62.5%;
+                background-size: cover;
+                background-position: center;
+            }
+
+            .content {
+                position: absolute;
+                width: 100%;
+                bottom: 0;
+                display: flex;
+                justify-content: center;
+                padding: 1rem;
+                left: 0;
+                flex-direction: column;
+
+                img {
+                    height: 4rem;
+                    margin-right: 1rem;
+                    margin-bottom: 0;
+                }
+
+                .title {
+                    color: #fff;
+                    font-weight: bold;
+                    font-size: 1.4rem;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}
+
+.na-departments-carousel {
+    margin: 0 -1rem;
+
+    li.na-slide {
+        position: relative;
+
+        a {
+            margin: 0 1rem;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    }
+
+    .department-title {
+        position: absolute;
+        bottom: 0;
+        height: auto;
+        z-index: 2;
+        left: 1rem;
+        color: #fff;
+        font-weight: bold;
+        font-size: 1.2rem;
+        padding: 1.3rem 1.6rem;
+    }
+}
+
+body .departments-list>ul>li {
+    width: 31.3%;
+}
+
+@media (max-width:768px) {
+
+    body .divisions-list,
+    body .departments-list {
+        >ul {
+
+            li {
+                width: 98%;
+            }
+        }
+    }
+}

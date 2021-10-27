@@ -1,89 +1,146 @@
-jQuery(document).ready(function(){
-    var popup = null;
-    function showPopup(id){
-        popup = jQuery("#popup-"+ id);
-        popup.find('.popup-content').css('max-height', jQuery(window).height() - 40 + "px");
-        popup.addClass('active');
-        jQuery('body').addClass('na-popup-active');
-    }
+app.ready(function () {
+	var popup = null,
+		popupContent;
 
-    function showPopupAjax(id, element) {
-        if(jQuery("#popup-"+ id).length == 0){
-            var _class= '';
-            if(element && element.length > 0){
-                _class = element.attr('popup-class');
-            }
-            jQuery('body').append('<div id="popup-'+ id + '" class="popup '+_class+'"><a class="close-popup" href="#">&times;</a><div class="popup-content"></div></div>')
-        }
-        popup = jQuery("#popup-"+ id);
-        popup.find('.popup-content').css('max-height', jQuery(window).height() - 40 + "px");
-        jQuery.ajax({
-            url: PopupSettings.url,
-            type: 'post',
-            dataType: "json",
-            data: {
-                action: 'popup',
-                id: id
-            },
-            success: function(result) {
-                if (result && result.status == "success") {
-                    var post_template = wp.template('popup');
-                    if(jQuery('#tmpl-popup-' + result.post.type).length > 0){
-                        post_template = wp.template('popup-'+ result.post.type);
-                    }
-                    popup.find('.popup-content').html(post_template(result.post));
-                    jQuery('body').addClass('na-popup-active');
-                    popup.addClass('active');
-                }else{
-                    jQuery('.popup .close-popup').trigger('click');
-                }
-            }
-        }).fail(function() {
-            jQuery('.popup .close-popup').trigger('click');
-        });
-        return false;
-    }
+	var stopPropagation = function (event) {
+		event.stopPropagation();
+	};
 
-    jQuery( window ).on( 'hashchange', function( e ) {
-        var hash = window.location.hash.replace(/^#!/,'');
-        if(hash){
-            var path = hash.split('/');
-            if(path[0] == 'popup'){
-                if(path[1] == 'load'){
-                    showPopupAjax(path[2], jQuery('a[href="'+window.location.hash+'"]'));
-                }else{
-                    showPopup(path[1]);
-                }
-            }
-        }
-    } );
+	var dispatchHashchange = function () {
+		if (typeof HashChangeEvent !== "undefined") {
+			window.dispatchEvent(new HashChangeEvent("hashchange"));
+			return;
+		}
 
-    jQuery(document).on('click', '.popup .close-popup', function(event){
-        event.preventDefault();
-        event.stopPropagation();
-        jQuery(this).closest('.popup').removeClass('active');
-        window.location.hash = '#!';
-        jQuery('body').removeClass('na-popup-active');
-    });
+		// HashChangeEvent is not available on all browsers. Use the plain Event.
+		try {
+			window.dispatchEvent(new Event("hashchange"));
+			return;
+		} catch (error) {
+			// but that fails on ie
+		}
 
-    jQuery('.popup').on('scroll mousewheel DOMMouseScroll', function(event){
-        event.stopPropagation();
-    });
+		// IE workaround
+		const ieEvent = document.createEvent("Event");
+		ieEvent.initEvent("hashchange", true, true);
+		window.dispatchEvent(ieEvent);
+	};
 
-    jQuery(document).on('keydown', function(event) {
-        if (popup && event.keyCode == 27) {
-            event.preventDefault();
-            event.stopPropagation();
-            jQuery('.close-popup').trigger('click');
-        }
-    });
-    jQuery(window).on('resize', function(event) {
-        if(popup){
-            popup.find('.popup-content').css('max-height', jQuery(window).height() - 40 + "px");
-        }
-    });
+	var onClose = function (event) {
+		if (event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+		popup.classList.remove("active");
+		window.location.hash = "#!";
+		document.body.classList.remove("na-popup-active");
+	};
 
-    if (!("onhashchange" in window)) {
-        jQuery( window ).trigger( 'hashchange' );
-    }
+	function showPopup(id) {
+		popup = document.querySelector("#popup-" + id);
+		popupContent = popup.querySelector(".popup-content");
+		popupContent.style.maxHeight = window.innerHeight - 40 + "px";
+		popup.classList.add("active");
+
+		popup.addEventListener("scroll", stopPropagation);
+		popup.addEventListener("mousewheel", stopPropagation);
+		popup.addEventListener("DOMMouseScroll", stopPropagation);
+
+		document.body.classList.add("na-popup-active");
+	}
+
+	function showPopupAjax(id, element) {
+		popup = document.querySelector("#popup-" + id);
+		if (!popup) {
+			var _class = "";
+			if (element) {
+				_class = element.getAttribute("popup-class");
+			}
+
+			popup = document.createElement("div");
+			popup.setAttribute("id", "popup-" + id);
+			popup.setAttribute("id", "popup " + _class);
+
+			popup.innerHTML = '<div class="popup-content"></div>';
+
+			var close = document.createElement("a");
+			close.classList.add("close-popup");
+			close.href = "#";
+			close.innerHTML = "&times;";
+			close.addEventListener("click", onClose);
+
+			popup.appendChild(close);
+
+			var popupContent = document.createElement("div");
+			popupContent.classList.add("popup-content");
+			popupContent.style.maxHeight = window.innerHeight - 40 + "px";
+
+			popup.appendChild(popupContent);
+			document.body.appendChild(popup);
+		} else {
+			popupContent = popup.querySelector(".popup-content");
+			popupContent.style.maxHeight = window.innerHeight - 40 + "px";
+		}
+
+		var formData = new FormData();
+
+		formData.append("action", "popup");
+		formData.append("id", id);
+
+		fetch(PopupSettings.url, {
+			method: "POST",
+			body: formData,
+		})
+			.then((response) => response.json())
+			.then((result) => {
+				if (result && result.status == "success") {
+					var post_template = wp.template("popup");
+					if (document.querySelector("#tmpl-popup-" + result.post.type)) {
+						post_template = wp.template("popup-" + result.post.type);
+					}
+					popupContent.html(post_template(result.post));
+					document.body.classList.add("na-popup-active");
+					popup.classList.add("active");
+				} else {
+					onClose();
+				}
+			})
+			.catch((error) => {
+                console.error(error);
+				onClose();
+			});
+
+		return false;
+	}
+
+	window.addEventListener("hashchange", function (e) {
+		var hash = window.location.hash.replace(/^#!/, "");
+		if (hash) {
+			var path = hash.split("/");
+			if (path[0] == "popup") {
+				if (path[1] == "load") {
+					showPopupAjax(path[2], document.querySelector('a[href="' + window.location.hash + '"]'));
+				} else {
+					showPopup(path[1]);
+				}
+			}
+		}
+	});
+
+	document.addEventListener("keydown", function (event) {
+		if (popup && event.keyCode == 27) {
+			event.preventDefault();
+			event.stopPropagation();
+			onClose();
+		}
+	});
+	window.addEventListener("resize", function (event) {
+		if (popupContent) {
+			popupContent.style.maxHeight = window.innerHeight - 40 + "px";
+		}
+	});
+
+	if (!("onhashchange" in window)) {
+		dispatchHashchange();
+	}
 });

@@ -1,5 +1,8 @@
 <?php
-class Na_Slider
+
+namespace NaTheme\Inc\Slider;
+
+class Slider
 {
     public function __construct()
     {
@@ -9,6 +12,10 @@ class Na_Slider
 
         add_filter('manage_slide_posts_columns', array(&$this, 'add_img_column'));
         add_filter('manage_slide_posts_custom_column', array(&$this, 'manage_img_column'), 10, 2);
+
+        $this->metabox = new Metabox(array('slide'), 'Settings');;
+        $this->image = new PostImage("slides-image", "Settings", "image", "slider", 2);
+        $this->image->set_meta_box($this->metabox);
     }
     public function init()
     {
@@ -36,12 +43,12 @@ class Na_Slider
             'show_ui'            => true,
             'show_in_menu'       => true,
             'query_var'          => true,
-            'rewrite'            => array( 'slug' => 'slide' ),
+            'rewrite'            => array('slug' => 'slide'),
             'capability_type'    => 'post',
             'has_archive'        => true,
             'hierarchical'       => false,
             'menu_position'      => null,
-            'supports'           => array( 'title', 'editor', 'thumbnail', 'page-attributes')
+            'supports'           => array('title', 'editor', 'thumbnail', 'page-attributes')
         );
 
         register_post_type('slide', $args);
@@ -66,7 +73,7 @@ class Na_Slider
             'show_ui'           => true,
             'show_admin_column' => true,
             'query_var'         => false,
-            'rewrite'           => array( 'slug' => 'slider' ),
+            'rewrite'           => array('slug' => 'slider'),
         );
         register_taxonomy(
             'slider',
@@ -74,20 +81,22 @@ class Na_Slider
             $args
         );
     }
-    public function add_img_column($columns) {
+    public function add_img_column($columns)
+    {
         $columns['img'] = 'Image';
         return $columns;
     }
-    public function manage_img_column($column_name, $post_id) {
-        if( $column_name == 'img' ) {
+    public function manage_img_column($column_name, $post_id)
+    {
+        if ($column_name == 'img') {
             echo get_the_post_thumbnail($post_id, 'thumbnail');
         }
         return $column_name;
     }
     public function scripts()
     {
-        wp_enqueue_script('na-slider-swipe', get_template_directory_uri() . '/inc/slider/js/hammer.min.js', array( 'jquery' ), '1.0.0', true);
-        wp_enqueue_script('na-slider', get_template_directory_uri() . '/inc/slider/js/slider.js', array( 'jquery' ), '1.0.0', true);
+        wp_enqueue_script('na-slider-hammer', get_template_directory_uri() . '/inc/slider/js/hammer.min.js', array(), '1.0.0', true);
+        wp_enqueue_script('na-slider', get_template_directory_uri() . '/inc/slider/js/slider.js', array('na-slider-hammer'), '1.0.0', true);
         wp_enqueue_style('na-slider', get_template_directory_uri() . '/inc/slider/css/slider.css', array(), '1.0');
     }
     public function slider($atts)
@@ -106,23 +115,24 @@ class Na_Slider
             'min-width' => 0,
             'columns' => 1
         ), $atts);
-        if($atts['id'] != 0){
+        if ($atts['id'] != 0) {
             $atts['category'] = $atts['id'];
         }
         $slides = get_posts(
             array(
-            'post_type' => 'slide',
-            'posts_per_page' => -1,
-            'orderby' => 'menu_order',
-			'order' => 'ASC',
-            'suppress_filters' => false,
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'slider',
-                    'field' => is_numeric($atts['category']) ? 'term_id': 'slug',
-                    'terms' => $atts['category']
+                'post_type' => 'slide',
+                'posts_per_page' => -1,
+                'orderby' => 'menu_order',
+                'order' => 'ASC',
+                'suppress_filters' => false,
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => 'slider',
+                        'field' => is_numeric($atts['category']) ? 'term_id' : 'slug',
+                        'terms' => $atts['category']
+                    )
                 )
-            ))
+            )
         );
         $settings = array();
         $_slides = array();
@@ -139,42 +149,54 @@ class Na_Slider
                 'height' => $atts['height']
             );
             if ($atts['type'] == 'mosaic') {
-                for ($i = 0; $i < count($slides);  $i = $i + 2):
+                for ($i = 0; $i < count($slides); $i = $i + 2) :
                     $slide1 = $slides[$i];
-                    $slide2 = $slides[$i+1];
+                    $slide2 = $slides[$i + 1];
                     $image1 = '';
                     $image2 = '';
+
+                    $video_id = $this->metabox->get_youtube_video_id($slide1->ID);
                     if (has_post_thumbnail($slide1->ID)) {
                         $image1 = wp_get_attachment_image_src(get_post_thumbnail_id($slide1->ID), "full")[0];
                     }
                     if (has_post_thumbnail($slide2->ID)) {
                         $image2 = wp_get_attachment_image_src(get_post_thumbnail_id($slide2->ID), "full")[0];
                     }
-    			    $_slides[] = array('content' => '<div class="na-slide-inner na-slider-inner1" style="background:url('.$image1.') no-repeat top center / cover;width:100%">
+                    $_slides[] = array('content' => '<div class="na-slide-inner na-slider-inner1" style="background:url(' . $image1 . ') no-repeat top center / cover;width:100%">
     						<div class="na-slide-text">
-    							'.apply_filters('the_content', $slide1->post_content).'
+    							' . apply_filters('the_content', $slide1->post_content) . '
     						</div>
     					</div>
-    					<div class="na-slide-inner na-slider-inner2" style="background:url('.$image2.') no-repeat top center / cover;width:100%">
+    					<div class="na-slide-inner na-slider-inner2" style="background:url(' . $image2 . ') no-repeat top center / cover;width:100%">
     						<div class="na-slide-text">
-    						     '.apply_filters('the_content', $slide2->post_content).'
+    						     ' . apply_filters('the_content', $slide2->post_content) . '
     						</div>
-    					</div>', 'post' => [$slide1, $slide2]);
-				endfor;
+    					</div>', 'post' => [$slide1, $slide2], 'video' => $video_id);
+                endfor;
             } else {
-                foreach ($slides as $slide):
+                foreach ($slides as $slide) :
+                    $video_id = $this->metabox->get_youtube_video_id($slide->ID);
                     $image = '';
                     if (has_post_thumbnail($slide->ID)) {
                         $image = wp_get_attachment_image_src(get_post_thumbnail_id($slide->ID), "full")[0];
                     }
-    				$_slides[] = array('content' => '<div style="background-image:url('.$image.')" class="na-slide-inner">
-                        <div class="'.$settings['container'].'">
-        					<div class="na-slide-text">
-        						'.apply_filters('the_content', $slide->post_content).'
-        					</div>
-    					</div>
-    				</div>', 'post' => $slide);
-                    if($atts['max'] && $atts['max'] < count($_slides)){
+
+                    $container  = '';
+                    $content = sprintf('<div class="na-slide-text">%s</div>', apply_filters('the_content', $slide->post_content));
+                    if ($settings['container'] == 'container') {
+                        if ($video_id) {
+                            $container  = sprintf('<div class="container"><div class="row"><div class="col-md-6">%s</div><div class="col-md-6"><a href="#" class="play-btn-big"></a></div></div></div>', $content);
+                        } else {
+                            $container  = sprintf('<div class="container"><div class="row"><div class="col-md-12">%s</div></div></div>', $content);
+                        }
+                    }else{
+                        $container = $content.'<a href="#" class="play-btn-big"></a>';
+                    }
+
+                    $_slides[] = array('content' => sprintf('<div style="background-image:url(%s)" class="na-slide-inner">
+                        %s
+    				</div>', $image, $container), 'post' => $slide, 'video' => $video_id);
+                    if ($atts['max'] && $atts['max'] < count($_slides)) {
                         break;
                     }
                 endforeach;
@@ -187,144 +209,60 @@ class Na_Slider
         if (count($slides) > 0) {
             $id = uniqid('slider_');
             ob_start();
-            if($settings['type'] == 'circular'){
-                $settings['autoplay'] = false;
+            if (isset($settings['thumbnails']) && $settings['thumbnails']) {
+                $settings['sync'] = $id . '_thumbnails';
             }
-            if (isset($settings['thumbnails']) && $settings['thumbnails']){
-                $settings['sync'] = $id.'_thumbnails';
-            }
-            ?>
-		<script>
-			if(typeof(slider_settings) == 'undefined'){
-				var slider_settings = [];
-			}
-			slider_settings['<?php echo $id; ?>'] = <?php echo json_encode((array)$settings); ?>;
-			slider_settings['<?php echo $id; ?>_thumbnails'] = <?php echo json_encode(array('columns' => 6, 'minWidth' => 50, 'height' => 'w15%')); ?>;
-		</script>
-		<div id="<?php echo $id; ?>" class="na-slider-wrapper na-slider-<?php echo $settings['vertical'] != 0 ? 'vertical': 'horizontal'; ?> na-<?php echo $settings['type'] != '' ? $settings['type']: 'normal'; ?> <?php echo $settings['class'] ?? ''; ?>" data-slider="<?php echo $id; ?>">
-            <?php if($settings['type'] == 'circular'): ?>
-                <div id="circular-nav">
-                    <div class="svg-wrap">
-                        <svg width="500px" height="500px" viewBox="0 0 500 500" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <g class="circular-wrap" style="transform-origin: 250px 250px; transition: transform ease 1s">
-                                    <circle id="main-circle" stroke="#34a0cd" stroke-width="2" cx="250" cy="250" r="200"></circle>
-                                    <circle class="point-circle" fill="#723a83" cx="250" cy="50" r="16"></circle>
-                                </g>
-                            </g>
-                        </svg>
-                        <ul class="na-slides-title">
-                            <?php
-                            foreach ($slides as $slide):
-                                if (has_post_thumbnail($slide['post']->ID)) {
-                                    $image = wp_get_attachment_image_src(get_post_thumbnail_id($slide['post']->ID), "full");
-                                }
-                                 ?>
-        						<li>
-        						     <span><?php echo $slide['post']->post_title; ?></span>
-        						</li>
-        					<?php endforeach;
-                             ?>
-                         </ul>
-                    </div>
-                </div>
-            <?php endif; ?>
-        	<div style="height:<?php echo $settings['height']; ?>" class="na-slider">
-				<ul class="na-slides <?php echo $settings['class'] ?? ''; ?>">
-					<?php
-                    foreach ($slides as $slide):
-                         ?>
-						<li class="na-slide na-slide-<?php echo $slide['post']->ID; ?>">
-						     <?php echo $slide['content']; ?>
-						</li>
-					<?php endforeach;
-                     ?>
-				</ul>
-			</div>
-			<?php if (count($slides) > 1) { ?>
-				<a href="#" class="na-slider-actions prev"><span>&nbsp;</span></a>
-				<a href="#" class="na-slider-actions next"><span>&nbsp;</span></a>
-			<?php
-            }
-            $total = count($slides)/$settings['columns'];
-            ?>
-			<?php if (isset($settings['bullets']) && $settings['bullets']  && count($slides) > 1) { ?>
-				<ul class="na-slider-bullets">
-                    <?php for ($index = 0; $index < $total; $index ++):?>
-                        <li><a data-index="<?php echo $index; ?>" class="na-slider-bullet-actions <?php echo $index == 0 ? 'active': ''; ?>" href="#"><span class="bullet-title"><?php echo $slides[$index]['post']->post_title; ?></span></a></li>
-                    <?php endfor; ?>
-                </ul>
-			<?php
-            } ?>
+            include('template/slider.tpl.php');
 
-		</div>
-        <?php if (isset($settings['thumbnails']) && $settings['thumbnails']  && count($slides) > 1) { ?>
-            <div class="na-slider-thumbnails">
-                <div id="<?php echo $id; ?>_thumbnails" class="na-slider-wrapper na-slider-<?php echo $settings['vertical'] != 0 ? 'vertical': 'horizontal'; ?> na-<?php echo $settings['type'] != '' ? $settings['type']: 'normal'; ?>" data-slider="<?php echo $id; ?>_thumbnails">
-                    <div style="height:50px" class="na-slider">
-                        <ul class="na-slides <?php echo $settings['class']; ?>">
-                            <?php
-                            foreach ($slides as $slide):
-                                 ?>
-                                <li class="na-slide na-slide-<?php echo $slide['post']->ID; ?>">
-                                     <?php echo $slide['content']; ?>
-                                </li>
-                            <?php endforeach;
-                             ?>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        <?php
-        } ?>
-		<?php
             return ob_get_clean();
         }
-
     }
 }
-class SLIDER_METABOXES extends NA_METABOXES
+class Metabox extends \NaTheme\Inc\Metaboxes\Metabox
 {
     public function show_metabox($post)
     {
-        ?>
-		<table class="form-table">
-			<tbody>
-				<tr class="form-field form-required term-name-wrap">
-					<th scope="row"><label for="name">Choose images</label></th>
-					<td><?php $this->_metabox_image($post->ID, 'image', 'slide'); ?>
-					<p class="description">Choose your slider images, those images will appear in the slider shortcode of your website.</p></td>
-				</tr>
-			</tbody>
-		</table>
-		<?php
+?>
+        <table class="form-table">
+            <tbody>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Youtube Video ID</label></th>
+                    <td><?php $this->_metabox_text($post->ID, 'youtube', 'slide'); ?>
+                        <p class="description">Youtube video ID.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <?php
 
     }
-    // public function get_slides($post_id)
-    // {
-    //     return ['post' => get_post($post_id), 'image' => $this->_metabox_image_value($post_id, 'image', 'slide', 'full')];
-    // }
+    public function get_youtube_video_id($post_id)
+    {
+        $p = $this->_metabox_text_value($post_id, 'youtube', 'slide', 'full');
+        return $p;
+    }
 }
-global $SLIDER_METABOXES;
-$SLIDER_METABOXES = new SLIDER_METABOXES(array('slide'), 'Slides');
 
-class NA_POST_IMAGE extends NA_POST_COLUMN
+class PostImage extends \NaTheme\Inc\Metaboxes\Admin\PostColumn
 {
+    public function set_meta_box($meta_box)
+    {
+        $this->meta_box = $meta_box;
+    }
     public function show_content($column, $post_id)
     {
-        global $SLIDER_METABOXES;
-        $images = $SLIDER_METABOXES->_metabox_image_value($post_id, 'image', 'slide');
-        //print_r();
+        $images = $this->meta_box->_metabox_image_value($post_id, 'image', 'slide');
         foreach ($images as $image) {
-            ?>
-			<img src="<?php echo $image[0]; ?>" style="height:50px" />
-			<?php
-
+        ?>
+            <img src="<?php echo $image[0]; ?>" style="height:50px" />
+<?php
         }
     }
 }
+
+
 global $slider;
-$slider = new Na_Slider();
-$NA_POST_IMAGE = new NA_POST_IMAGE("slides-image", "Slides", "image", "slider", 2);
+$slider = new Slider();
+
 
 ?>

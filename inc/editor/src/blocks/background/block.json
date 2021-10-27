@@ -1,0 +1,34 @@
+{
+	"apiVersion": 2,
+	"name": "na-theme-blocks/background",
+	"title": "Background & Text",
+	"category": "na-theme",
+	"description": "Set background image with text.",
+	"keywords": ["image", "background"],
+	"textdomain": "default",
+	"attributes": {
+		"mediaPosition": {
+			"type": "string",
+			"default": "left"
+		},
+		"mediaId": {
+			"type": "number"
+		},
+		"mediaUrl": {
+			"type": "string"
+		},
+
+		"verticalAlignment": {
+			"type": "string"
+		},
+		"imageFill": {
+			"type": "boolean"
+		}
+	},
+	"supports": {
+		"anchor": false,
+		"html": false
+	},
+	"editorStyle": "wp-block-background-text-editor",
+	"style": "wp-block-background-text"
+}

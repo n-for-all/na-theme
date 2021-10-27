@@ -1,6 +1,8 @@
 <?php
 
-class Posts_Widget extends WP_Widget
+namespace NaTheme\Inc\Widgets;
+
+class Posts extends \WP_Widget
 {
     function __construct()
     {
@@ -63,7 +65,7 @@ class Posts_Widget extends WP_Widget
             $taxonomy = get_term_by($field_type, $category, $taxonomy_name);
             $taxonomies[] = $taxonomy;
 
-            $query = new WP_Query($args);
+            $query = new \WP_Query($args);
 
 
             if ($query->have_posts()) {

@@ -70,8 +70,8 @@ get_header(); ?>
 
                         // Previous/next page navigation.
                         the_posts_pagination(array(
-                            'prev_text'          => __('Previous page', 'twentyfifteen'),
-                            'next_text'          => __('Next page', 'twentyfifteen'),
+                            'prev_text'          => '&larr;',
+                            'next_text'          => '&rarr;',
                             'before_page_number' => '<span class="meta-nav screen-reader-text">' . __('Page', 'twentyfifteen') . ' </span>',
                         ));
                         ?>

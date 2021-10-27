@@ -4,6 +4,11 @@ declare let wp: any, naThemeData: any;
 /**
  * WordPress Dependencies
  */
+
+if(!wp.plugins){
+    throw new Error('wp.plugin is not loaded');
+}
+
 const { addFilter, addAction } = wp.hooks;
 const { registerPlugin } = wp.plugins;
 const { __ } = wp.i18n;
@@ -13,6 +18,7 @@ const { createHigherOrderComponent, withState, compose } = wp.compose;
 const { ToggleControl, SelectControl, TextControl } = wp.components;
 const { PluginDocumentSettingPanel, PluginSidebarMoreMenuItem, PluginSidebar } = wp.editPost;
 const { withSelect, withDispatch } = wp.data;
+
 
 /**
  * Add custom attribute for mobile visibility.
@@ -161,4 +167,3 @@ addAction('all', 'editor', (name) => {
 	console.log(name);
 });
 
-console.log('running');

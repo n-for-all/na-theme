@@ -1,0 +1,29 @@
+.na-theme-blocks-row.row.alignfull {
+  margin-left: 0;
+  margin-right: 0; }
+
+.grid {
+  padding-left: 15px;
+  padding-right: 15px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #87A0AA;
+  margin: 2rem 0;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden; }
+  .grid .row {
+    margin-bottom: -1px; }
+  .grid:before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    background-color: #87A0AA;
+    height: 100%;
+    width: 1px; }
+  .grid .item {
+    border-bottom: 1px solid #87A0AA;
+    padding: 2rem;
+    align-items: center;
+    display: flex; }

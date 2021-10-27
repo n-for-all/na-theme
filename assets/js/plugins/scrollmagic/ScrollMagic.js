@@ -471,7 +471,6 @@
 		 * var scene = new ScrollMagic.Scene({offset: 200});
 		 * controller.scrollTo(scene);
 		 *
-		 * // define a new scroll position modification function (jQuery animate instead of jump)
 		 * controller.scrollTo(function (newScrollPos) {
 		 *	$("html, body").animate({scrollTop: newScrollPos});
 		 * });
@@ -2538,7 +2537,6 @@
 		 * ------------------------------
 		 */
 
-		// extend obj – same as jQuery.extend({}, objA, objB)
 		U.extend = function (obj) {
 			obj = obj || {};
 			for (i = 1; i < arguments.length; i++) {

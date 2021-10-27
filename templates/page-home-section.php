@@ -52,33 +52,33 @@ get_header(); ?>
                             $start_scroller = true; ?>
                             <div id="scroll-container" class="scrolling-container--<?php echo $naTheme->homepage_scrolling; ?>">
                                 <div id="inner-scroll" class="scrolling-style-<?php echo $naTheme->homepage_scrolling; ?>">
-                                <?php endif; ?>
-                            <?php endif;
-                            include('parts/section.php'); 
-                            
-                            $i++;
-                        }
-                        if ($start_scroller) :
-                            if ($naTheme->homepage_scrolling == 4) :
-                            ?>
+                                <?php endif;
+                        endif;
+                        include('parts/section.php');
+
+                        $i++;
+                    }
+                    if ($start_scroller) :
+                        if ($naTheme->homepage_scrolling == 4) :
+                                ?>
                                 <section class="section-placeholder"></section>
                             <?php endif; ?>
                                 </div>
                             </div>
                         <?php endif;
-                        if ($naTheme->show_scroll_icon == 1) { ?>
+                    if ($naTheme->show_scroll_icon == 1) { ?>
                             <span class="mouse"><span class="scroll" title=""></span></span>
                     <?php }
-                        wp_reset_postdata();
-                        //get_template_part( 'content', 'home' );
+                    wp_reset_postdata();
+                    //get_template_part( 'content', 'home' );
 
-                        // If comments are open or we have at least one comment, load up the comment template.
-                        if (comments_open() || get_comments_number()) :
-                            comments_template();
-                        endif;
-                        // End the loop.
-                        break;
-                    endwhile;
+                    // If comments are open or we have at least one comment, load up the comment template.
+                    if (comments_open() || get_comments_number()) :
+                        comments_template();
+                    endif;
+                    // End the loop.
+                    break;
+                endwhile;
                     ?>
         </div>
     </main>

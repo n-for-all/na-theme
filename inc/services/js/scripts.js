@@ -1,4 +1,5 @@
-jQuery(document).ready(function() {
+app.ready(function() {
+    return;
     var last = null;
 
     function showService(element, id) {

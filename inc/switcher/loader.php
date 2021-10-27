@@ -45,7 +45,7 @@ class Na_Switcher
     public function scripts()
     {
         wp_enqueue_style('switcher-shortcode', get_template_directory_uri() . '/inc/switcher/css/styles.css', array(), '1.0.0', 'screen');
-        wp_enqueue_script('switcher-shortcode', get_template_directory_uri() . '/inc/switcher/js/scripts.js', array('jquery'));
+        wp_enqueue_script('switcher-shortcode', get_template_directory_uri() . '/inc/switcher/js/scripts.js', array());
     }
 }
 new Na_Switcher();

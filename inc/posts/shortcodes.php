@@ -49,7 +49,7 @@ class Posts_Shortcode
             );
         }
         $output = '';
-        $query = new WP_Query($args);
+        $query = new \WP_Query($args);
         $template = '<li class="post-list-item %s"><a data-id="%d" class="posts-image" style="%s" href="%s"><dt>%s</dt></a><div class="posts-inner"><div class="posts-header"><h3><a href="%s">%s</a></h3></div><div class="posts-content">%s</div></div></li>';
         if ($query->have_posts()) {
             $output = '<ul class="na-posts">';

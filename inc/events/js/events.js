@@ -1,6 +1,8 @@
-(function() {
+app.ready(function() {
+    console.log('Requires Refactoring events.js');
+    return;
     function showEvent(post_id){
-        jQuery("body").addClass("na-events-overlay");
+        document.body.classList.add("na-events-overlay");
         jQuery.ajax({
             url: events_ajax,
             type: 'post',
@@ -18,7 +20,7 @@
                 }
             },
             error: function() {
-                jQuery("body").removeClass("na-events-overlay");
+                document.body.classList.remove("na-events-overlay");
             }
         })
     }
@@ -32,7 +34,7 @@
         event.preventDefault();
         jQuery('#na-event-template').fadeOut(function() {
             jQuery(this).remove();
-            jQuery("body").removeClass("na-events-overlay");
+            document.body.classList.remove("na-events-overlay");
         });
 
     });
@@ -53,4 +55,4 @@
             }
         }
     } );
-})();
+});

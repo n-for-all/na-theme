@@ -1,10 +1,12 @@
 <?php
 
-class Testimonials_Shortcode extends NA_METABOXES
+namespace NaTheme\Inc\Testimonials;
+
+class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
 {
     public function __construct()
     {
-        parent::__construct(array('testimonial'), 'Testimonials Member', 'normal', 'high');
+        parent::__construct(array('testimonial'), 'Testimonial', 'normal', 'high');
 
         $this->actions();
         $this->shortcodes();
@@ -20,14 +22,12 @@ class Testimonials_Shortcode extends NA_METABOXES
     }
     public function shortcodes()
     {
-        add_shortcode('testimonials', array($this, 'shortcode'));
+        add_shortcode('testimonials', array($this, 'render'));
+        add_shortcode('testimonials-carousel', array($this, 'renderCarousel'));
     }
     public function scripts()
     {
-        wp_enqueue_style('testimonials-shortcode', get_template_directory_uri() . '/inc/testimonials/css/testimonials.css', array(), '1.0.0', 'screen');
-        wp_enqueue_script('wp-util');
-        wp_enqueue_script('underscore');
-        wp_enqueue_script('testimonials-shortcode-js', get_template_directory_uri() . '/inc/testimonials/js/testimonials.js', array('jquery'), '1.0.0');
+        wp_enqueue_style('testimonials-shortcode', get_template_directory_uri() . '/inc/testimonials/css/styles.css', array(), '1.0.0', 'screen');
     }
 
     public function get_testimonial()
@@ -63,9 +63,9 @@ class Testimonials_Shortcode extends NA_METABOXES
             'menu_name'          => _x('Testimonials', 'admin menu', 'na-theme'),
             'name_admin_bar'     => _x('Testimonials', 'add new on admin bar', 'na-theme'),
             'add_new'            => _x('Add New', 'timeline-media', 'na-theme'),
-            'add_new_item'       => __('Add New Testimonials Member', 'na-theme'),
-            'new_item'           => __('New Testimonials Member', 'na-theme'),
-            'edit_item'          => __('Edit Testimonials Member', 'na-theme'),
+            'add_new_item'       => __('Add New Testimonial', 'na-theme'),
+            'new_item'           => __('New Testimonial', 'na-theme'),
+            'edit_item'          => __('Edit Testimonial', 'na-theme'),
             'view_item'          => __('View Testimonials', 'na-theme'),
             'all_items'          => __('All Testimonials', 'na-theme'),
             'search_items'       => __('Search Testimonials', 'na-theme'),
@@ -123,7 +123,59 @@ class Testimonials_Shortcode extends NA_METABOXES
 
         register_taxonomy('testimonials', 'testimonial', $args);
     }
-    public function shortcode($atts)
+
+    public function render($atts)
+    {
+        $atts = shortcode_atts(array(
+            'limit' => -1,
+            'orderby' => 'menu_order',
+            'order' => 'ASC',
+        ), $atts);
+
+        $testimonials = get_posts(
+            array(
+                'post_type' => 'testimonial',
+                'posts_per_page' => $atts['limit'],
+                'orderby' => $atts['orderby'],
+                'order' => $atts['order'],
+                'suppress_filters' => false
+            )
+        );
+
+        ob_start();
+        if (count($testimonials) > 0) { ?>
+            <div class="testimonials-list">
+                <ul>
+                    <?php
+                    global $post;
+                    foreach ($testimonials as $post) :
+                        setup_postdata($post);
+                        $meta = $this->get_meta(get_the_ID(), 'testimonials');
+                        $image = false;
+                        if (has_post_thumbnail()) {
+                            $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
+                        }
+                    ?>
+                        <li>
+                            <a href="<?php the_permalink(); ?>" style="<?php echo $image ? "background-image:url({$image[0]})" : '' ?>" class="image"></a>
+                            <div class="content">
+                                <a href="<?php the_permalink(); ?>" class="title"><?php the_title(); ?></a>
+                                <?php if($meta['name'] != ''): ?><a href="<?php the_permalink(); ?>" class="meta meta-name"><?php echo $meta['name']; ?></a><?php endif; ?>
+                                <div class="text"><?php the_excerpt(); ?></div>
+                            </div>
+                        </li>
+                    <?php
+                    endforeach;
+                    wp_reset_postdata();
+                    ?>
+                </ul>
+            </div>
+        <?php
+        }
+        return ob_get_clean();
+    }
+
+    public function renderCarousel($atts)
     {
         global $slider;
         $atts = shortcode_atts(array(
@@ -155,7 +207,7 @@ class Testimonials_Shortcode extends NA_METABOXES
                 'order' => 'ASC'
             );
         }
-        $query = new WP_Query($args);
+        $query = new \WP_Query($args);
         $slides = array();
         global $post;
         if ($query->have_posts()) {
@@ -169,7 +221,7 @@ class Testimonials_Shortcode extends NA_METABOXES
                     $slide_image = sprintf('<div class="testimonials-image" style="%s"></div>', "background-image:url($image[0])");
                 }
                 $slides[] = array(
-                    'content' => apply_filters('testimonial-shortcode-item', sprintf('%s<div class="testimonials-inner"><div class="testimonials-header"><h3>%s</h3><span class="testimonials-position">%s</span></div><div class="testimonials-content">%s</div></div>', $slide_image, get_the_title(), $meta['position'], get_the_content()), $post, $meta, get_the_content(), $image), 
+                    'content' => apply_filters('testimonial-shortcode-item', sprintf('%s<div class="testimonials-inner"><div class="testimonials-header"><h3>%s</h3><span class="testimonials-name">%s</span></div><div class="testimonials-content">%s</div></div>', $slide_image, get_the_title(), $meta['name'], get_the_content()), $post, $meta, get_the_content(), $image),
                     'post' => $post
                 );
             }
@@ -181,19 +233,19 @@ class Testimonials_Shortcode extends NA_METABOXES
             'vertical' => $atts['vertical'],
             'type' => $atts['type'],
             'class' => 'testimonials-slider',
-            'height' => $atts['height'] ? $atts['height']: '50vh'
+            'height' => $atts['height'] ? $atts['height'] : '50vh'
         );
         return $slider->addSlider($slides, $settings);
     }
     public function show_metabox($post)
     {
-?>
+        ?>
         <table class="form-table">
             <tbody>
                 <tr class="form-field form-required term-name-wrap">
-                    <th scope="row"><label for="name">Position</label></th>
-                    <td><?php $this->_metabox_text($post->ID, 'position', 'testimonials'); ?>
-                        <p class="description">The person position.</p>
+                    <th scope="row"><label for="name">Name</label></th>
+                    <td><?php $this->_metabox_text($post->ID, 'name', 'testimonials'); ?>
+                        <p class="description">The person name.</p>
                     </td>
                 </tr>
             </tbody>
@@ -202,5 +254,4 @@ class Testimonials_Shortcode extends NA_METABOXES
 
     }
 }
-new Testimonials_Shortcode();
 ?>

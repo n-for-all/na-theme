@@ -1,8 +1,8 @@
-jQuery(document).ready(function() {
+app.ready(function() {
     var last = null;
 
     function showTeamMember(id) {
-        jQuery("body").addClass('na-team-active');
+        document.body.classList.add('na-team-active');
         jQuery.ajax({
             url: TeamSettings.url,
             type: 'post',
@@ -17,12 +17,12 @@ jQuery(document).ready(function() {
                     jQuery("body").append("<div id='na-team-member-template'><a class='close-team' href='#'></a>" + post_template(result.post) + "</div>");
                     jQuery('#na-team-member-template').fadeIn();
                 }else{
-                    jQuery("body").removeClass('na-team-active');
+                    document.body.classList.remove('na-team-active');
                 }
             }
         }).fail(function() {
             jQuery('.close-team').trigger('click');
-            jQuery("body").removeClass('na-team-active');
+            document.body.classList.remove('na-team-active');
         });
         return false;
     }
@@ -46,7 +46,7 @@ jQuery(document).ready(function() {
         event.preventDefault();
         jQuery('#na-team-member-template').fadeOut(function() {
             jQuery('#na-team-member-template').remove();
-            jQuery("body").removeClass("na-team-active");
+            document.body.classList.remove("na-team-active");
         });
         window.location.hash = '#!';
     });

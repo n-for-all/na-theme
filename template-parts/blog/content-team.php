@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The template used for displaying page content
  *
@@ -12,26 +13,29 @@ global $naTheme, $post;
 /**
  * Featured Image
  */
+
+global $post;
 $featured_image = $naTheme->get_post_thumbnail(null, 'full');
+$meta = get_post_meta($post->ID, '_meta_team', true);
 ?>
 
-<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
-		<?php
-		if($featured_image):
-		?>
-		<figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
-			<img src="<?php echo $featured_image; ?>" />
-		</figure>
-		<?php endif; ?>
-		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
-	</header><!-- .entry-header -->
-
-	<div class="<?php $naTheme->classes('content', 'entry-content'); ?>">
-		<div class="entry-inner-content">
-			<?php
-			the_excerpt();
-			?>
-		</div>
-	</div><!-- .entry-content -->
-</article><!-- #post-## -->
+<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+    <div class="row row-flex">
+        <div class="col-lg-6 col-md-12">
+            <figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
+                <img src="<?php echo $featured_image; ?>" />
+            </figure>
+        </div>
+        <div class="col-lg-6 col-md-12 d-flex align-items-center">
+            <div class="entry-content">
+                <?php the_title('<h3 class="entry-title">', '</h3>'); ?>
+                <div class="position"><?php echo $meta['position'] ?? ''; ?></div>
+                <div class="entry-inner-content">
+                    <?php
+                    the_content();
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div><!-- #post-## -->
+</div><!-- #post-## -->

@@ -1,0 +1,210 @@
+#cont-place li a {
+    color: #333;
+}
+
+#cont-place li a,
+#cont-place li span {
+    font-weight: normal;
+    padding: 5px 5px;
+    display: block
+}
+
+#cont-place ul {
+    padding-left: 0;
+}
+
+#cont-place>li>span {
+    position: relative;
+}
+
+#cont-place>li>span:after {
+    content: "";
+    float: right;
+    border-width: 4px 3px 0 3px;
+    border-style: solid;
+    border-color: #565656 transparent;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+
+#cont-place li>a,
+#cont-place li>span {
+    direction: ltr;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+    color: rgb(86, 86, 86);
+    font-family: Roboto, Arial, sans-serif;
+    user-select: none;
+    font-size: 11px;
+    background-color: rgb(255, 255, 255);
+    padding: 8px;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    box-shadow: rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px;
+    border-left: 0px;
+    text-align: left;
+}
+
+#cont-place li>a:hover {
+    text-decoration: none;
+    background: #f8f8f8;
+}
+
+#cont-place li>span {
+    cursor: pointer;
+}
+
+#cont-place li>ul {
+    display: none;
+}
+
+#cont-place li.gm-show-active>ul {
+    display: block;
+}
+
+#cont-place {
+    padding: 0px 0px 0px 10px;
+    position: absolute;
+    top: 0;
+    left: 100px;
+    z-index: 3;
+    /*background: #fff;*/
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 11px;
+    color: #333;
+    font-weight: normal;
+    margin: 10px;
+    border-radius: 2px;
+    padding-left: 0;
+    overflow: hidden;
+}
+
+.ltr #cont-place li:last-child {
+    border-right: 0 none;
+}
+
+.rtl {
+    #cont-place {
+        padding: 0px 10px 0px 0px;
+    }
+
+    #cont-place li:last-child {
+        border-left: 0 none;
+    }
+
+    #cont-place li {
+        border-left: 1px solid #aaa;
+        border-right: 0 none;
+    }
+
+    #cont-place li {
+        float: right;
+    }
+}
+
+#cont-place li {
+    list-style: none;
+}
+
+
+
+#map-cont {
+    position: relative;
+
+    >div#map-canvas {
+        min-height: 300px;
+
+        img {
+            max-width: none;
+        }
+
+        .gm-style-mtc {
+            margin-right: 0.5rem;
+
+            >button {
+                height: 26px !important;
+                line-height: 25px !important;
+                font-size: 15px !important;
+            }
+        }
+    }
+}
+
+#cont-place-list {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    position: absolute;
+    bottom: 15px;
+    z-index: 3;
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    li {
+        list-style: none;
+
+        a {
+            background: none padding-box #fff;
+            border: 0px;
+            margin: 0px;
+            padding: 0px 8px;
+            text-transform: none;
+            appearance: none;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            direction: ltr;
+            overflow: hidden;
+            text-align: center;
+            height: 22px;
+            color: #000;
+            font-size: 11px;
+            box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
+            min-width: 29px;
+            font-weight: 500;
+            line-height: 22px;
+            display: block;
+
+            &:hover,
+            &.active {
+                background-color: #0169a6;
+                color: #fff;
+            }
+        }
+    }
+}
+
+#map-box {
+    position: absolute;
+    z-index: 9;
+    background: #75c58c;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%) translateX(250%);
+    padding: 15px;
+    color: #fff;
+    border-radius: 5px;
+    margin-right: 30px;
+    transition: all ease 0.3s;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+
+    h2 {
+        text-align: center;
+        color: #fff;
+        text-transform: uppercase;
+    }
+
+    small {
+        text-align: center;
+        display: block;
+        margin-bottom: 10px;
+    }
+}
+
+.map-box-show #map-box {
+    transform: translateY(-50%) translateX(0%);
+}

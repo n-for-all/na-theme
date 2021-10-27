@@ -5,17 +5,36 @@
  *
  */
 
+namespace NaTheme\Inc;
 
-class Na_Theme
+class Theme
 {
 
     private $search = [];
     private $modules = [];
+    private $module_classes = [];
 
     private $cache_id = false;
 
     public function __construct()
     {
+        spl_autoload_register(function ($class_name) {
+            if (\stripos($class_name, __NAMESPACE__ . '\\') === 0) {
+                $class_name = dirname(__FILE__) . '/' . str_ireplace([__NAMESPACE__ . '\\', '\\'], ['', '/'], $class_name) . '.php';
+                if (!file_exists($class_name)) {
+                    $classes = explode('/', $class_name);
+                    $name = ucwords($classes[count($classes) - 1]);
+
+                    $classes = array_map('strtolower', $classes);
+                    $classes[count($classes) - 1] = $name;
+                    $class_name = implode('/', $classes);
+                }
+
+                require_once $class_name;
+            }
+        });
+
+
         $this->actions();
         $this->filters();
         $this->shortcodes();
@@ -32,7 +51,7 @@ class Na_Theme
                 }
             }
             if (!is_admin() && pll_current_language() == pll_default_language()) {
-                $strings = new ArrayObject();
+                $strings = new \ArrayObject();
                 add_filter('gettext', function ($translation, $text, $domain) use (&$strings) {
                     if ($translation == $text) {
                         $strings[$text] = $text;
@@ -57,8 +76,7 @@ class Na_Theme
     {
         add_action('after_setup_theme', array($this, 'setup'));
         add_action('widgets_init', array(&$this, 'widgets_init'));
-        add_action('wp_head', array(&$this, 'javascript_detection'), 0);
-        add_action('wp_head', array(&$this, 'head'));
+        add_action('wp_head', array(&$this, 'head'), 1);
         add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 11);
         add_action('admin_enqueue_scripts', array(&$this, 'admin_scripts'));
         add_action('credits', array(&$this, 'credits'));
@@ -139,10 +157,28 @@ class Na_Theme
         add_filter('dynamic_sidebar_params', array($this, 'dynamic_sidebar_params'));
         add_filter('widget_update_callback', array($this, 'widget_update'), 10, 2);
         add_filter('widget_form_callback', array($this, 'widget_form_extend'), 10, 2);
+
+        //remove wordpress links
+        add_filter('wp_headers', function ($headers, $wp_query) {
+            if (array_key_exists('X-Pingback', $headers)) {
+                unset($headers['X-Pingback']);
+            }
+            return $headers;
+        }, 11, 2);
+
+        add_filter('bloginfo_url', function ($output, $property) {
+            return ($property == 'pingback_url') ? null : $output;
+        }, 11, 2);
+
+        add_action('wp', function () {
+            remove_action('wp_head', 'rsd_link');
+        }, 11);
     }
 
     public function setup()
     {
+
+        $this->remove_json_api();
         /*
 		 * Make theme available for translation.
 		 * Translations can be filed in the /languages/ directory.
@@ -178,7 +214,6 @@ class Na_Theme
             'primary' => __('Primary Left Menu',      NA_THEME_TEXT_DOMAIN),
             'primary-right'  => __('Primary Right Menu', NA_THEME_TEXT_DOMAIN),
             'social'  => __('Social Links Menu', NA_THEME_TEXT_DOMAIN),
-            'footer'  => __('Footer Menu', NA_THEME_TEXT_DOMAIN),
         ));
 
         /*
@@ -400,11 +435,6 @@ class Na_Theme
         $header_font     = get_theme_mod('header-font', "");
         $header_variants     = (array) get_theme_mod('header-variant', array());
 
-        //$font_variants = (array)get_theme_mod('font_variants', array());
-        wp_enqueue_style(
-            'custom-fonts',
-            get_template_directory_uri() . '/assets/css/fonts.css'
-        );
         $fonts = array();
         if (trim($font, " 0") != "") {
             $fonts = array_merge($fonts, (array) ($font . ":" . implode(",", $font_variants)));
@@ -430,15 +460,6 @@ class Na_Theme
 
         return $fonts_url;
     }
-    /**
-     * JavaScript Detection.
-     *
-     * Adds a `js` class to the root `<html>` element when JavaScript is detected.
-     */
-    function javascript_detection()
-    {
-        echo "<script>(function(html){html.className = html.className.replace(/\bno-js\b/,'js')})(document.documentElement);</script>\n";
-    }
 
     function head()
     {
@@ -450,18 +471,62 @@ class Na_Theme
             <meta name="apple-mobile-web-app-status-bar-style" content="<?php echo $this->browser_color; ?>">
         <?php
         }
+        ?>
+        <script type="text/javascript">
+            var options = {
+                ajax: "<?php echo admin_url('admin-ajax.php') ?>",
+                mobile: <?php echo ($this->mobile_breakpoint != '' ? strval(intval($this->mobile_breakpoint)) : '767'); ?>
+            };
+            var app = {
+                ready: function(fn) {
+                    if (document.readyState != "loading") {
+                        fn();
+                    } else {
+                        document.addEventListener("DOMContentLoaded", fn);
+                    }
+                },
+                on: function(event, fn) {
+                    document.body.addEventListener(event, fn);
+                }
+            };
+        </script>
+        <?php
+    }
+
+    function remove_json_api()
+    {
+
+        // Remove the REST API lines from the HTML Header
+        remove_action('wp_head', 'rest_output_link_wp_head', 10);
+        remove_action('wp_head', 'wp_oembed_add_discovery_links', 10);
+
+        // Remove the REST API endpoint.
+        remove_action('rest_api_init', 'wp_oembed_register_route');
+
+        // Turn off oEmbed auto discovery.
+        add_filter('embed_oembed_discover', '__return_false');
+
+        // Don't filter oEmbed results.
+        remove_filter('oembed_dataparse', 'wp_filter_oembed_result', 10);
+
+        // Remove oEmbed discovery links.
+        remove_action('wp_head', 'wp_oembed_add_discovery_links');
+
+        // Remove oEmbed-specific JavaScript from the front-end and back-end.
+        remove_action('wp_head', 'wp_oembed_add_host_js');
     }
     /**
      * Enqueue scripts and styles.
      */
     public function scripts()
     {
+        wp_deregister_script('jquery');
         //bootstrap styles for this theme
-        wp_enqueue_style('grid', get_template_directory_uri() . '/assets/css/bootstrap.min.css', array(), '1.0');
+        wp_enqueue_style('na_theme-bootstrap', get_template_directory_uri() . '/assets/css/bootstrap.min.css', array(), '1.0');
 
         // Add custom fonts, used in the main stylesheet
         $fonts = $this->fonts_url();
-        wp_enqueue_style('na_fonts', $fonts, array(), null);
+        wp_enqueue_style('na_theme-fonts', $fonts, array(), null);
 
         //main styles for this theme
 
@@ -471,53 +536,38 @@ class Na_Theme
         wp_enqueue_style('font-awesome', get_template_directory_uri() . '/assets/css/font-awesome.min.css', array(), '3.2');
         wp_enqueue_style('font-na-theme', get_template_directory_uri() . '/assets/fonts/na-theme/stylesheet.css', array(), '3.2');
 
-        // Load the Internet Explorer specific stylesheet.
-        wp_enqueue_style('na_theme-ie', get_template_directory_uri() . '/assets/css/ie.css', array('na_theme-main'), '20141010');
-        wp_style_add_data('na_theme-ie', 'conditional', 'lt IE 9');
-
-
-        wp_enqueue_style('na_theme-ie7', get_template_directory_uri() . '/assets/css/ie7.css', array('na_theme-main'), '20141010');
-        wp_style_add_data('na_theme-ie7', 'conditional', 'lt IE 8');
 
         //custom styles for this theme
         if ($this->menu) {
-            wp_enqueue_style('na_menu', get_template_directory_uri() . '/assets/css/menu/' . $this->menu, array(), '1.0');
+            wp_enqueue_style('na_menu', get_template_directory_uri() . '/assets/css/menu/' . $this->menu, array('na_theme-main'), '1.0');
         } else {
-            wp_enqueue_style('na_menu', get_template_directory_uri() . '/assets/css/menu/default.css', array(), '1.0');
+            wp_enqueue_style('na_menu', get_template_directory_uri() . '/assets/css/menu/default.css', array('na_theme-main'), '1.0');
         }
         if (class_exists('woocommerce')) {
             wp_enqueue_style('na_woocommerce', get_template_directory_uri() . '/assets/css/woocommerce.css', array('na_theme-main', 'woocommerce-general'), '1.0');
         }
 
-        if (defined('ICL_LANGUAGE_CODE') && ICL_LANGUAGE_CODE == "ar") {
-            wp_enqueue_style('na_wpml_rtl', get_template_directory_uri() . '/rtl.css', '1.0');
+        if (function_exists('pll_current_language') && pll_current_language() == "ar") {
+            wp_enqueue_style('na_theme-rtl', get_template_directory_uri() . '/rtl.css', '1.0');
         }
         if (is_singular() && comments_open() && get_option('thread_comments')) {
             wp_enqueue_script('comment-reply');
         }
 
-        if (is_singular() && wp_attachment_is_image()) {
-            wp_enqueue_script('na_theme-keyboard-image-navigation', get_template_directory_uri() . '/assets/js/keyboard-image-navigation.js', array('jquery'), '20141010');
-        }
-
         //main scripts
-        wp_enqueue_script('jquery');
-        wp_enqueue_script('bootstrap', get_template_directory_uri() . '/assets/js/bootstrap.min.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_script('bootstrap', get_template_directory_uri() . '/assets/js/bootstrap.min.js', array(), '1.0.0', true);
 
 
 
-        wp_enqueue_script('na_theme-custom', get_template_directory_uri() . '/assets/js/custom.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_script('na_theme-script', get_template_directory_uri() . '/assets/js/functions.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_script('na_theme-fastclick', get_template_directory_uri() . '/assets/js/plugins/fastclick.min.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_script('na_theme-scripts', get_template_directory_uri() . '/assets/js/scripts.js', array('jquery'), '1.0.0', true);
-        wp_add_inline_script('na_theme-script', 'var options = {ajax: "' . admin_url('admin-ajax.php') . '", mobile: ' . ($this->mobile_breakpoint != '' ? strval(intval($this->mobile_breakpoint)) : '767') . '}');
-        // wp_enqueue_script( 'na_theme-waypoints', get_template_directory_uri() . '/assets/js/plugins/jquery.waypoints.min.js', array( 'jquery' ), '1.0.0', true );
+        wp_enqueue_script('na_theme-scripts', get_template_directory_uri() . '/assets/js/theme.js', array(), '1.0.0', true);
+        wp_enqueue_script('na_theme-custom', get_template_directory_uri() . '/assets/js/custom.js', array('na_theme-scripts'), '1.0.0', true);
 
         if ($this->homepage_scrolling != "") {
             wp_add_inline_script('na_theme-scripts', 'options.scrolling = ' . strval($this->homepage_scrolling) . ';');
 
             if ($this->homepage_scrolling == 1) {
-                wp_enqueue_script('na_theme-tweenmax', get_template_directory_uri() . '/assets/js/plugins/fullpage/javascript.fullPage.min.js', array('jquery'), '1.0.0', true);
+                wp_enqueue_script('na_theme-fullpage', get_template_directory_uri() . '/assets/js/plugins/fullpage/javascript.fullPage.min.js', array(), '1.0.0', true);
+                wp_enqueue_style('na_theme-fullpage', get_template_directory_uri() . '/assets/css/plugins/fullpage.min.css', array(), '1.0');
             } else {
                 wp_enqueue_script('na_theme-tweenmax', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/TweenMax.min.js', array('jquery'), '1.0.0', true);
                 wp_enqueue_script('na_theme-scrollmagic', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollMagic.js', array('jquery'), '1.0.0', true);
@@ -530,7 +580,7 @@ class Na_Theme
             'collapse' => '<span class="screen-reader-text">' . __('collapse child menu', NA_THEME_TEXT_DOMAIN) . '</span>',
         ));
 
-        wp_enqueue_style('na_theme-main', get_template_directory_uri() . '/assets/css/style.css', array(), '1.0');
+        wp_enqueue_style('na_theme-main', get_template_directory_uri() . '/assets/css/style.css', array('na_theme-bootstrap'), '1.0');
 
         // Load our main stylesheet.
         wp_enqueue_style('na_theme-style', get_stylesheet_uri(), array('na_theme-main'));
@@ -550,9 +600,6 @@ class Na_Theme
     public function admin_scripts()
     {
         //admin styles for this theme
-        wp_enqueue_style('na_theme-admin', get_template_directory_uri() . '/admin/css/admin.css', array(), '1.0');
-        wp_enqueue_script('na_theme-admin-scripts', get_template_directory_uri() . '/admin/js/admin.js', array('jquery'), '1.0.0', true);
-
         $parts = self::get_template_parts();
         $x = [];
         foreach ($parts as $key => $value) {
@@ -561,12 +608,16 @@ class Na_Theme
             $x[] = ['label' => ucwords($v), 'value' => $key];
         }
 
-        wp_enqueue_script('na_theme-blocks-scripts', get_template_directory_uri() . '/admin/js/app.js', array('wp-blocks', 'wp-i18n', 'wp-element', 'jquery'), '1.0.0', true);
-        wp_localize_script(
-            'na_theme-blocks-scripts',
-            'naThemeData',
-            ['templates' => $x]
-        );
+        if (is_admin()) {
+            wp_enqueue_style('na_theme-admin', get_template_directory_uri() . '/admin/css/admin.css', array(), '1.0');
+            wp_enqueue_script('na_theme-admin-scripts', get_template_directory_uri() . '/admin/js/admin.js', array('jquery'), '1.0.0', true);
+            wp_enqueue_script('na_theme-blocks-scripts', get_template_directory_uri() . '/admin/js/app.js', array('wp-blocks', 'wp-i18n', 'wp-element', 'jquery'), '1.0.0', true);
+            wp_localize_script(
+                'na_theme-blocks-scripts',
+                'naThemeData',
+                ['templates' => $x]
+            );
+        }
     }
     /**
      * Add a `screen-reader-text` class to the search form's submit button.
@@ -578,13 +629,7 @@ class Na_Theme
     {
         return str_replace('class="search-submit"', 'class="search-submit screen-reader-text"', $html);
     }
-    /**
-     * Replaces "[...]" (appended to automatically generated excerpts) with ... and a 'Continue reading' link.
-     *
-     * @since Twenty Fifteen 1.0
-     *
-     * @return string 'Continue reading' link prepended with an ellipsis.
-     */
+
     function excerpt_more($more)
     {
         $link = sprintf(
@@ -620,7 +665,6 @@ class Na_Theme
     }
     function get_excerpt($excerpt)
     {
-        global $post;
         if (has_excerpt() && !is_attachment() && !is_admin() || trim($excerpt) != '') {
             $excerpt = $this->get_excerpt_limited_words($excerpt, 40);
             $excerpt .= sprintf(
@@ -631,22 +675,26 @@ class Na_Theme
         }
         return $excerpt;
     }
-    function shortcode_permalinks($atts)
+    function shortcode_permalinks($atts, $content)
     {
-
         extract(
             shortcode_atts(
                 array(
                     'id' => 1,
-                    'text' => ""
+                    'text' => "",
+                    'class' => "",
                 ),
                 $atts
             )
         );
-        $id = apply_filters('wpml_object_id', $id);
-        if ($text) {
+
+        if (empty($text)) {
+            $text = $content;
+        }
+        $id = function_exists('pll_get_post') ? pll_get_post($id) : $id;
+        if (!empty($text)) {
             $url = get_permalink($id);
-            return '<a href="' . $url . '">' . $text . '</a>';
+            return sprintf('<a class="%s" href="%s">%s</a>', $class, $url, $text);
         } else {
             return get_permalink($id);
         }
@@ -906,6 +954,9 @@ class Na_Theme
 
     public function page_attributes_misc_attributes($post)
     {
+        if ($post->post_type != 'page') {
+            return;
+        }
         $x = self::get_template_parts();
 
         $part = get_post_meta($post->ID, '_wp_page_template_part', true);
@@ -1047,12 +1098,24 @@ class Na_Theme
     {
         if (is_array($module)) {
             foreach ($module as $key) {
+                if (isset($this->module_classes[$key])) {
+                    if (class_exists($this->module_classes[$key])) {
+                        $class = new \ReflectionClass($this->module_classes[$key]);
+                        $class->newInstanceArgs([$this]);
+                    }
+                    continue;
+                }
                 if (isset($this->modules[$key])) {
                     require_once $this->modules[$key];
                 }
             }
         } elseif (isset($this->modules[$module])) {
-            require_once $this->modules[$module];
+            if (isset($this->module_classes[$key]) && class_exists($this->module_classes[$key])) {
+                $class = new \ReflectionClass($this->module_classes[$key]);
+                $class->newInstanceArgs([$this]);
+            } else {
+                require_once $this->modules[$module];
+            }
         }
     }
     public function enable_search($post_type)
@@ -1072,9 +1135,16 @@ class Na_Theme
         }
         return $query;
     }
+
     public function register($module, $loader)
     {
         $this->modules[$module] = $loader;
+    }
+
+
+    public function registerClass($module, $class)
+    {
+        $this->module_classes[$module] = $class;
     }
 
     /**
@@ -1153,22 +1223,33 @@ class Na_Theme
     }
 }
 global $naTheme;
-$naTheme = new Na_Theme();
-require get_template_directory() . '/inc/metaboxes/loader.php';
-require get_template_directory() . '/inc/user/loader.php';
-require get_template_directory() . '/inc/widgets/loader.php';
+$naTheme = new \NaTheme\Inc\Theme();
+new \NaTheme\Inc\User\Filter();
+new \NaTheme\Inc\Editor\Editor();
+
+
+add_action('widgets_init', function () {
+    return register_widget(new \NaTheme\Inc\Widgets\Posts());
+});
 
 $naTheme->register('shortcodes', get_template_directory() . '/inc/shortcodes/shortcodes.php');
 $naTheme->register('twitter', get_template_directory() . '/inc/social/twitter.php');
-$naTheme->register('services', get_template_directory() . '/inc/services/loader.php');
+
+$naTheme->registerClass('services', '\NaTheme\Inc\Services\Services');
+$naTheme->registerClass('team', '\NaTheme\Inc\Team\Team');
+$naTheme->registerClass('events', '\NaTheme\Inc\Events\Shortcode');
+$naTheme->registerClass('menu', '\NaTheme\Inc\Menu\Shortcode');
+$naTheme->registerClass('healthcare', '\NaTheme\Inc\Healthcare\Healthcare');
+$naTheme->registerClass('testimonials', '\NaTheme\Inc\Testimonials\Shortcode');
+$naTheme->registerClass('map', '\NaTheme\Inc\Map\Map');
+
+
 $naTheme->register('slider', get_template_directory() . '/inc/slider/loader.php');
 $naTheme->register('instagram', get_template_directory() . '/inc/social/instagram.php');
-$naTheme->register('team', get_template_directory() . '/inc/team/loader.php');
+
 $naTheme->register('case-studies', get_template_directory() . '/inc/case-studies/shortcode.php');
 $naTheme->register('carousel', get_template_directory() . '/inc/carousel/shortcode.php');
-$naTheme->register('testimonials', get_template_directory() . '/inc/testimonials/shortcode.php');
 $naTheme->register('posts', get_template_directory() . '/inc/posts/shortcodes.php');
-$naTheme->register('events', get_template_directory() . '/inc/events/loader.php');
 $naTheme->register('attachment', get_template_directory() . '/inc/attachment/loader.php');
 $naTheme->register('switcher', get_template_directory() . '/inc/switcher/loader.php');
 $naTheme->register('popup', get_template_directory() . '/inc/popup/loader.php');

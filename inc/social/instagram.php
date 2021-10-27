@@ -137,7 +137,6 @@ class InstagramClient
     }
     public function setup( $wp_query )
     {
-        global $naTheme;
         if (get_query_var('instagram') == 1) {
             if (isset($_GET['code'])) {
                 $this->setCode($_GET['code']);

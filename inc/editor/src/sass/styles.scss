@@ -1,0 +1,41 @@
+.na-theme-blocks-row {
+
+    // Remove negative margin from row when full width should be used
+    &.row.alignfull {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+.grid {
+    padding-left: 15px;
+    padding-right: 15px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #87A0AA;
+    margin: 2rem 0;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+
+    .row {
+        margin-bottom: -1px;
+    }
+
+    &:before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        background-color: #87A0AA;
+        height: 100%;
+        width: 1px;
+    }
+
+    .item {
+        border-bottom: 1px solid #87A0AA;
+        padding: 2rem;
+        align-items: center;
+        display: flex;
+    }
+}

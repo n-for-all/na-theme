@@ -1,5 +1,9 @@
 <?php
-class Carousels_Shortcode extends NA_METABOXES
+
+namespace NaTheme\Inc\Carousel;
+
+
+class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
 {
     public function __construct()
     {
@@ -27,9 +31,7 @@ class Carousels_Shortcode extends NA_METABOXES
     public function scripts()
     {
         wp_enqueue_style('carousel-shortcode', get_template_directory_uri().'/inc/carousel/css/carousel.css', array(), '1.0.0', 'screen');
-        wp_enqueue_script('wp-util');
-        wp_enqueue_script('underscore');
-        wp_enqueue_script('carousel-shortcode-js', get_template_directory_uri().'/inc/carousel/js/carousel.js', array('jquery'), '1.0.0');
+        wp_enqueue_script('carousel-shortcode-js', get_template_directory_uri().'/inc/carousel/js/carousel.js', array(), '1.0.0');
     }
 
     public function init()
@@ -139,7 +141,7 @@ class Carousels_Shortcode extends NA_METABOXES
              );
         }
         $output = '';
-        $query = new WP_Query($args);
+        $query = new \WP_Query($args);
         $id = time() + rand(1, 100);
         $slides = array();
         global $post;
@@ -192,5 +194,5 @@ class Carousels_Shortcode extends NA_METABOXES
 		<?php
     }
 }
-new Carousels_Shortcode();
+new Shortcode();
 ?>

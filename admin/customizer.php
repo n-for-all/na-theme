@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  Na Theme Customizer functionality.
  */
@@ -25,11 +26,11 @@ class Na_Theme_Admin
     public function customizer_scripts()
     {
         wp_enqueue_script(
-          'na-themecustomizer',            //Give the script an ID
-          get_template_directory_uri().'/admin/js/theme-customizer.js',//Point to file
-          array('jquery', 'customize-preview'),    //Define dependencies
-          '',                        //Define a version (optional)
-          true                        //Put script in footer?
+            'na-themecustomizer',            //Give the script an ID
+            get_template_directory_uri() . '/admin/js/theme-customizer.js', //Point to file
+            array('jquery', 'customize-preview'),    //Define dependencies
+            '',                        //Define a version (optional)
+            true                        //Put script in footer?
         );
     }
 
@@ -76,14 +77,14 @@ class Na_Theme_Admin
 
         $section = 'header';
         $wp_customize->add_section(
-          $section,
-                    array(
-                            'title' => 'Header',
-                            'description' => 'Change header styles.',
-                            'priority' => 1,
-                            'panel' => $panel,
-                    )
-            );
+            $section,
+            array(
+                'title' => 'Header',
+                'description' => 'Change header styles.',
+                'priority' => 1,
+                'panel' => $panel,
+            )
+        );
         $setting = 'navbar';
         $wp_customize->add_setting($setting, array(
             'default' => '',
@@ -119,9 +120,9 @@ class Na_Theme_Admin
         ));
         $setting = 'btn_menu_style';
         $wp_customize->add_setting($setting, array(
-                  'default' => '',
-              'type' => 'theme_mod',
-              ));
+            'default' => '',
+            'type' => 'theme_mod',
+        ));
         $wp_customize->add_control($setting, array(
             'type' => 'radio',
             'choices' => $this->list_all_btn_styles(),
@@ -133,35 +134,35 @@ class Na_Theme_Admin
         ));
         $setting = 'menu_expanded';
         $wp_customize->add_setting($setting, array(
-                  'default' => '',
-                  'type' => 'theme_mod',
-              ));
+            'default' => '',
+            'type' => 'theme_mod',
+        ));
         $wp_customize->add_control($setting, array(
-                    'type' => 'checkbox',
-                    'default' => '',
-                    'priority' => 5, // Within the section.
-                    'section' => $section, // Required, core or custom.
-                    'label' => __('Expanded'),
-                    'description' => __('Expand the menu by default'),
-                ));
+            'type' => 'checkbox',
+            'default' => '',
+            'priority' => 5, // Within the section.
+            'section' => $section, // Required, core or custom.
+            'label' => __('Expanded'),
+            'description' => __('Expand the menu by default'),
+        ));
         $setting = 'show_scroll_icon';
         $wp_customize->add_setting($setting, array(
-                  'default' => '',
-                  'type' => 'theme_mod',
-              ));
+            'default' => '',
+            'type' => 'theme_mod',
+        ));
         $wp_customize->add_control($setting, array(
-                    'type' => 'checkbox',
-                    'default' => '',
-                    'priority' => 5, // Within the section.
-                    'section' => $section, // Required, core or custom.
-                    'label' => __('Show Scrolling Icon'),
-                    'description' => __('Only shown on the homepage sections template'),
-                ));
+            'type' => 'checkbox',
+            'default' => '',
+            'priority' => 5, // Within the section.
+            'section' => $section, // Required, core or custom.
+            'label' => __('Show Scrolling Icon'),
+            'description' => __('Only shown on the homepage sections template'),
+        ));
         $setting = 'top_bar';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
         $wp_customize->add_control($setting, array(
             'type' => 'textarea',
             'default' => '',
@@ -172,20 +173,20 @@ class Na_Theme_Admin
         ));
         $section = 'general';
         $wp_customize->add_section(
-          $section,
-                    array(
-                            'title' => 'Logo\'s',
-                            'description' => 'Change logo\'s, favicons and more.',
-                            'priority' => 1,
-                            'panel' => $panel,
-                    )
-            );
+            $section,
+            array(
+                'title' => 'Logo\'s',
+                'description' => 'Change logo\'s, favicons and more.',
+                'priority' => 1,
+                'panel' => $panel,
+            )
+        );
 
         $setting = 'favicon';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
 
         $wp_customize->add_control(new WP_Customize_Media_Control($wp_customize, $setting, array(
             'label' => __('Favicon'),
@@ -197,9 +198,9 @@ class Na_Theme_Admin
 
         $setting = 'logo';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
 
         $wp_customize->add_control(new WP_Customize_Media_Control($wp_customize, $setting, array(
             'label' => __('Logo'),
@@ -210,9 +211,9 @@ class Na_Theme_Admin
         )));
         $setting = 'logo_dark';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
 
         $wp_customize->add_control(new WP_Customize_Media_Control($wp_customize, $setting, array(
             'label' => __('Logo Dark'),
@@ -223,9 +224,9 @@ class Na_Theme_Admin
         )));
         $setting = 'loading_logo';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
 
         $wp_customize->add_control(new WP_Customize_Media_Control($wp_customize, $setting, array(
             'label' => __('Loading Logo'),
@@ -237,9 +238,9 @@ class Na_Theme_Admin
 
         $setting = 'logo_footer';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
 
         $wp_customize->add_control(new WP_Customize_Media_Control($wp_customize, $setting, array(
             'label' => __('Footer Logo'),
@@ -251,22 +252,22 @@ class Na_Theme_Admin
 
         $setting = 'glitch';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
-                'type' => 'theme_mod',
-            ));
+            'default' => '',
+            'type' => 'theme_mod',
+        ));
         $wp_customize->add_control($setting, array(
-                  'type' => 'checkbox',
-                  'default' => '',
-                  'priority' => 5, // Within the section.
-                  'section' => $section, // Required, core or custom.
-                  'label' => __('Glitch'),
-                  'description' => __('glitch the logo'),
-              ));
+            'type' => 'checkbox',
+            'default' => '',
+            'priority' => 5, // Within the section.
+            'section' => $section, // Required, core or custom.
+            'label' => __('Glitch'),
+            'description' => __('glitch the logo'),
+        ));
         $setting = 'browser_color';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
-                'type' => 'theme_mod',
-            ));
+            'default' => '',
+            'type' => 'theme_mod',
+        ));
         $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, $setting, array(
             'label' => __('Chrome theme color.'),
             'description' => __('Applied to the chrome header on mobile.'),
@@ -275,13 +276,13 @@ class Na_Theme_Admin
 
         $section = 'typography';
         $wp_customize->add_section(
-          $section,
-                array(
-                        'title' => 'Typography',
-                        'description' => 'Change header fonts and variants',
-                        'priority' => 1,
-                        'panel' => $panel,
-                )
+            $section,
+            array(
+                'title' => 'Typography',
+                'description' => 'Change header fonts and variants',
+                'priority' => 1,
+                'panel' => $panel,
+            )
         );
 
         /*$setting = 'fonts_header';
@@ -314,15 +315,15 @@ class Na_Theme_Admin
         ));
         $wp_customize->add_control(new Na_Fonts_Control(
             $wp_customize,
-      'fonts',
+            'fonts',
             array(
-            'type' => 'font',
-            'section' => $section, // Required, core or custom.
-            'settings' => array('font' => 'font', 'variant' => 'variant'),
-            'label' => array(__('Customize Body Fonts:'), __('Font'), __('Font Variant')),
-            'description' => __(''),
-        )
-      ));
+                'type' => 'font',
+                'section' => $section, // Required, core or custom.
+                'settings' => array('font' => 'font', 'variant' => 'variant'),
+                'label' => array(__('Customize Body Fonts:'), __('Font'), __('Font Variant')),
+                'description' => __(''),
+            )
+        ));
 
         $setting = 'header-font';
         $wp_customize->add_setting($setting, array(
@@ -338,38 +339,38 @@ class Na_Theme_Admin
         ));
         $wp_customize->add_control(new Na_Fonts_Control(
             $wp_customize,
-      'header-fonts',
+            'header-fonts',
             array(
-            'type' => 'font',
-            'section' => $section, // Required, core or custom.
-            'settings' => array('header-font' => 'header-font', 'header-variant' => 'header-variant'),
-            'label' => array(__('Customize Header Fonts:'), __('Font'), __('Font Variant')),
-            'description' => __(''),
-        )
-      ));
+                'type' => 'font',
+                'section' => $section, // Required, core or custom.
+                'settings' => array('header-font' => 'header-font', 'header-variant' => 'header-variant'),
+                'label' => array(__('Customize Header Fonts:'), __('Font'), __('Font Variant')),
+                'description' => __(''),
+            )
+        ));
         $section = 'theme_cache';
         $wp_customize->add_section(
-        $section,
-              array(
-                      'title' => 'Cache',
-                      'description' => 'Disable them cache',
-                      'priority' => 1,
-                      'panel' => $panel,
-              )
-      );
+            $section,
+            array(
+                'title' => 'Cache',
+                'description' => 'Disable the cache',
+                'priority' => 1,
+                'panel' => $panel,
+            )
+        );
         $setting = 'cache';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
-                'type' => 'theme_mod',
-            ));
+            'default' => '',
+            'type' => 'theme_mod',
+        ));
         $wp_customize->add_control($setting, array(
-                  'type' => 'checkbox',
-                  'default' => '',
-                  'priority' => 5, // Within the section.
-                  'section' => $section, // Required, core or custom.
-                  'label' => __('Disable Cache'),
-                  'description' => __('This will change a random number on CSS and JS each time you refresh the page'),
-              ));
+            'type' => 'checkbox',
+            'default' => '',
+            'priority' => 5, // Within the section.
+            'section' => $section, // Required, core or custom.
+            'label' => __('Disable Cache'),
+            'description' => __('This will change a random number on CSS and JS each time you refresh the page'),
+        ));
         $social_panel = 'na_theme_social';
         $wp_customize->add_panel($social_panel, array(
             'title' => __('Theme Social API\'s'),
@@ -378,19 +379,19 @@ class Na_Theme_Admin
         ));
         $section = 'twitter_api';
         $wp_customize->add_section(
-          $section,
-                    array(
-                            'title' => 'Twitter API',
-                            'description' => 'Allow access to twitter services, to generate acess click <a href="https://apps.twitter.com/app/new" target="_blank">here</a>.',
-                            'priority' => 1,
-                            'panel' => $social_panel,
-                    )
-            );
+            $section,
+            array(
+                'title' => 'Twitter API',
+                'description' => 'Allow access to twitter services, to generate acess click <a href="https://apps.twitter.com/app/new" target="_blank">here</a>.',
+                'priority' => 1,
+                'panel' => $social_panel,
+            )
+        );
         $setting = 'twitter_key';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
         $wp_customize->add_control($setting, array(
             'type' => 'textarea',
             'default' => '',
@@ -401,9 +402,9 @@ class Na_Theme_Admin
         ));
         $setting = 'twitter_secret';
         $wp_customize->add_setting($setting, array(
-                'default' => '',
+            'default' => '',
             'type' => 'theme_mod',
-            ));
+        ));
         $wp_customize->add_control($setting, array(
             'type' => 'textarea',
             'default' => '',
@@ -414,14 +415,14 @@ class Na_Theme_Admin
         ));
         $section = 'instagram_api';
         $wp_customize->add_section(
-          $section,
-                    array(
-                            'title' => 'Instagram API',
-                            'description' => 'Allow access to twitter services, to generate acess click <a href="https://www.instagram.com/developer/clients/manage/" target="_blank">here</a>.',
-                            'priority' => 1,
-                            'panel' => $social_panel,
-                    )
-            );
+            $section,
+            array(
+                'title' => 'Instagram API',
+                'description' => 'Allow access to twitter services, to generate acess click <a href="https://www.instagram.com/developer/clients/manage/" target="_blank">here</a>.',
+                'priority' => 1,
+                'panel' => $social_panel,
+            )
+        );
         $setting = 'instagram_key';
         $wp_customize->add_setting($setting, array(
             'default' => '',
@@ -446,19 +447,19 @@ class Na_Theme_Admin
             'priority' => 5, // Within the section.
             'section' => $section, // Required, core or custom.
             'label' => __('Client Secret'),
-            'description' => '<span class="instagram-redirect-uri"><span>Redirect URI: </span>'.home_url('instagram/auth').'</span>Click this button after you add your client id and secret to authorize the access.<br/><a class="button button-primary" href="#" onclick="
-            return api_authorize(\''.home_url('instagram/auth').'\')">Authorize</a><select id="insta-publish"><option value="code">Sandbox</option><option value="token">Live</option></select>',
+            'description' => '<span class="instagram-redirect-uri"><span>Redirect URI: </span>' . home_url('instagram/auth') . '</span>Click this button after you add your client id and secret to authorize the access.<br/><a class="button button-primary" href="#" onclick="
+            return api_authorize(\'' . home_url('instagram/auth') . '\')">Authorize</a><select id="insta-publish"><option value="code">Sandbox</option><option value="token">Live</option></select>',
         ));
         $section = 'copyright';
         $wp_customize->add_section(
-          $section,
-                    array(
-                            'title' => 'Copyright',
-                            'description' => '',
-                            'priority' => 1,
-                            'panel' => $panel,
-                    )
-            );
+            $section,
+            array(
+                'title' => 'Copyright',
+                'description' => '',
+                'priority' => 1,
+                'panel' => $panel,
+            )
+        );
         $setting = 'copyright';
         $wp_customize->add_setting($setting, array(
             'default' => '',
@@ -474,22 +475,23 @@ class Na_Theme_Admin
             'description' => __(''),
         ));
 
+
         $social_panel = 'na_theme_behaviour';
         $wp_customize->add_panel($social_panel, array(
-              'title' => __('Theme Behaviour'),
-              'description' => 'Configure theme behavious', // Include html tags such as <p>.
-              'priority' => 3, // Mixed with top-level-section hierarchy.
-          ));
+            'title' => __('Theme Behaviour'),
+            'description' => 'Configure theme behavious', // Include html tags such as <p>.
+            'priority' => 3, // Mixed with top-level-section hierarchy.
+        ));
         $section = 'homepage_behaviour';
         $wp_customize->add_section(
             $section,
-                      array(
-                              'title' => 'Homepage Sections',
-                              'description' => '',
-                              'priority' => 1,
-                              'panel' => $social_panel,
-                      )
-              );
+            array(
+                'title' => 'Homepage Sections',
+                'description' => '',
+                'priority' => 1,
+                'panel' => $social_panel,
+            )
+        );
         $setting = 'homepage_scrolling';
         $wp_customize->add_setting($setting, array(
             'default' => '',
@@ -503,24 +505,25 @@ class Na_Theme_Admin
             'label' => __('Scrolling'),
             'description' => __(''),
             'choices' => array(
-              '' => 'Normal',
-              '1' => 'Full Screen',
-              '2' => 'Slides Manual',
-              '3' => 'Slides Natural',
-              '4' => 'Slides Left and Right',
-              '5' => 'Normal Sections',
+                '' => 'Normal',
+                '1' => 'Full Screen',
+                '2' => 'Slides Manual',
+                '3' => 'Slides Natural',
+                '4' => 'Slides Left and Right',
+                '5' => 'Normal Sections',
             ),
         ));
         $section = 'mobile_behaviour';
         $wp_customize->add_section(
             $section,
-             array(
-                  'title' => 'Mobile',
-                  'description' => '',
-                  'priority' => 1,
-                  'panel' => $social_panel,
-             )
+            array(
+                'title' => 'Mobile',
+                'description' => '',
+                'priority' => 1,
+                'panel' => $social_panel,
+            )
         );
+
         $setting = 'mobile_breakpoint';
         $wp_customize->add_setting($setting, array(
             'default' => '',
@@ -534,6 +537,49 @@ class Na_Theme_Admin
             'label' => __('Mobile Media Query'),
             'description' => __('This will switch to mobile as soon as it reaaches a specific size, usually 768px, keep empty for 768px media query'),
         ));
+
+        $section = 'sidebars';
+        $setting = 'footer_sidebars';
+
+        $wp_customize->add_section(
+            $section,
+            array(
+                'title' => 'Sidebars',
+                'description' => '',
+                'priority' => 1,
+                'panel' => $social_panel,
+            )
+        );
+        
+        $sidebars = array(
+            'footer_1' => 'Footer 1',
+            'footer_2' => 'Footer 2',
+            'footer_3' => 'Footer 3',
+            'footer_4' => 'Footer 4',
+            'footer_5' => 'Footer 5',
+            'footer_6' => 'Footer 6',
+            'footer_7' => 'Footer 7',
+            'footer_8' => 'Footer 8'
+        );
+
+        $choices = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $choices[$i] = sprintf('Column %s', $i);
+        }
+        foreach ($sidebars as $key => $sidebar) {
+            $wp_customize->add_setting($key, array(
+                'default' => 4,
+                'type' => 'theme_mod',
+            ));
+            $wp_customize->add_control($key, array(
+                'type' => 'select',
+                'priority' => 1, // Within the section.
+                'section' => $section, // Required, core or custom.
+                'label' => $sidebar,
+                'description' => __('Column size for this footer column'),
+                'choices' => $choices,
+            ));
+        }
     }
 }
 global $naTheme_admin;
