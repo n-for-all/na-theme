@@ -1,0 +1,92 @@
+.search-box {
+    position: relative;
+
+    .live-search-values {
+        display: none;
+        background: #fff;
+        z-index: 9;
+        width: 100%;
+        border: 1px solid #d1d1d1;
+        margin-top: -2px;
+        border-top: 0;
+        position: absolute;
+        border-radius: 0 0 3px 3px;
+        width: 100%;
+        max-height: 400px;
+        overflow: auto;
+        padding: 0;
+
+        >li {
+            display: flex;
+            padding: 0.5rem 0.5rem;
+            border-bottom: 1px solid #d1d1d1;
+            align-items: center;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #f8f8f8;
+            }
+
+            >img {
+                width: 60px;
+                border-radius: 50%;
+                margin-bottom: 0;
+                margin-right: 0.5rem;
+                background-color: #f8f8f8;
+            }
+
+            span {
+                display: block;
+            }
+
+            .label {
+                font-weight: bold;
+            }
+
+            .description {
+                font-size: 0.9rem;
+            }
+
+            &:last-child {
+                border: 0;
+            }
+
+            &.item-end {
+                text-align: center;
+                background-color: #f8f8f8;
+
+                span {
+                    display: block;
+                    width: 100%;
+                }
+            }
+
+            &.group-title {
+                background-color: #332f491f;
+                cursor: default;
+            }
+        }
+    }
+
+    input:focus+ul {
+        border-color: #606c76;
+    }
+
+    &.visible {
+        .live-search-values {
+            display: block;
+        }
+    }
+
+}
+
+.form-inline.doctors-search {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    .search-group {
+        flex: 1;
+        margin-right: 2rem;
+    }
+}

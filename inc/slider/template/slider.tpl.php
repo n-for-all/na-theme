@@ -1,9 +1,16 @@
 <?php
 
+
+$bullets = false;
+if (isset($settings['bullets']) && $settings['bullets']  && count($slides) > 1) : 
+    $bullets = true;
+endif; 
+
 $classes = [
     'na-slider-wrapper',
     'na-slider-' . ($settings['vertical'] != 0 ? 'vertical' : 'horizontal'),
     'na-' . ($settings['type'] != '' ? $settings['type'] : 'normal'),
+    'na-' . ($bullets ? 'with-bullets' : 'no-bullets'),
     $settings['class'] ?? ''
 ];
 

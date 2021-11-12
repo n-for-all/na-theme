@@ -16,6 +16,17 @@ global $naTheme, $post;
 $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+    <?php
+    if ($featured_image) :
+    ?>
+        <header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
+
+            <figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
+                <img src="<?php echo $featured_image; ?>" />
+            </figure>
+
+        </header><!-- .entry-header -->
+    <?php endif; ?>
     <div class="<?php $naTheme->classes('content', 'entry-content'); ?>  <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
         <?php $naTheme->get_template_layout_before(get_the_ID()); ?>
         <div class="entry-inner-content">

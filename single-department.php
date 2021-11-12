@@ -61,10 +61,11 @@ get_header(); ?>
              * Featured Image
              */
             $featured_image = $naTheme->get_post_thumbnail(null, 'full');
+            //    print_r($post->icon);
             ?>
 
             <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-                <header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
+                <header class="<?php $naTheme->classes('header', 'entry-header'); ?> d-flex align-items-center">
                     <?php
                     if ($featured_image) :
                     ?>
@@ -74,7 +75,12 @@ get_header(); ?>
                     <?php endif; ?>
                     <div class="container">
                         <div class="row">
-                            <div class="col-md-12"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
+                            <div class="d-flex entry-title align-items-center relative">
+                                <?php if (!empty($post->icon)) : ?>
+                                    <img class="icon me-3" src="<?php echo $post->icon[0]; ?>" />
+                                    <?php the_title('<h1>', '</h1>'); ?>
+                                <?php endif ?>
+                            </div>
                         </div>
                     </div>
                 </header><!-- .entry-header -->
@@ -89,39 +95,53 @@ get_header(); ?>
                         </div>
                     </section>
                     <?php if (!empty($post->clinical) || !empty($post->procedural)) : ?>
-                    <section class="section-subspecialties">
+                        <section class="section-subspecialties">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h2 class="section-title"><?php _e('Subspecialties', 'na-theme'); ?></h2>
+                                    </div>
+                                </div>
+                                <?php if (!empty($post->clinical)) : ?>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h3 class="section-title"><?php _e('Clinical', 'na-theme'); ?></h3>
+                                            <?php $cursiveList($post->clinical); ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (!empty($post->procedural)) : ?>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h3 class="section-title"><?php _e('Procedural', 'na-theme'); ?></h3>
+                                            <?php $cursiveList($post->procedural); ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </section>
+                    <?php endif; ?>
+                    <?php 
+                    $doctors = do_shortcode(sprintf('[doctors department="%s" limit="%s"]', get_the_ID(), -1));
+                    if (!empty($doctors)) :
+                        ?>
+                    <section class="section-doctors">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <h2 class="section-title"><?php _e('Subspecialties', 'na-theme'); ?></h2>
+                                    <h2 class="section-title"><?php _e('Doctors', 'na-theme'); ?></h2>
+                                    <?php echo $doctors; ?>
                                 </div>
                             </div>
-                            <?php if (!empty($post->clinical)) : ?>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3 class="section-title"><?php _e('Clinical', 'na-theme'); ?></h3>
-                                        <?php $cursiveList($post->clinical); ?>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-                            <?php if (!empty($post->procedural)) : ?>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3 class="section-title"><?php _e('Procedural', 'na-theme'); ?></h3>
-                                        <?php $cursiveList($post->procedural); ?>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
                         </div>
                     </section>
                     <?php endif; ?>
-
                     <section class="section-related">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-12">
                                     <h2 class="section-title"><?php _e('Other Departments', 'na-theme'); ?></h2>
-                                    <?php echo do_shortcode('[departments limit="3"]'); ?>
+                                    <?php echo do_shortcode(sprintf('[departments-carousel exclude="%s" limit="%s"]', get_the_ID(), 9)); ?>
                                 </div>
                             </div>
                         </div>

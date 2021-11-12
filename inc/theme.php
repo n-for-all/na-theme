@@ -490,6 +490,8 @@ class Theme
                 }
             };
         </script>
+        <script src="https://unpkg.com/react/umd/react.production.min.js" ></script>
+        <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js" ></script>
         <?php
     }
 
@@ -627,7 +629,7 @@ class Theme
      */
     function search_form_modify($html)
     {
-        return str_replace('class="search-submit"', 'class="search-submit screen-reader-text"', $html);
+        return $html;
     }
 
     function excerpt_more($more)
@@ -994,7 +996,7 @@ class Theme
                 <select name="page_template_layout">
                     <option <?php echo $layout == 'none' ? 'selected' : ''; ?> value="none">None</option>
                     <option <?php echo $layout == 'container' ? 'selected' : ''; ?> value="container">Boxed</option>
-                    <option <?php echo $layout == 'container boxed-offset' ? 'selected' : ''; ?> value="container boxed-offset">Boxed Offset</option>
+                    <option <?php echo $layout == 'container boxed-offset' || $layout == 'boxed-offset' ? 'selected' : ''; ?> value="container boxed-offset">Boxed Offset</option>
                     <option <?php echo $layout == 'container-fluid' ? 'selected' : ''; ?> value="container-fluid">Fluid</option>
                 </select>
                 <small class="help">Select the template layout.</small>
@@ -1039,6 +1041,7 @@ class Theme
                 echo '<div class="row"><div class="col-md-12">';
                 break;
             case 'container boxed-offset':
+            case 'boxed-offset':
                 echo '<div class="row"><div class="col-md-10 offset-md-1 col-xs-12">';
                 break;
             default:
@@ -1051,8 +1054,6 @@ class Theme
         switch ($part) {
             case 'container-fluid':
             case 'container':
-                echo '</div></div>';
-                break;
             case 'boxed-offset':
                 echo '</div></div>';
                 break;

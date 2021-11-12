@@ -13,6 +13,7 @@ class Department
         add_filter('manage_department_posts_columns', array(&$this, 'add_img_column'));
         add_filter('manage_department_posts_custom_column', array(&$this, 'manage_img_column'), 10, 2);
 
+        add_filter('autocomplete', array(&$this, 'autocomplete'), 11, 1);
 
         add_action('the_post', array(&$this, 'post_object'));
         $this->metabox = new DepartmentMetabox(array('department'), 'Departments');
@@ -57,6 +58,50 @@ class Department
         register_post_type('department', $args);
     }
 
+    public function autocomplete(&$values)
+    {
+        $search = $_GET['q'];
+
+        $main_args = array(
+            'post_type' => 'department',
+            'post_status' => 'publish',
+            'posts_per_page' => 20
+        );
+        $args = $main_args;
+        $args['s'] = $search;
+
+        $query = new \WP_Query($args);
+        if ($search != '') {
+            $meta_args = $main_args;
+            $meta_args['meta_query'] = array(
+                'relation' => 'OR',
+                array(
+                    'key' => '_meta_department',
+                    'value' => $search,
+                    'compare' => 'LIKE'
+                )
+            );
+            if (isset($args['tax_query'])) {
+                $meta_args['tax_query'] = $args['tax_query'];
+            }
+            $meta_query = new \WP_Query($meta_args);
+            $query->posts = array_unique(array_merge($query->posts, $meta_query->posts), SORT_REGULAR);
+            $query->post_count = count($query->posts);
+        }
+
+        $json = [];
+        global $post;
+        if ($query->have_posts()) :
+            $json[] = ['label' => 'Departments', 'type' => 'title'];
+            while ($query->have_posts()) : $query->the_post();
+                $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'thumbnail');
+                $json[] = ['label' => get_the_title(), 'image' => $image[0], 'description' => $post->position, 'url' => get_permalink()];
+            endwhile;
+        endif;
+
+        return array_merge($values, $json);
+    }
+
     function post_object(&$post_object)
     {
         if ($post_object->post_type == 'department') {
@@ -85,6 +130,15 @@ class Department
                 }
             }
             $post_object->procedural = $procedural;
+            $post_object->doctors = function () use ($post_object) {
+                $posts = get_posts([
+                    'post_type' => 'doctor',
+                    'post_status' => 'publish',
+                    'meta_key' => '_meta_na_department',
+                    'meta_value' => $post_object->ID,
+                ]);
+                return $posts;
+            };
         }
     }
 
@@ -107,16 +161,29 @@ class Department
             'limit' => -1,
             'orderby' => 'menu_order',
             'order' => 'ASC',
+            'division' => null,
+            'exclude' => null,
         ), $atts);
 
+        $args = array(
+            'post_type' => 'department',
+            'posts_per_page' => $atts['limit'],
+            'orderby' => $atts['orderby'],
+            'order' => $atts['order'],
+            'suppress_filters' => false
+        );
+
+        if(!empty($atts['exclude'])){
+            $args['post__not_in'] = explode(',', $atts['exclude']);
+        }
+
+        if ($atts['division'] != '') {
+            $args['meta_key'] = '_meta_na_division';
+            $args['meta_value'] = $atts['division'];
+        }
+
         $departments = get_posts(
-            array(
-                'post_type' => 'department',
-                'posts_per_page' => $atts['limit'],
-                'orderby' => $atts['orderby'],
-                'order' => $atts['order'],
-                'suppress_filters' => false
-            )
+            $args
         );
 
         ob_start();
@@ -160,6 +227,7 @@ class Department
             'autoplay' => 0,
             'thumbnails' => 0,
             'bullets' => 1,
+            'pagination' => 1,
             'min-width' => 0,
             'columns' => 3
         ), $atts);
@@ -178,6 +246,7 @@ class Department
         if (count($departments) > 0) {
             $settings = array(
                 'class' => 'na-departments-carousel ' . $atts['class'],
+                'pagination' => $atts['pagination'],
                 'autoplay' => $atts['autoplay'],
                 'container' => $atts['container'],
                 'bullets' => $atts['bullets'],
@@ -234,7 +303,7 @@ class DepartmentMetabox extends \NaTheme\Inc\Metaboxes\Metabox
                 </tr>
                 <tr class="form-field form-required term-name-wrap">
                     <th scope="row"><label for="name">Choose division</label></th>
-                    <td><?php $this->_metabox_select($post->ID, $options, 'department'); ?>
+                    <td><?php $this->_metabox_select($post->ID, $options, 'division'); ?>
                         <p class="description">Choose your department division.</p>
                     </td>
                 </tr>

@@ -65,21 +65,29 @@ get_header(); ?>
 
             <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
                 <header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
-                    <?php
-                    if ($featured_image) :
-                    ?>
-                        <figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
-                            <img src="<?php echo $featured_image; ?>" />
-                        </figure>
-                    <?php endif; ?>
+
                     <div class="container">
                         <div class="row">
-                            <div class="col-md-12"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
+                            <div class="col-md-12 col-lg-6 d-flex align-items-end">
+                                <?php if ($featured_image) : ?>
+                                    <img class="featured" src="<?php echo $featured_image; ?>" />
+                                <?php endif; ?>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
+                                <?php if ($post->position != '') : ?>
+                                    <h4 class="entry-position"><?php echo $post->position; ?></h4>
+                                <?php endif; ?>
+                                <ul class="meta">
+                                    <?php if ($post->languages != '') : ?><li class="meta-item languages"><label><?php _e('Languages Spoken:', 'na-theme'); ?></label><?php echo $post->languages; ?></li><?php endif; ?>
+                                </ul>
+                                <a class="btn btn-default" href="#!section/book-an-appointment"><?php _e('Book an appointment', 'na-theme'); ?></a>
+                            </div>
                         </div>
                     </div>
                 </header><!-- .entry-header -->
                 <div class="sections-list alternating doctor-sections">
-                    <section class="<?php $naTheme->classes('content', 'entry-content'); ?>">
+                    <section class="<?php $naTheme->classes('content', 'entry-content'); ?> section-doctor-description">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-12">
@@ -95,25 +103,11 @@ get_header(); ?>
                                     <div class="col-md-12">
                                         <h3 class="section-title"><?php _e('Doctor can help with', 'na-theme'); ?></h3>
                                         <ul>
-                                        <?php foreach($post->services as $item): ?>
-                                            <li><h4><?php echo $item['title']; ?></h4><?php echo $item['description']; ?></li>
-                                        <?php endforeach; ?>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    <?php endif; ?>
-                    <?php if (!empty($post->education)) : ?>
-                        <section class="section-education">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h3 class="section-title"><?php _e('Education', 'na-theme'); ?></h3>
-                                        <ul>
-                                        <?php foreach($post->education as $item): ?>
-                                            <li><h4><?php echo $item['title']; ?></h4><?php echo $item['description']; ?></li>
-                                        <?php endforeach; ?>
+                                            <?php foreach ($post->services as $item) : ?>
+                                                <li>
+                                                    <label><?php echo $item['title']; ?></label><?php echo $item['description']; ?>
+                                                </li>
+                                            <?php endforeach; ?>
                                         </ul>
                                     </div>
                                 </div>
@@ -125,27 +119,77 @@ get_header(); ?>
                             <div class="container">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h3 class="section-title"><?php _e('Experience', 'na-theme'); ?></h3>
-                                        <ul>
-                                        <?php foreach($post->experience as $item): ?>
-                                            <li><h4><?php echo $item['title']; ?></h4><?php echo $item['description']; ?></li>
-                                        <?php endforeach; ?>
-                                        </ul>
+                                        <h3 class="section-title"><?php _e('Training & Work Experience', 'na-theme'); ?></h3>
+                                        <div class="timeline">
+                                            <ul>
+                                                <?php foreach ($post->experience as $item) : ?>
+                                                    <li>
+                                                        <div class="content">
+                                                            <div class="description">
+                                                                <h3><?php echo $item['title']; ?></h3><?php echo $item['description']; ?>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </section>
                     <?php endif; ?>
-                    <section class="section-related">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h2 class="section-title"><?php _e('Other Departments', 'na-theme'); ?></h2>
-                                    <?php echo do_shortcode('[departments limit="3"]'); ?>
+                    <?php if (!empty($post->education)) : ?>
+                        <section class="section-education">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3 class="section-title"><?php _e('Education', 'na-theme'); ?></h3>
+                                        <div class="timeline">
+                                            <ul>
+                                                <?php foreach ($post->education as $item) : ?>
+                                                    <li>
+                                                        <div class="content">
+                                                            <div class="description">
+                                                                <h3><?php echo $item['title']; ?></h3><?php echo $item['description']; ?>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    <?php endif; ?>
+                    <?php
+                    $department = $post->department ? get_post($post->department) : null;
+                    if ($department) :
+                        $output = do_shortcode(sprintf('[doctors department="%s" exclude="%s" limit="%s"]', $department->ID, get_the_ID(), 3));
+                        if ($output) :
+                    ?>
+                            <section class="section-related">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12 col-lg-8">
+                                            <h3 class="section-title"><?php _e('Doctors from the same specialty', 'na-theme'); ?></h3>
+                                        </div>
+                                        <div class="col-md-12 col-lg-4 align-right">
+                                            <a href="<?php echo get_permalink($department); ?>" class="btn btn-default"><?php _e(sprintf('View all "%s" doctors', $department->post_title)); ?></a>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <?php echo $output; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                    <?php
+                        endif;
+                    endif;
+                    ?>
+                    <?php echo do_action('after_single_doctor', $post); ?>
                 </div>
             </div><!-- #post-## -->
         <?php

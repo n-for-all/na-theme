@@ -104,6 +104,20 @@ export default class PositionTooltip {
 						};
 					},
 				},
+				{
+					name: 'Add Department Title',
+					callback: (cont) => {
+						window.location.hash = '#!popup/department';
+						this.addDepartment = (id, text, icon, url) => {
+							this.createDepartment(
+								this.mousePosition,
+								{ x: this.mousePosition.x, y: this.mousePosition.y, title: text },
+								null,
+								url
+							);
+						};
+					},
+				},
 				{},
 				{ name: 'Close' },
 			],

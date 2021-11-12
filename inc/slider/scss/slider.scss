@@ -44,7 +44,11 @@ slider {
             opacity: 0.5;
         }
 
-        .na-slider-actions.prev {
+        &.na-with-bullets {
+            padding-bottom: 3rem;
+        }
+
+        .na-slider-actions.prev { 
             left: 0;
         }
 
@@ -275,7 +279,9 @@ slider {
 }
 
 .na-status-loading {
-    .play-btn-big::after, .play-btn-big::before {
+
+    .play-btn-big::after,
+    .play-btn-big::before {
         opacity: 1;
         animation: blink-animation 1.2s infinite;
     }

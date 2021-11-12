@@ -133,7 +133,7 @@ const SectionTemplate = () => (
 				options={[
 					{ label: 'None', value: 'none' },
 					{ label: 'Boxed', value: 'container' },
-                    { label: 'Boxed Offset', value: 'boxed-offset' },
+                    { label: 'Boxed Offset', value: 'container boxed-offset' },
 					{ label: 'Fluid', value: 'container-fluid' },
 				]}
 			/>

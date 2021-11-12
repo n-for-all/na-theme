@@ -7,6 +7,8 @@ if (current_user_can('manage_options')) {
     $editable = 'data-tooltip-container';
 }
 
+$json = filter_var( $json, FILTER_SANITIZE_SPECIAL_CHARS );
+
 $departments = get_posts([
     'post_type' => 'department',
     'post_status' => 'publish',
@@ -16,7 +18,7 @@ $departments = get_posts([
     'suppress_filters' => false
 ]);
 ?>
-<div class="symptom-checker" <?php echo $editable; ?> data="<?php echo json_encode($json); ?>">
+<div class="symptom-checker" <?php echo $editable; ?> data="<?php echo $json; ?>">
     <svg preserveaspectratio="xMidYMid meet" class="top-background" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 1000 600">
         <image x="250" y="60" width="500" height="500" xlink:href="<?php echo get_template_directory_uri(); ?>/inc/healthcare/img/body.png" />
     </svg>

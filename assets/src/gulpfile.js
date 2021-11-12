@@ -20,23 +20,30 @@ gulp.task("sass", function (done) {
 	var sass_files = ["./scss/*.scss", "./scss/**/*.scss"];
 	var src = null;
 	if (gutil.env && gutil.env.NODE_ENV == "development") {
-		src = gulp.src(sass_files).pipe(sourcemaps.init()).pipe(sass().on("error", sass.logError)).pipe(sourcemaps.write());
+		src = gulp
+			.src(sass_files)
+			.pipe(sourcemaps.init({ largeFile: true }))
+			.pipe(sourcemaps.identityMap())
+			.pipe(sass().on("error", sass.logError))
+			.pipe(postcss([autoprefixer("last 2 versions")]))
+			.pipe(sourcemaps.write());
 	} else {
-		src = gulp.src(sass_files).pipe(
-			sass({
-				outputStyle: "compressed",
-			}).on("error", sass.logError)
-		);
+		src = gulp
+			.src(sass_files)
+			.pipe(
+				sass({
+					outputStyle: "compressed",
+				}).on("error", sass.logError)
+			)
+			.pipe(postcss([autoprefixer("last 2 versions")]));
 	}
-	src.pipe(postcss([autoprefixer("last 2 versions")]))
-		.pipe(gulp.dest("../css/"))
-		.pipe(browserSync.stream());
+	src.pipe(gulp.dest("../css/")).pipe(browserSync.stream());
 	done();
 });
 
 gulp.task("rollup:build-dev", function (done) {
 	//watch each alone so we don't have to build everything on change
-    return new Promise(gulp.series("rollup:watch"));
+	return new Promise(gulp.series("rollup:watch"));
 	// gulp.watch(["./scripts/**/**/*"], gulp.series("rollup:watch")).on("change", function () {
 	// 	gutil.env.NODE_ENV = "development";
 	// });
@@ -64,13 +71,13 @@ gulp.task("rollup:build", function (done) {
 });
 
 gulp.task("rollup:watch", function (done) {
-    console.log("Watching...");
+	console.log("Watching...");
 	var rollupConfig = require(path.resolve(__dirname, "./rollup.config.js"));
 	const watcher = watch(rollupConfig);
 	watcher.on("event", ({ result }) => {
 		if (result) {
 			result.close();
-            done();
+			done();
 		}
 	});
 });

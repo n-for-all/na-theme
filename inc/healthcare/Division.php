@@ -13,6 +13,8 @@ class Division
         add_filter('manage_division_posts_columns', array(&$this, 'add_img_column'));
         add_filter('manage_division_posts_custom_column', array(&$this, 'manage_img_column'), 10, 2);
 
+        add_action('the_post', array(&$this, 'post_object'));
+
         $this->metabox = new DivisionMetabox(array('division'), 'Divisions');
 
         $image = new DivisionImage("division-icon", "Icon", "icon", "divisions", 2);
@@ -65,6 +67,23 @@ class Division
             echo get_the_post_thumbnail($post_id, 'thumbnail');
         }
         return $column_name;
+    }
+
+    function post_object(&$post_object)
+    {
+        if ($post_object->post_type == 'division') {
+            $post_object->image = $this->metabox->get_image($post_object->ID);
+            $post_object->icon = $this->metabox->get_icon($post_object->ID);
+            $post_object->departments = function () use ($post_object) {
+                $posts = get_posts([
+                    'post_type' => 'department',
+                    'post_status' => 'publish',
+                    'meta_key' => '_meta_na_division',
+                    'meta_value' => $post_object->ID,
+                ]);
+                return $posts;
+            };
+        }
     }
 
     public function renderCarousel($atts)

@@ -1,0 +1,55 @@
+$gutter_0: .75rem;
+$gutter_1: 1.25rem;
+$gutter_2: 1.75rem;
+$bg-color: white;
+
+.filters-sidebar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    .form-actions {
+        margin-left: -$gutter_1;
+        margin-right: -$gutter_1;
+
+        padding: $gutter_1 $gutter_1;
+        border-top: 1px solid #efefef;
+        margin-top: $gutter_1;
+    }
+
+
+    .widget {
+        padding: 0 $gutter_1 0;
+        width: 278px;
+        color: rgba(0, 0, 0, 0.87);
+        background-color: $bg-color;
+        border-radius: 2px;
+        border: 1px solid #efefef;
+
+        h4,
+        h5 {
+            background-color: darken($bg-color, 4%);
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
+            margin-left: -$gutter_1;
+            margin-right: -$gutter_1;
+            padding: $gutter_0 $gutter_1;
+            cursor: default;
+        }
+
+        h4.filter-title,
+        h5.filter-title {
+            margin-top: -$gutter_0;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        form {
+            label {
+                width: 100%;
+            }
+        }
+    }
+}

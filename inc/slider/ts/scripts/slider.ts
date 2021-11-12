@@ -53,7 +53,7 @@ class NaSliderBullets {
 		let slides = this.slider.getSlides();
 		let total = slides.length;
 		if (pagination == 1) {
-			total = Math.floor(slides.length / columns);
+			total = Math.ceil(slides.length / columns);
 		}
 		let totalArray = new Array(total);
 		[...totalArray].map((_, index) => {
@@ -61,13 +61,12 @@ class NaSliderBullets {
 			this.bullets.appendChild(span);
 			span.addEventListener("click", (e) => {
 				e.preventDefault();
-
 				this.slider.pause = true;
 				this.slider.to(index);
 				this.update(index);
 			});
 		});
-		this.update(initial);
+		this.update(initial); 
 	}
 
 	update(index) {
@@ -163,14 +162,13 @@ class NaSliderNavigation {
 	}
 	prevPage() {
 		if (this.current > 0) {
-			var index = this.current / this.columns - 1;
+			var index = this.current - 1;
 			this.to(index);
 		}
 	}
 	nextPage() {
 		if (this.current < this.slider.getTotalSlides() - this.columns) {
-			var index = this.current / this.columns + 1;
-			this.to(index);
+			this.to(this.current + 1);
 		}
 	}
 
@@ -204,6 +202,10 @@ class NaSliderNavigation {
 
 	getCurrent() {
 		return this.current;
+	}
+
+	getCurrentIndex() {
+		return this.pagination == 1 ? this.current * this.columns : this.current;
 	}
 }
 
@@ -303,18 +305,17 @@ class NaSlider {
 			[].forEach.call(slides, (slide) => {
 				let li = document.createElement("li");
 				this.cloneAttributes(slide, li);
-                this.innerSlider.appendChild(li);
+				this.innerSlider.appendChild(li);
 
 				while (slide.children.length > 0) {
 					li.appendChild(slide.children[0]);
 					if (li.hasAttribute("data-youtube-video")) {
-						li["_youtube_video"] = new YouTube(li.getAttribute("data-youtube-video"), li); 
+						li["_youtube_video"] = new YouTube(li.getAttribute("data-youtube-video"), li);
 					}
 				}
 
 				this.slides.push(li);
 				slide.parentNode.removeChild(slide);
-				
 			});
 		}
 
@@ -322,9 +323,9 @@ class NaSlider {
 
 		this.element.prepend(this.inner);
 		if (this.settings.autoplay > 0 && this.slides.length > 1) {
-			this.autoplay(this.settings.autoplay); 
+			this.autoplay(this.settings.autoplay);
 		}
- 
+
 		if (this.slides.length >= 1) {
 			if (this.settings.columns > this.slides.length) {
 				this.settings.columns = this.slides.length;
@@ -649,13 +650,13 @@ class NaSlider {
 		}
 	}
 	visibility() {
-		let index = this.navigation.getCurrent(); 
+		let index = this.navigation.getCurrentIndex();
 		var range = [index, index + this.columns - 1];
 		this.slides.forEach((slide, index) => {
 			slide.classList.remove("before", "after", "visible");
 			slide.classList.add("na-slide");
-			if (index >= range[0] && index <= range[1]) { 
-				slide.classList.add("visible"); 
+			if (index >= range[0] && index <= range[1]) {
+				slide.classList.add("visible");
 			} else {
 				slide.classList.remove("visible");
 			}

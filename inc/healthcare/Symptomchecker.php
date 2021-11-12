@@ -16,10 +16,12 @@ class Symptomchecker
     public function render($atts)
     {
         $atts = shortcode_atts(array(
+            'data' => ''
         ), $atts);
 
         ob_start();
 
+        $json = base64_decode($atts['data']);
         include(dirname(__FILE__).'/templates/symptomchecker.php');
         return ob_get_clean();
     }
