@@ -1,0 +1,34 @@
+{
+	"apiVersion": 2,
+	"name": "na-theme-blocks/accordion",
+	"title": "Accordion",
+	"category": "na-theme",
+	"description": "accordion",
+	"keywords": ["image", "accordion"],
+	"textdomain": "default",
+	"attributes": {
+		"mediaPosition": {
+			"type": "string",
+			"default": "left"
+		},
+		"mediaId": {
+			"type": "number"
+		},
+		"mediaUrl": {
+			"type": "string"
+		},
+
+		"verticalAlignment": {
+			"type": "string"
+		},
+		"imageFill": {
+			"type": "boolean"
+		}
+	},
+	"supports": {
+		"anchor": false,
+		"html": false
+	},
+	"editorStyle": "wp-block-accordion-text-editor",
+	"style": "wp-block-accordion-text"
+}

@@ -44,6 +44,31 @@ class Theme {
 			this.headerOffset = header.clientHeight;
 		}
 
+
+		let toggles = document.querySelectorAll("[data-toggle]");
+		if (toggles) {
+			[].forEach.call(toggles, (toggle: HTMLAnchorElement) => {
+				let elm: HTMLElement = document.querySelector(toggle.getAttribute("data-target"));
+				if (elm) {
+					let toggleClass = toggle.getAttribute("data-toggle") ? toggle.getAttribute("data-toggle") : "active";
+
+					toggle.setAttribute("data-toggle-initial", toggle.innerHTML);
+					toggle.addEventListener("click", (e) => {
+						e.preventDefault();
+						if (elm.classList.contains(toggleClass)) {
+							elm.classList.remove(toggleClass);
+							toggle.classList.add("active-toggle");
+							if (toggle.getAttribute("data-toggle-close")) toggle.innerHTML = toggle.getAttribute("data-toggle-initial");
+						} else {
+							elm.classList.add(toggleClass);
+							toggle.classList.remove("active-toggle");
+							if (toggle.getAttribute("data-toggle-close")) toggle.innerHTML = toggle.getAttribute("data-toggle-close");
+						}
+					});
+				}
+			});
+		}
+
 		this.load();
 	}
 	load() {
