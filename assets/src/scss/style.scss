@@ -519,7 +519,6 @@ Navbar toggle button animations
     margin-top: 0px;
     width: 60px;
     margin-right: -5px;
-    transform: translateY(-50%);
     margin-bottom: 0;
 }
 
@@ -546,7 +545,8 @@ Navbar toggle button animations
     display: block;
     position: absolute;
     width: 30px;
-    background: #d3531a;
+    height:2px;
+    background: #000000;
     border-radius: 9px;
     opacity: 1;
     left: 15px;
