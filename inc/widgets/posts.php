@@ -8,7 +8,7 @@ class Posts extends \WP_Widget
     {
         parent::__construct(false, $name = 'NA: Posts Dropdown');
     }
-    function widget($args, $instance)
+    function widget($args, $instance) 
     {
         extract($args);
         $title = apply_filters('widget_title', $instance['title']);
