@@ -95,9 +95,9 @@ class Slider
     }
     public function scripts()
     {
-        wp_enqueue_script('na-slider-hammer', get_template_directory_uri() . '/inc/slider/js/hammer.min.js', array(), '1.0.0', true);
-        wp_enqueue_script('na-slider', get_template_directory_uri() . '/inc/slider/js/slider.js', array('na-slider-hammer'), '1.0.0', true);
-        wp_enqueue_style('na-slider', get_template_directory_uri() . '/inc/slider/css/slider.css', array(), '1.0');
+        wp_enqueue_script('na-slider-hammer', get_template_directory_uri() . '/inc/slider/js/hammer.min.js', array(), '1.0.1', true);
+        wp_enqueue_script('na-slider', get_template_directory_uri() . '/inc/slider/js/slider.js', array('na-slider-hammer'), '1.0.1', true);
+        wp_enqueue_style('na-slider', get_template_directory_uri() . '/inc/slider/css/slider.css', array(), '1.0.1');
     }
     public function slider($atts)
     {

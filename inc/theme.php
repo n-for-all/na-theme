@@ -490,8 +490,8 @@ class Theme
                 }
             };
         </script>
-        <script src="https://unpkg.com/react/umd/react.production.min.js" ></script>
-        <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js" ></script>
+        <script src="https://unpkg.com/react/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
         <?php
     }
 
@@ -1218,8 +1218,9 @@ class Theme
         $widget_obj    = $wp_registered_widgets[$widget_id];
         $widget_opt    = get_option($widget_obj['callback'][0]->option_name);
         $widget_num    = $widget_obj['params'][0]['number'];
-        if (isset($widget_opt[$widget_num]['classes']) && !empty($widget_opt[$widget_num]['classes']))
+        if (isset($widget_opt[$widget_num]['classes']) && !empty($widget_opt[$widget_num]['classes'])) {
             $params[0]['before_widget'] = preg_replace('/class="/', "class=\"{$widget_opt[$widget_num]['classes']} ", $params[0]['before_widget'], 1);
+        }
         return $params;
     }
 }
@@ -1239,6 +1240,7 @@ $naTheme->register('twitter', get_template_directory() . '/inc/social/twitter.ph
 $naTheme->registerClass('services', '\NaTheme\Inc\Services\Services');
 $naTheme->registerClass('team', '\NaTheme\Inc\Team\Team');
 $naTheme->registerClass('events', '\NaTheme\Inc\Events\Shortcode');
+$naTheme->registerClass('news', '\NaTheme\Inc\News\Shortcode');
 $naTheme->registerClass('menu', '\NaTheme\Inc\Menu\Shortcode');
 $naTheme->registerClass('healthcare', '\NaTheme\Inc\Healthcare\Healthcare');
 $naTheme->registerClass('testimonials', '\NaTheme\Inc\Testimonials\Shortcode');
@@ -1256,4 +1258,5 @@ $naTheme->register('switcher', get_template_directory() . '/inc/switcher/loader.
 $naTheme->register('popup', get_template_directory() . '/inc/popup/loader.php');
 
 do_action('theme_init', $naTheme);
+
 ?>

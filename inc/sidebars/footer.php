@@ -52,7 +52,6 @@ $columns = $count > 0 ? intval(12 / $count) : 4;
                 echo sprintf('<div class="row row-%s">%s</div>', $row + 1, implode("\n", $columns));
             }
             ?>
-            <?php echo '</div>'; ?>
         <?php endif; ?>
     </div>
 </section>

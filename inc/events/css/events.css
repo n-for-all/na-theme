@@ -1,5 +1,7 @@
 ul.na-events {
     padding-left: 0 !important;
+    margin-left: -1rem;
+    margin-right: -1rem;
 }
 
 .na-events>li>.events-inner>a.events-image {
@@ -7,7 +9,7 @@ ul.na-events {
     display: block;
     background-size: cover;
     position: relative;
-    padding-top: 100%;
+    padding-top: 70%;
     background-position: center center;
     background-repeat: no-repeat;
     transition: all ease .4s;
@@ -34,9 +36,10 @@ ul.na-events {
     top: 0;
     left: 0;
     width: 100%;
-    display: none;
     box-shadow: inset 1px 1px 13px 0px rgba(0, 0, 0, 0.5);
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: #00000030;
+    opacity: 0;
+    transition: all ease 0.3s;
 }
 
 .na-events>li>.events-inner>a::after {
@@ -47,13 +50,15 @@ ul.na-events {
     right: 5px;
     top: 10px;
     width: 34px;
-    display: none;
     background-size: 24px;
     background-position: center center;
+    opacity: 0;
+    transition: all ease 0.3s;
 }
 
-.na-events>li:hover>.events-inner>a::before, .na-events>li:hover>.events-inner>a::after {
-    display: block;
+.na-events>li:hover>.events-inner>a::before,
+.na-events>li:hover>.events-inner>a::after {
+    opacity: 1;
 }
 
 .na-events>li {
@@ -61,7 +66,7 @@ ul.na-events {
     display: block;
     margin: 0%;
     float: left;
-    padding: 7.5px;
+    padding: 1rem;
 }
 
 .na-events>li:first-child {
@@ -327,11 +332,11 @@ ul.na-events.na-events-columns-4 li {
 }
 
 ul.na-events.na-events-columns-3 li {
-    width: 33%;
+    width: 33.3%;
 }
 
 ul.na-events.na-events-columns-2 li {
-    width: 33%;
+    width: 50%;
 }
 
 .events-tabs {
@@ -356,11 +361,7 @@ ul.na-events.na-events-columns-2 li {
     line-height: 30px;
 }
 
-.events-inner * {
-    font-family: Roboto Condensed, Arial, tahoma, sans-serif;
-}
-
-.events-range {
+.event-range {
     font-size: 12px;
     color: #fff;
     display: inline-block;
@@ -370,7 +371,7 @@ ul.na-events.na-events-columns-2 li {
     font-family: inherit;
 }
 
-.events-range .event-date-range>.events-to-label {
+.event-range .event-date-range>.events-to-label {
     position: absolute;
     min-width: 0;
     top: 50%;
@@ -387,12 +388,14 @@ ul.na-events.na-events-columns-2 li {
     font-family: serif;
 }
 
-.events-range .event-date-range>span span, .events-range .event-date-single>span span {
+.event-range .event-date-range>span span,
+.event-range .event-date-single>span span {
     font-family: inherit;
     display: block;
 }
 
-.events-range .event-date-range>span, .events-range .event-date-single>span {
+.event-range .event-date-range>span,
+.event-range .event-date-single>span {
     display: inline-block;
     font-size: 15px;
     background: rgba(152, 44, 44, 0.75);
@@ -403,14 +406,13 @@ ul.na-events.na-events-columns-2 li {
     font-family: inherit;
 }
 
-.events-range .event-date-single>span {
+.event-range .event-date-single>span {
     background: rgba(44, 100, 152, 0.75);
 }
 
-.events-range .event-date-range>span span.year, .events-range .event-date-single>span span.year {
-    line-height: 13px;
+.event-range .event-date-range>span span.year,
+.event-range .event-date-single>span span.year {
     display: block;
-    font-size: 11px;
     letter-spacing: 1px;
 }
 
@@ -422,7 +424,8 @@ ul.na-events.na-events-columns-2 li {
     display: block;
 }
 
-.events-range .event-date-range>span span.day, .events-range .event-date-single>span span.day {
+.event-range .event-date-range>span span.day,
+.event-range .event-date-single>span span.day {
     display: block;
     font-size: 40px;
     text-transform: uppercase;
@@ -432,11 +435,12 @@ ul.na-events.na-events-columns-2 li {
     margin-left: -6px;
 }
 
-.events-range .event-date-single {
+.event-range .event-date-single {
     float: left;
 }
 
-.events-range .event-date-range>span>span.month, .events-range .event-date-single>span>span.month {
+.event-range .event-date-range>span>span.month,
+.event-range .event-date-single>span>span.month {
     display: block;
     font-size: 14px;
     line-height: 15px;
@@ -449,9 +453,11 @@ ul.na-events.na-events-columns-2 li {
     .na-events>li {
         width: 24%;
     }
+
     .na-events>li .events-header {
         min-height: 90px;
     }
+
     ul.na-events.na-events-columns-4 li {
         width: 33%;
     }
@@ -461,37 +467,46 @@ ul.na-events.na-events-columns-2 li {
     footer .widget {
         float: none;
     }
+
     .na-events>li {
         width: 32%;
     }
+
     ul.na-events.na-events-columns-4 li {
         width: 50%;
     }
+
     ul.na-events.na-events-columns-3 li {
         width: 50%;
     }
+
     #na-event-template .entry-content h2 {
         font-size: 16px;
     }
+
     #na-event-template .entry-content .events-location-tpl {
         font-size: 12px;
         margin-bottom: 10px;
         line-height: 14px;
     }
+
     #na-event-template {
         width: 96%;
         left: 2%;
         top: 10%;
     }
+
     #na-event-template .row-equal>.col-md-4 {
         width: 100%;
         height: 200px;
         padding-right: 0;
     }
+
     #na-event-template .row-equal {
         display: block;
     }
-    #na-event-template .entry-content{
+
+    #na-event-template .entry-content {
         min-height: 0;
     }
 }
@@ -506,12 +521,15 @@ ul.na-events.na-events-columns-2 li {
     .na-events>li {
         width: 99%;
     }
+
     ul.na-events.na-events-columns-4 li {
         width: 100%;
     }
+
     ul.na-events.na-events-columns-3 li {
         width: 100%;
     }
+
     ul.na-events.na-events-columns-2 li {
         width: 100%;
     }

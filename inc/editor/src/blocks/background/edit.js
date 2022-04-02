@@ -10,7 +10,7 @@ import { compose } from "@wordpress/compose";
 import { __, _x } from "@wordpress/i18n";
 import { useSelect, withSelect } from "@wordpress/data";
 import { useState, useRef, Component, Fragment } from "@wordpress/element";
-import { BlockControls, BlockVerticalAlignmentControl, __experimentalUseInnerBlocksProps as useInnerBlocksProps, InspectorControls, useBlockProps, __experimentalImageURLInputUI as ImageURLInputUI, __experimentalImageSizeControl as ImageSizeControl, store as blockEditorStore } from "@wordpress/block-editor";
+import { BlockControls, BlockVerticalAlignmentControl, useInnerBlocksProps, InspectorControls, useBlockProps, __experimentalImageURLInputUI as ImageURLInputUI, __experimentalImageSizeControl as ImageSizeControl, store as blockEditorStore } from "@wordpress/block-editor";
 import { PanelBody, RangeControl, TextareaControl, ToggleControl, ToolbarButton, ExternalLink, FocalPointPicker } from "@wordpress/components";
 import { pullLeft, pullRight } from "@wordpress/icons";
 

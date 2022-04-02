@@ -9,32 +9,14 @@ import { noop, isEmpty } from "lodash";
  */
 import { InnerBlocks, useBlockProps } from "@wordpress/block-editor";
 
-/**
- * Internal dependencies
- */
-import { imageFillStyles } from "./media-container";
-
-const DEFAULT_MEDIA_WIDTH = 50;
-
 export default function save({ attributes }) {
-
-	const { mediaPosition, mediaUrl, mediaWidth, mediaId, verticalAlignment, imageFill } = attributes;
-    const backgroundStyles = imageFillStyles(mediaUrl, imageFill, verticalAlignment);
-	let image = null;
-	image = (
-		<div className="wp-block-background-image" style={backgroundStyles}>
-			<div className="wp-block-background-text">
-				<InnerBlocks.Content />
-			</div>
-		</div>
-	);
-	const className = classnames({
-		"has-media-on-the-right": "right" === mediaPosition,
-	});
-	
+	const { openByDefault } = attributes;
 	return (
-		<div {...useBlockProps.save()}>
-			{image}
+		<div
+			{...useBlockProps.save({
+				className: openByDefault ? "open" : "",
+			})}>
+			<InnerBlocks.Content />
 		</div>
 	);
 }

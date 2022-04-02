@@ -54,7 +54,9 @@ class NaSliderBullets {
 		let total = slides.length;
 		if (pagination == 1) {
 			total = Math.ceil(slides.length / columns);
-		}
+		}else{
+            total = slides.length - (columns - 1);
+        }
 		let totalArray = new Array(total);
 		[...totalArray].map((_, index) => {
 			let span = document.createElement("span");
@@ -373,7 +375,7 @@ class NaSlider {
 						height = Math.floor((parseInt(this.settings.height.replace("%", ""), 10) / 100) * this.element.clientWidth);
 					}
 				} else if (this.settings.height.indexOf("vh") > 0) {
-					height = Math.floor((parseInt(this.settings.height.replace("vh", ""), 10) / 100) * this.element.clientHeight);
+					height = Math.floor((parseInt(this.settings.height.replace("vh", ""), 10) / 100) * window.innerHeight);
 				} else {
 					height = this.settings.height.replace("px", "");
 				}

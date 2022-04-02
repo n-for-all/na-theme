@@ -178,7 +178,9 @@ class Team extends \NaTheme\Inc\Metaboxes\Metabox
     {
         $atts = shortcode_atts(array(
             'autoplay' => false,
+            'filter' => true,
             'bullets' => true,
+            'popup' => false,
             'pagination' => false,
             'columns' => '4',
             'minWidth' => '0',
@@ -216,13 +218,12 @@ class Team extends \NaTheme\Inc\Metaboxes\Metabox
         $output = [];
         $query = new \WP_Query($args);
         if ($query->have_posts()) {
-
             while ($query->have_posts()) {
                 $query->the_post();
                 $meta = $this->get_meta(get_the_ID(), 'team');
                 $style = array();
                 if (has_post_thumbnail()) {
-                    $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
+                    $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
                     $style[] = "background-image:url($image[0])";
                 }
                 $inner = '';
@@ -235,18 +236,35 @@ class Team extends \NaTheme\Inc\Metaboxes\Metabox
                 } else {
                     $inner = '<span class="team-header">
                         <span class="team-title">' . get_the_title() . '</span>
-                        <span class="team-position">' . $meta['position'] . '</span>
+                        <span class="team-position">' . $meta['position'] . '</span> 
                     </span>';
                 }
                 $has_content = trim(get_the_content()) != '';
-                $link =  sprintf('<a href="%s" data-id="%s" class="team-image team-button"><span style="%s" class="image"></span>%s</a>', $has_content ? '#!team/' . get_the_ID() : '#!', get_the_ID(), implode(";", $style), $inner);
-                $output[] = sprintf('
-                <div class="team-inner %s">%s%s
-                    <div class="team-content">%s</div>
-                </div>', $has_content ? '' : 'no-content', $link, $outer, get_the_excerpt());
+                $has_popup = $atts['popup'];
+
+                $categories = wp_get_post_terms(get_the_ID(), 'team', array("fields" => "all"));
+                $term_ids = [];
+                $class = [];
+
+                foreach ($categories as $category) {
+                    $term_ids[] = $category->term_id;
+                    $class[] = sprintf('category-%s', $category->term_id);
+                }
+
+                $link =  sprintf('<a href="%s" data-id="%s" data-terms="%s" class="team-image team-button"><span style="%s" class="image"></span>%s</a>', $has_popup ? '#!team-member/' . get_the_ID() : get_permalink(), get_the_ID(), implode(",", $term_ids), implode(";", $style), $inner);
+                $output[] = [
+                    'id' => get_the_ID(),
+                    'post' => get_post(),
+                    'terms' => $term_ids,
+                    'content' => sprintf('<div class="team-inner %s">%s%s
+                        <div class="team-content">%s</div>
+                    </div>', $has_content ? '' : 'no-content', $link, $outer, get_the_excerpt())
+                ];
             }
         }
         wp_reset_postdata();
+
+        $header = '%s';
         if ($atts['slider'] == 1) {
             global $slider;
             $settings = array(
@@ -260,13 +278,27 @@ class Team extends \NaTheme\Inc\Metaboxes\Metabox
                 'type' => 'carousel',
                 'height' => $atts['height']
             );
-            $slides = [];
-            foreach ($output as $value) {
-                $slides[] = ['content' => $value];
+
+            return $slider->addSlider($output, $settings);
+        } else if ($atts['filter']) {
+            $terms = get_terms(['taxonomy' => 'team', 'hide_empty' => false]);
+            $list = [];
+
+            foreach ($terms as $key => $term) {
+                $list[] = sprintf('<li><a class="%s" href="#!team/%s">%s</a></li>', $key == 0 ? 'active' : '', $term->term_id, $term->name);
             }
-            return $slider->addSlider($slides, $settings);
+            $header = sprintf('<ul class="na-team-header">%s</ul>', implode('', $list));
+            $header = '<div class="na-team-wrapper">' . $header . '%s</div>';
+            $first = isset($terms[0]) ? $terms[0]->term_id : '';
+            $output = array_map(function ($item) use ($first) {
+                return  sprintf('<li class="%s item-%s">%s</li>', in_array($first, $item['terms']) ? '' : 'hidden', $item['id'], $item['content']);
+            }, $output);
+        } else {
+            $output = array_map(function ($item) {
+                return  sprintf('<li class="item-%s">%s</li>', $item['id'], $item['content']);
+            }, $output);
         }
-        return $output = sprintf('<ul class="na-team na-team-columns-%s">%s</ul>', $atts['columns'], '<li>' . implode('</li><li>', $output) . '</li>');
+        return sprintf($header, sprintf('<ul class="na-team na-team-columns-%s">%s</ul>', $atts['columns'], implode('', $output)));
     }
     public function show_metabox($post)
     {

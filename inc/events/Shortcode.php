@@ -327,14 +327,17 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     {
         $atts = shortcode_atts(array(
             'category' => '',
-            'columns' => '4'
+            'columns' => '4',
+            'orderby' => 'post_date',
+            'limit' => -1,
+            'order' => 'DESC',
         ), $atts, 'events-shortcode');
         $categories = (array)explode(",", $atts['category']);
         $categories = array_filter($categories);
         $args = array(
             'post_type' => 'event',
-            'orderby' => 'menu_order',
-            'order' => 'ASC'
+            'orderby' => $atts['orderby'],
+            'order' => $atts['order']
         );
 
         if (!empty($atts['category'])) {
@@ -370,12 +373,12 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
             $date_from = $date_to = null;
             if (isset($term_meta['date_from_today'])) {
                 $date_from = time();
-            } elseif (trim($term_meta['date_from']) != '') {
+            } elseif (isset($term_meta['date_from']) && trim($term_meta['date_from']) != '') {
                 $date_from = strtotime($term_meta['date_from']);
             }
             if (isset($term_meta['date_to_today'])) {
                 $date_to = time();
-            } elseif (trim($term_meta['date_to']) != '') {
+            } elseif (isset($term_meta['date_to']) && trim($term_meta['date_to']) != '') {
                 $date_to = strtotime($term_meta['date_to']);
             }
             $meta_query = array();
@@ -404,8 +407,9 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                         'terms' => $cat->term_id,
                     ),
                 ),
-                'orderby' => 'menu_order',
-                'order' => 'ASC'
+                'posts_per_page' => $atts['limit'],
+                'orderby' => $atts['orderby'],
+                'order' => $atts['order']
             );
             if (!empty($meta_query)) {
                 $args['meta_query'] = $meta_query;
@@ -446,7 +450,7 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
             $first = false;
         }
         wp_reset_postdata();
-        return '<div class="events"><div class="events-tabs">' . implode('', $tabs) . '</div>' . $output . '</div>';
+        return sprintf('<div class="events">%s%s</div>', count($tabs) > 1 ? '<div class="events-tabs">' . implode('', $tabs) . '</div>' : '', $output);
     }
     public function get_event_date($id)
     {
@@ -457,12 +461,12 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                 for ($i = 0; $i < sizeof((array)$meta['range']); $i = $i + 2) {
                     $from = '';
                     if (isset($meta['range'][$i]['date'])) {
-                        list($year, $month, $day) = explode('-', date('Y-M-j', strtotime($meta['range'][0]['date'])));
+                        list($year, $month, $day) = explode('-', date('Y-M-d', strtotime($meta['range'][0]['date'])));
                         $from = '<span><span class="day">' . $day . '</span><span class="month">' . $month . '</span><span class="year">' . $year . '</span></span>';
                     }
                     $to = '';
                     if (isset($meta['range'][$i + 1]['date'])) {
-                        list($year, $month, $day) = explode('-', date('Y-M-j', strtotime($meta['range'][1]['date'])));
+                        list($year, $month, $day) = explode('-', date('Y-M-d', strtotime($meta['range'][1]['date'])));
                         $to = '<span><span class="day">' . $day . '</span><span class="month">' . $month . '</span><span class="year">' . $year . '</span></span>';
                     }
                     $dates .= '<div class="event-date-range">' . $from . ($from != '' && $to != '' ? '<span class="events-to-label">to</span>' : '') . $to . '</div>';
@@ -473,7 +477,7 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                 for ($i = 0; $i < sizeof((array)$meta['range']); $i++) {
                     $from = '';
                     if (isset($meta['range'][$i]['date'])) {
-                        list($year, $month, $day) = explode('-', date('Y-M-j', strtotime($meta['range'][$i]['date'])));
+                        list($year, $month, $day) = explode('-', date('Y-M-d', strtotime($meta['range'][$i]['date'])));
                         $from = '<span><span class="day">' . $day . '</span><span class="month">' . $month . '</span><span class="year">' . $year . '</span></span>';
                     }
                     $dates .= '<div class="event-date-single">' . $from . '</div>';

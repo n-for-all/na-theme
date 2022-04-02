@@ -3,7 +3,7 @@
  */
 import "@wordpress/core-data";
 import "@wordpress/block-editor";
-import { registerBlockTypeFromMetadata, setDefaultBlockName, setFreeformContentHandlerName, setUnregisteredTypeHandlerName, setGroupingBlockName } from "@wordpress/blocks";
+import { registerBlockType, setDefaultBlockName, setFreeformContentHandlerName, setUnregisteredTypeHandlerName, setGroupingBlockName } from "@wordpress/blocks";
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ const registerBlock = (block) => {
 	}
 
 	const { metadata, settings, name } = block;
-	registerBlockTypeFromMetadata({ name, ...metadata }, settings);
+	registerBlockType({ name, ...metadata }, settings);
 };
 
 registerBlock(blockData);

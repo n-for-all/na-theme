@@ -1,0 +1,34 @@
+{
+	"apiVersion": 2,
+	"name": "na-theme-blocks/linkwithicon",
+	"title": "Link with icon & text",
+	"category": "na-theme",
+	"description": "Set background image with link.",
+	"keywords": ["image", "background", "link"],
+	"textdomain": "default",
+	"attributes": {
+		"mediaPosition": {
+			"type": "string",
+			"default": "left"
+		},
+		"mediaId": {
+			"type": "number"
+		},
+		"mediaUrl": {
+			"type": "string"
+		},
+
+		"verticalAlignment": {
+			"type": "string"
+		},
+		"imageFill": {
+			"type": "boolean"
+		}
+	},
+	"supports": {
+		"anchor": false,
+		"html": false
+	},
+	"editorStyle": "wp-block-linkwithicon-text-editor",
+	"style": "wp-block-linkwithicon-text"
+}

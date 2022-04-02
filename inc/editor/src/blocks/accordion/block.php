@@ -6,38 +6,17 @@ return array(
     'title' => 'Accordion',
     'category' => 'na-theme-blocks',
     'description' => 'Create an accordion with title and text.',
-    'keywords' =>
-    array(
-        0 => 'image',
+    'keywords' => array(
+        0 => 'toggle',
         1 => 'accordion',
     ),
     'textdomain' => 'default',
-    'attributes' =>
-    array(
-        'mediaPosition' =>
-        array(
-            'type' => 'string',
-            'default' => 'left',
-        ),
-        'mediaId' =>
-        array(
-            'type' => 'number',
-        ),
-        'mediaUrl' =>
-        array(
-            'type' => 'string'
-        ),
-        'verticalAlignment' =>
-        array(
-            'type' => 'string',
-        ),
-        'imageFill' =>
-        array(
+    'attributes' => array(
+        'openByDefault' => array(
             'type' => 'boolean',
-        ),
+        )
     ),
-    'supports' =>
-    array(
+    'supports' => array(
         'anchor' => false,
         'html' => false,
     ),

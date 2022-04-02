@@ -1,4 +1,6 @@
 import "./blocks/background/index";
+import "./blocks/linkwithicon/index";
+import "./blocks/counter/index";
 import "./blocks/accordion/index";
 import "./blocks/grid/block";
 import "./blocks/grid/column/block";

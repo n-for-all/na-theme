@@ -24,13 +24,13 @@ export const settings = {
 			{
 				name: "core/heading",
 				attributes: {
-					content: __("The wren<br>Earns his living<br>Noiselessly."),
+					content: __("Accordion Title..."),
 				},
 			},
 			{
 				name: "core/paragraph",
 				attributes: {
-					content: __("— Kobayashi Issa (一茶)"),
+					content: __("Accordion Content..."),
 				},
 			},
 		],

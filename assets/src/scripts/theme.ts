@@ -2,6 +2,9 @@ import css from "dom-helpers/css";
 import closest from "dom-helpers/closest";
 import contains from "dom-helpers/contains";
 import { animate, backOut } from "popmotion";
+import Parallax from "./parallax";
+import { counter } from "./counter";
+import { Team } from "./team";
 
 declare let ScrollMagic, TimelineMax, Linear, app, options, fullpage;
 
@@ -31,12 +34,16 @@ class Theme {
 	handler: any;
 	innerScroll: any;
 	headerOffset: number;
+	Parallax: Parallax;
+    team: Team;
 	constructor(options = {}) {
 		this.options = options;
 		this.controller = null;
 		this.scene = null;
 		this.fullpage = null;
 		this.sections = null;
+		this.Parallax = new Parallax();
+		this.team = new Team();
 
 		let header = document.querySelector("#masthead");
 		this.headerOffset = 0;
@@ -330,18 +337,20 @@ class Theme {
 					return;
 				}
 
-				let hash = window.location.hash?.replace("#!", "");
+				let hash = window.location.hash?.replace("#!", "").replace("#", "");
 				if (hash) {
+					let handler = hash.split("/");
+					if (handler.length > 1) {
+						if (handler[0] == "tabs") {
+							this.showTab(handler[1]);
+						}
+						return;
+					}
 					let section = document.querySelector(`#${hash}`);
 					if (section) {
 						this.scrollIfNeeded(section);
 						event.stopPropagation();
 						return;
-					}
-
-					let path = hash.split("/");
-					if (path[0] == "tabs") {
-						this.showTab(path[1]);
 					}
 				}
 			});
@@ -451,12 +460,25 @@ class Theme {
 				});
 			});
 		}
+		var elms = document.querySelectorAll(".wp-block-na-theme-blocks-accordion");
+		if (elms.length) {
+			[].forEach.call(elms, function (elm) {
+				elm.addEventListener("click", function (e) {
+					if (!e.target.classList.contains("block-title")) {
+						return;
+					}
+					e.preventDefault();
+					elm.classList.toggle("open");
+					return false;
+				});
+			});
+		}
 		window.addEventListener("load", function () {
-			var loadingOverlay = document.querySelector(".loading-overlay");
 			document.body.classList.remove("loading");
 			setTimeout(function () {
+				var loadingOverlay = document.querySelector(".loading-overlay");
 				document.body.classList.add("loaded");
-				if (loadingOverlay) {
+				if (loadingOverlay && loadingOverlay.parentNode) {
 					loadingOverlay.parentNode.removeChild(loadingOverlay);
 				}
 			}, 2000);
@@ -467,6 +489,7 @@ class Theme {
 		});
 
 		this.sectionObserver();
+		this.initCounters();
 
 		window["naTheme"] = this;
 
@@ -527,7 +550,7 @@ class Theme {
 				return this.handler(document.querySelector("#" + newHash));
 			}
 		}
-		document.querySelector(".content").classList.remove("active");
+		document.querySelector(".content")?.classList.remove("active");
 
 		let menu_items = document.querySelector("#menu-main-menu li a");
 		let menu_item = document.querySelector('#menu-main-menu li a[href^="' + this.escapeRegExp(hash) + '"]');
@@ -545,6 +568,81 @@ class Theme {
 
 		return null;
 	};
+
+	trigger = (element: Element | NodeListOf<Element>, eventName: string, detail: any = null) => {
+		let event = null;
+		if (detail) {
+			event = new CustomEvent(eventName, { detail });
+		} else {
+			event = new Event(eventName);
+		}
+		if (element instanceof NodeList) {
+			element.forEach((elm) => {
+				elm.dispatchEvent(event);
+			});
+		} else {
+			element.dispatchEvent(event);
+		}
+	};
+	countDecimals = function (val) {
+		if (Math.floor(val) === val) return 0;
+		return val.toString().split(".")[1].length || 0;
+	};
+
+	format = (num, separator) => String(num).replace(/(?<!\..*)(\d)(?=(?:\d{3})+(?:\.|$))/g, "$1" + separator);
+
+	initCounters() {
+		document.body.addEventListener("section.in", (e: CustomEvent) => {
+			let { section } = e.detail;
+			if (section) {
+				let cntrs = section.querySelectorAll(".counter");
+				if (!cntrs || cntrs.length == 0) {
+					return;
+				}
+				[].forEach.call(cntrs, (cntr) => {
+					if (cntr) {
+						let elm = cntr.querySelector(".block-title");
+						if (!elm) {
+							return;
+						}
+						let settings = eval("(" + cntr.getAttribute("data-settings") + ")");
+						let step = parseFloat(settings.step);
+						let initVal = parseFloat(settings.start);
+						let lastVal = parseFloat(settings.end);
+						let totalDecimals = this.countDecimals(step);
+						var formatOutput = (output) => {
+							if (settings.seperator && settings.seperator != "") {
+								output = this.format(output, settings.seperator);
+							}
+							return output;
+						};
+						var update = (progress) => {
+							let output = (progress * (lastVal - initVal) + step).toFixed(totalDecimals);
+							elm.innerHTML = settings.prefix + formatOutput(output) + settings.suffix;
+							if (progress >= 1) {
+								elm.innerHTML = settings.prefix + formatOutput(settings.end) + settings.suffix;
+							}
+						};
+
+						counter(parseFloat(settings.duration), update);
+					}
+				});
+			}
+		});
+		let counters = document.querySelectorAll(".counter .count");
+		if (counters.length) {
+			[].forEach.call(counters, (elm) => {
+				let number = elm.innerHTML.match(/\d+/);
+				let html = elm.innerHTML;
+				if (number && number.length) {
+					number.map((n) => {
+						html = html.replace(n, '<span data-count="' + n + '" class="inner-counter inner-counter-' + n + '">' + n + "</span>");
+					});
+					elm.innerHTML = html;
+				}
+			});
+		}
+	}
 
 	getScrollPosition = (el) => ({
 		x: el.pageXOffset !== undefined ? el.pageXOffset : el.scrollLeft,
@@ -584,10 +682,12 @@ class Theme {
 						entry.target.classList.add("in-once");
 						entry.target.classList.add("in");
 						entry.target.classList.remove("out");
+						this.trigger(document.body, "section.in", { section: entry.target });
 						// observer.unobserve(entry.target);
 					} else {
 						entry.target.classList.add("out");
 						entry.target.classList.remove("in");
+						this.trigger(document.body, "section.out", { section: entry.target });
 					}
 				});
 			});
@@ -629,11 +729,11 @@ app.ready(function () {
 		if (!mac) document.body.classList.add("custom-scrollbar");
 	} catch (error) {}
 	setTimeout(function () {
-		var loadingOverlay = document.querySelector(".loading-overlay");
 		document.body.classList.remove("loading");
 		setTimeout(function () {
+			var loadingOverlay = document.querySelector(".loading-overlay");
 			document.body.classList.add("loaded");
-			if (loadingOverlay) {
+			if (loadingOverlay && loadingOverlay.parentNode) {
 				loadingOverlay.parentNode.removeChild(loadingOverlay);
 			}
 		}, 2000);

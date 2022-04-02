@@ -32,6 +32,29 @@
 }
 
 // Row block
+[data-type="na-theme-blocks/linkwithicon"] > div{
+    display: flex;
+    padding: 1rem;
+    border: 1px solid #eee;
+
+    .wp-block-linkwithicon-image {
+        flex: 1;
+        margin-right: 1rem;
+    }
+
+    .wp-block-linkwithicon-text {
+        flex: 1;
+    }
+
+    .wp-block-background-image{
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
+        margin-right: 1rem;
+        min-width: 80px;
+    }
+}
+
 [data-type="na-theme-blocks/row"] {
 
     // Row background on hover to make it visible

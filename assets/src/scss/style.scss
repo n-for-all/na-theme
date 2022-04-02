@@ -344,14 +344,15 @@ blockquote::after {
 
 blockquote cite {
     font-size: 1rem;
-    font-weight: bold; 
+    font-weight: bold;
 }
 
 
 blockquote p {
-    font-size: 1.2rem; 
-    em{ 
-        font-style: normal; 
+    font-size: 1.2rem;
+
+    em {
+        font-style: normal;
     }
 }
 
@@ -545,7 +546,7 @@ Navbar toggle button animations
     display: block;
     position: absolute;
     width: 30px;
-    height:2px;
+    height: 2px;
     background: #000000;
     border-radius: 9px;
     opacity: 1;
@@ -795,11 +796,13 @@ Featured Overlay
 
 .entry-header figure.entry-image {
     position: absolute;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
-    top: 50%;
+    top: 0%;
     overflow: hidden;
     width: 100%;
+    background-position: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .entry-header h1.entry-title {
@@ -825,6 +828,16 @@ Featured Overlay
     }
 }
 
+.team-related {
+    padding: 2rem 0;
+
+    h2 {
+        text-align: center;
+        font-size: 1.6rem;
+        padding: 1rem;
+    }
+}
+
 .team-member {
     margin: 20px 0;
     border-bottom: 1px solid #1d23271f;
@@ -840,18 +853,15 @@ Featured Overlay
     max-width: 100%;
 }
 
-.team-member .entry-header h1.entry-title {
-    padding: 15px 0px 15px;
-    color: #333;
-    text-transform: none;
-    margin-bottom: 0;
-    margin-top: 0;
-    position: relative;
-    z-index: 2;
-    font-size: 1.8rem;
-    margin-top: 30px;
-    font-weight: bold;
-    letter-spacing: -0.1rem;
+.team-member .entry-header {
+    min-height: 0;
+
+    h1.entry-title {
+        padding: 0px;
+        color: inherit;
+        font-size: 1.8rem;
+        font-weight: bold;
+    }
 }
 
 .team-member .entry-content {
@@ -1087,9 +1097,7 @@ section.not-found .page-header h1 {
 }
 
 .blog-list-container {
-    max-width: 1000px;
     margin: 0 auto;
-    padding: 0 30px;
     min-height: 500px;
 }
 
@@ -1099,21 +1107,36 @@ section.not-found .page-header h1 {
     border-top: 1px solid rgba(0, 0, 0, 0.07);
 }
 
-.blog-list-container .sidebar {
-    width: 20%;
-    float: right;
-    margin: 30px 0 30px 2%;
-}
-
 .blog-list-container .blogroll.no-sidebar {
     width: 100%;
     float: none;
 }
 
-.blog-list-container .blogroll {
-    float: left;
-    width: 77%;
-    margin-bottom: 50px;
+.blog-list-container {
+    display: flex;
+
+    .blogroll {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+
+        >header {
+            flex: 1;
+            margin-bottom: 1rem;
+            min-width: 100%;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+
+        .blog-post {
+            max-width: 50%;
+            padding: 1rem;
+        }
+    }
+
+    .blog-sidebar {
+        flex: 0.25;
+    }
 }
 
 .blog article.post {
@@ -2871,6 +2894,12 @@ div.wpcf7-acceptance-missing {
     height: auto !important;
 }
 
+.single-team-member{
+    .entry-image{
+        margin: 1rem;
+    }
+}
+
 .single-doctor {
     #main .entry-header {
         min-height: 0;
@@ -3088,8 +3117,9 @@ div.wpcf7-acceptance-missing {
                 white-space: pre-line;
             }
 
-            &:nth-child(odd) .content, &:nth-child(odd) .content p {
-                text-align: left;  
+            &:nth-child(odd) .content,
+            &:nth-child(odd) .content p {
+                text-align: left;
             }
 
 
@@ -3101,7 +3131,7 @@ div.wpcf7-acceptance-missing {
             &:nth-child(even) .content:before {
                 left: -10px;
                 border-width: 10px 10px 10px 0px;
-                border-color: #0000 #dfe7f5; 
+                border-color: #0000 #dfe7f5;
             }
         }
     }

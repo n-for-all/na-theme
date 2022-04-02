@@ -4,24 +4,10 @@
 	"title": "Accordion",
 	"category": "na-theme",
 	"description": "accordion",
-	"keywords": ["image", "accordion"],
+	"keywords": ["toggle", "accordion"],
 	"textdomain": "default",
 	"attributes": {
-		"mediaPosition": {
-			"type": "string",
-			"default": "left"
-		},
-		"mediaId": {
-			"type": "number"
-		},
-		"mediaUrl": {
-			"type": "string"
-		},
-
-		"verticalAlignment": {
-			"type": "string"
-		},
-		"imageFill": {
+        "openByDefault": {
 			"type": "boolean"
 		}
 	},

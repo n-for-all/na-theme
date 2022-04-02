@@ -57,17 +57,19 @@ class Editor
         );
     }
 
-    public function add_category($block_categories)
+    public function add_category($block_categories, $editor_context)
     {
-        return array_merge(
-            $block_categories,
-            array(
+        if ( ! empty( $editor_context->post ) ) {
+            array_push(
+                $block_categories,
                 array(
-                    'slug' => 'na-theme',
+                    'slug'  => 'na-theme',
                     'title' => __('Na Theme', 'na-theme'),
-                ),
-            )
-        );
+                    'icon'  => null,
+                )
+            );
+        }
+        return $block_categories;
     }
 
     /**
@@ -84,11 +86,24 @@ class Editor
          */
 
         $backgroundData = require_once(dirname(__FILE__).'/src/blocks/background/block.php');
+        $linkwithiconData = require_once(dirname(__FILE__).'/src/blocks/linkwithicon/block.php');
+        $counterData = require_once(dirname(__FILE__).'/src/blocks/counter/block.php');
 
         $blocks = [
             'background' => [
                 'attributes' => $backgroundData['attributes'],
                 'template' => 'background',
+                'title' => 'Background',
+            ],
+            'linkwithicon' => [
+                'attributes' => $linkwithiconData['attributes'],
+                'template' => 'linkwithicon',
+                'title' => 'Link With Icon',
+            ],
+            'counter' => [
+                'attributes' => $counterData['attributes'],
+                'template' => 'counter',
+                'title' => 'Counter',
             ],
             'grid' => [
                 'attributes' => array(
@@ -98,6 +113,7 @@ class Editor
                     ),
                 ),
                 'template' => 'grid',
+                'title' => 'Grid',
             ],
             'container' => [
                 'attributes' => array(
@@ -268,6 +284,7 @@ class Editor
                 'na-theme-blocks/' . $name,
                 array(
                     'render_callback' => function ($block_attributes, $content) use ($block) {
+                       
                         return $this->get_template($block['template'], $block_attributes, $content);
                     },
                     'attributes' => $block['attributes'],

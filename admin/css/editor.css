@@ -79,6 +79,22 @@
 /**
  * Breakpoints & Media Queries
  */
+[data-type="na-theme-blocks/linkwithicon"] > div {
+  display: flex;
+  padding: 1rem;
+  border: 1px solid #eee; }
+  [data-type="na-theme-blocks/linkwithicon"] > div .wp-block-linkwithicon-image {
+    flex: 1;
+    margin-right: 1rem; }
+  [data-type="na-theme-blocks/linkwithicon"] > div .wp-block-linkwithicon-text {
+    flex: 1; }
+  [data-type="na-theme-blocks/linkwithicon"] > div .wp-block-background-image {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    margin-right: 1rem;
+    min-width: 80px; }
+
 [data-type="na-theme-blocks/row"]:not(.is-selected):not(.has-child-selected):hover {
   background-color: rgba(220, 220, 220, 0.5);
   outline: 1px dashed #949494; }

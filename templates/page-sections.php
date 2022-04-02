@@ -18,13 +18,13 @@ get_header(); ?>
             <?php
             if ($featured_image) :
             ?>
-                <figure class="entry-image" style="background-image:<?php echo $featured_image; ?>">
+                <figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
                     <img src="<?php echo $featured_image; ?>" />
                 </figure>
             <?php endif; ?>
             <div class="container">
                 <div class="row">
-                    <div class="col-md-12" style="visibility:hidden"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
+                    <div class="col-md-12"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
                 </div>
             </div>
 
@@ -52,6 +52,11 @@ get_header(); ?>
                 $_class .= " section-" . $post->post_type;
                 $_class .= " " . $naTheme->get_template_part($post->ID, 'content-page-notitle');
                 $_class .= " subsection";
+
+                $extraClass = get_post_meta($post->ID, '_wp_section_class', true);
+                if ($extraClass) {
+                    $_class .= " " . $extraClass;
+                }
 
                 $background = $naTheme->get_post_thumbnail($post, 'full');
                 if ($background) {
