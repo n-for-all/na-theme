@@ -1,5 +1,5 @@
 /**
- * BLOCK: na-theme/column
+ * BLOCK: na-theme/tab
  */
 
 // WordPress dependencies
@@ -9,23 +9,21 @@ import * as BlockEditor from '@wordpress/block-editor';
 import * as Editor from '@wordpress/editor';
 
 import edit, { bgColorOptions } from './edit';
-import { column } from '../../icons';
+import { tab } from '../../icons';
 
 const { InnerBlocks } = BlockEditor || Editor;
 
-registerBlockType( 'na-theme-blocks/column', {
+registerBlockType( 'na-theme-blocks/tab', {
 	
-	title: __( 'Column', 'na-theme' ),
-	icon: column,
+	title: __( 'Tab', 'na-theme' ),
+	icon: tab,
 	category: 'na-theme',
 	keywords: [
-		__( 'Column', 'na-theme' ),
-		__( 'Bootstrap Column', 'na-theme' ),
+		__( 'Tab', 'na-theme' ),
+		__( 'Bootstrap Tab', 'na-theme' ),
 		__( 'Bootstrap', 'na-theme' ),
 	],
-	parent: [ 'na-theme-blocks/row' ],
-
-	
+	parent: [ 'na-theme-blocks/tabs' ],
 
 	getEditWrapperProps( attributes ) {
 		const {

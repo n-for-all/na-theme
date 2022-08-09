@@ -59,7 +59,7 @@ class Editor
 
     public function add_category($block_categories, $editor_context)
     {
-        if ( ! empty( $editor_context->post ) ) {
+        if (!empty($editor_context->post)) {
             array_push(
                 $block_categories,
                 array(
@@ -85,9 +85,9 @@ class Editor
          * @param array $default_attributes Default attributes of block.
          */
 
-        $backgroundData = require_once(dirname(__FILE__).'/src/blocks/background/block.php');
-        $linkwithiconData = require_once(dirname(__FILE__).'/src/blocks/linkwithicon/block.php');
-        $counterData = require_once(dirname(__FILE__).'/src/blocks/counter/block.php');
+        $backgroundData = require_once(dirname(__FILE__) . '/src/blocks/background/block.php');
+        $linkwithiconData = require_once(dirname(__FILE__) . '/src/blocks/linkwithicon/block.php');
+        $counterData = require_once(dirname(__FILE__) . '/src/blocks/counter/block.php');
 
         $blocks = [
             'background' => [
@@ -277,6 +277,28 @@ class Editor
                     ),
                 ),
                 'template' => 'grid-column',
+            ],
+            'tabs' => [
+                'attributes' => array(
+                    'editorStackColumns' => array(
+                        'type' => 'boolean',
+                        'default' => '',
+                    ),
+                ),
+                'template' => 'tabs',
+            ],
+            'tab' => [
+                'attributes' =>   array(
+                    'padding' => array(
+                        'type' => 'string',
+                        'default' => '',
+                    ),
+                    'label' => array(
+                        'type' => 'string',
+                        'default' => '',
+                    )
+                ),
+                'template' => 'tab',
             ]
         ];
         foreach ($blocks as $name => $block) {
@@ -284,7 +306,7 @@ class Editor
                 'na-theme-blocks/' . $name,
                 array(
                     'render_callback' => function ($block_attributes, $content) use ($block) {
-                       
+
                         return $this->get_template($block['template'], $block_attributes, $content);
                     },
                     'attributes' => $block['attributes'],

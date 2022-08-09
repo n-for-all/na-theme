@@ -7,3 +7,5 @@ import "./blocks/grid/column/block";
 import "./blocks/container/block";
 import "./blocks/row/block";
 import "./blocks/column/block";
+import "./blocks/tabs/block";
+import "./blocks/tab/block";

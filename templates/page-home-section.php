@@ -9,7 +9,7 @@
  *
  * @package WordPress
  */
-
+global $_class, $naTheme, $post;
 get_header(); ?>
 <div id="primary" class="content-area ">
     <main id="main" class="site-main" role="main">
@@ -26,20 +26,19 @@ get_header(); ?>
                     'orderby'            => 'menu_order',
                     'order'    => 'ASC'
                 );
-                $_children = get_posts($args);
+                $query = new \WP_Query($args);
                 $i = 0;
                 $start_scroller = false;
-                global $_class, $naTheme;
-                foreach ($_children as $post) {
-                    //print_r($post);
-                    setup_postdata($post);
+
+                while ($query->have_posts()) :
+                    $query->the_post();
                     $_class = 'section ';
                     $_class .= $i % 2 == 0 ? 'even' : 'odd';
                     $_class .= " section-scroll section-" . $post->post_type;
-                    $_class .= " " . $naTheme->get_template_part($post->ID, 'content-page-notitle');
+                    $_class .= " " . $naTheme->get_template_part(get_the_ID(), 'content-page-notitle');
                     $_class .= " subsection";
 
-                    $extraClass = get_post_meta($post->ID, '_wp_section_class', true);
+                    $extraClass = $naTheme->get_meta(get_the_ID(), '_wp_section_class');
                     if ($extraClass) {
                         $_class .= " " . $extraClass;
                     }
@@ -47,39 +46,37 @@ get_header(); ?>
                     if ($background) {
                         $_class .= " has-post-thumbnail";
                     } ?>
-                    <?php if ($naTheme->homepage_scrolling != "") : //scrollmagic manual
+                    <?php 
+                    if ($naTheme->homepage_scrolling != "") : //scrollmagic manual
                         if (($i == 1 || $naTheme->homepage_scrolling == 1) && !$start_scroller) :
                             $start_scroller = true; ?>
                             <div id="scroll-container" class="scrolling-container--<?php echo $naTheme->homepage_scrolling; ?>">
                                 <div id="inner-scroll" class="scrolling-style-<?php echo $naTheme->homepage_scrolling; ?>">
-                                <?php endif;
+                                <?php
                         endif;
-                        include('parts/section.php');
-
-                        $i++;
-                    }
-                    if ($start_scroller) :
-                        if ($naTheme->homepage_scrolling == 4) :
-                                ?>
-                                <section class="section-placeholder"></section>
-                            <?php endif; ?>
-                                </div>
-                            </div>
-                        <?php endif;
-                    if ($naTheme->show_scroll_icon == 1) { ?>
-                            <span class="mouse"><span class="scroll" title=""></span></span>
-                    <?php }
-                    wp_reset_postdata();
-                    //get_template_part( 'content', 'home' );
-
-                    // If comments are open or we have at least one comment, load up the comment template.
-                    if (comments_open() || get_comments_number()) :
-                        comments_template();
                     endif;
-                    // End the loop.
-                    break;
+                    include 'parts/section.php';
+
+                    $i++;
                 endwhile;
-                    ?>
+                if ($start_scroller) :
+                    if ($naTheme->homepage_scrolling == 4) :
+                            ?>
+                            <section class="section-placeholder"></section>
+                        <?php
+                    endif; ?>
+                            </div>
+                        </div>
+                    <?php
+                endif;
+                if ($naTheme->show_scroll_icon == 1) { ?>
+                        <span class="mouse"><span class="scroll" title=""></span></span>
+                <?php }
+                
+                $query->reset_postdata();
+            endwhile;
+            wp_reset_postdata();
+        ?>
         </div>
     </main>
     <!-- .site-main -->

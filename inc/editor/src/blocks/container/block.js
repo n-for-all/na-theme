@@ -11,13 +11,13 @@ import * as Editor from '@wordpress/editor';
 import edit from './edit';
 import { stack } from '../../icons';
 
-const { InnerBlocks } = BlockEditor || Editor; // Fallback to deprecated '@wordpress/editor' for backwards compatibility
+const { InnerBlocks } = BlockEditor || Editor;
 
 registerBlockType( 'na-theme-blocks/container', {
-	// Block name. Block names must be string that contains a namespace prefix. Example: my-plugin/my-custom-block.
-	title: __( 'Container', 'na-theme' ), // Block title.
+	
+	title: __( 'Container', 'na-theme' ),
 	icon: stack,
-	category: 'na-theme', // Block category — Group blocks together based on common traits E.g. common, formatting, layout widgets, embed.
+	category: 'na-theme',
 	keywords: [
 		__( 'Container', 'na-theme' ),
 		__( 'Bootstrap Container', 'na-theme' ),
@@ -28,7 +28,7 @@ registerBlockType( 'na-theme-blocks/container', {
 		align: false,
 	},
 
-	// attributes are defined server side with register_block_type(). This is needed to make default attributes available in the blocks render callback.
+	
 
 	edit,
 

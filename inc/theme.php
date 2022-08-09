@@ -613,7 +613,7 @@ class Theme
         if (is_admin()) {
             wp_enqueue_style('na_theme-admin', get_template_directory_uri() . '/admin/css/admin.css', array(), '1.0');
             wp_enqueue_script('na_theme-admin-scripts', get_template_directory_uri() . '/admin/js/admin.js', array('jquery'), '1.0.0', true);
-            wp_enqueue_script('na_theme-blocks-scripts', get_template_directory_uri() . '/admin/js/app.js', array('wp-blocks', 'wp-i18n', 'wp-element', 'jquery'), '1.0.0', true);
+            wp_enqueue_script('na_theme-blocks-scripts', get_template_directory_uri() . '/admin/js/app.js', array('wp-blocks', 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-i18n', 'wp-element', 'jquery'), '1.0.0', true);
             wp_localize_script(
                 'na_theme-blocks-scripts',
                 'naThemeData',
@@ -1029,12 +1029,12 @@ class Theme
     }
     function get_template_layout($post_id, $default)
     {
-        $part = get_post_meta($post_id, '_wp_page_template_layout', true);
+        $part = $this->get_meta($post_id, '_wp_page_template_layout');
         return $part != '' ? $part : $default;
     }
     function get_template_layout_before($post_id)
     {
-        $part = get_post_meta($post_id, '_wp_page_template_layout', true);
+        $part = $this->get_template_layout($post_id, 'container');
         switch ($part) {
             case 'container-fluid':
             case 'container':
@@ -1050,7 +1050,7 @@ class Theme
     }
     function get_template_layout_after($post_id)
     {
-        $part = get_post_meta($post_id, '_wp_page_template_layout', true);
+        $part = $this->get_template_layout($post_id, 'container');
         switch ($part) {
             case 'container-fluid':
             case 'container':
@@ -1205,13 +1205,13 @@ class Theme
     }
 
 
-    public function  widget_update($instance, $new_instance)
+    public function widget_update($instance, $new_instance)
     {
         $instance['classes'] = $new_instance['classes'];
         return $instance;
     }
 
-    public function  dynamic_sidebar_params($params)
+    public function dynamic_sidebar_params($params)
     {
         global $wp_registered_widgets;
         $widget_id    = $params[0]['widget_id'];
@@ -1223,11 +1223,25 @@ class Theme
         }
         return $params;
     }
+
+    public function get_meta($post_id, $name = '')
+    {
+        $meta_name = '';
+        $meta_name = "_meta_{$name}";
+        if ($a = get_post_meta($post_id, $meta_name, true)) {
+            return $a;
+        } else {
+            $a = get_post_meta($post_id, $name, true);
+            return $a ?? false;
+        }
+        return false;
+    }
 }
 global $naTheme;
 $naTheme = new \NaTheme\Inc\Theme();
 new \NaTheme\Inc\User\Filter();
 new \NaTheme\Inc\Editor\Editor();
+new \NaTheme\Inc\Metaboxes\Section();
 
 
 add_action('widgets_init', function () {

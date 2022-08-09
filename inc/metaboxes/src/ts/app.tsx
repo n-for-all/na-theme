@@ -58,11 +58,11 @@ const SectionTemplate = () => {
 							control = <MetaTextControl name={`${metabox.name}`} label={metabox.label} />;
 						}
 						if (metabox.type == "select") {
-							control = <MetaSelectControl name={`${metabox.name}`} label={metabox.label} options={section.templates} />;
+							control = <MetaSelectControl name={`${metabox.name}`} label={metabox.label} options={metabox.options} />;
 						}
 						return <div key={"metabox-" + indexMetabox}>{control}</div>;
 					});
-				}
+				} 
 				return (
 					<PluginDocumentSettingPanel key={"section-" + index} name={section.name} title={section.label} className={"na-metabox-section na-metabox-section-" + section.name}>
 						{section.description && section.description != '' ? <p>{section.description}</p> : null}
@@ -78,5 +78,3 @@ registerPlugin("na-theme-metabox", {
 	render: SectionTemplate,
 	icon: "palmtree",
 });
-
-console.log("metaboxes-added");

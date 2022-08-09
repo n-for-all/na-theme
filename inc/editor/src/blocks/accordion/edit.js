@@ -12,7 +12,7 @@ import * as Editor from "@wordpress/editor";
 
 import { verticalAlignBottom, verticalAlignCenter, verticalAlignTop } from "../../icons";
 
-const { InnerBlocks, InspectorControls, BlockControls, AlignmentToolbar } = BlockEditor || Editor; // Fallback to deprecated '@wordpress/editor' for backwards compatibility
+const { InnerBlocks, InspectorControls, BlockControls, AlignmentToolbar } = BlockEditor || Editor;
 
 /**
  * Constants

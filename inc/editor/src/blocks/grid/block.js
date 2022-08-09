@@ -11,10 +11,10 @@ import * as Editor from "@wordpress/editor";
 import edit from "./edit";
 import { stack } from "../../icons";
 
-const { InnerBlocks } = BlockEditor || Editor; // Fallback to deprecated '@wordpress/editor' for backwards compatibility
+const { InnerBlocks } = BlockEditor || Editor;
 
 registerBlockType("na-theme-blocks/grid", {
-	title: __("Grid", "na-theme"), // Block title.
+	title: __("Grid", "na-theme"),
 	icon: stack,
 	category: "na-theme", 
 	keywords: [__("Grid", "na-theme"), __("Bootstrap Grid", "na-theme"), __("Bootstrap", "na-theme")],

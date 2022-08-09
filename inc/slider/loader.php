@@ -104,6 +104,7 @@ class Slider
         $atts = shortcode_atts(array(
             'id' => 0,
             'category' => 0,
+            'class' => '',
             'container' => 'container',
             'height' => '100%',
             'type' => '',
@@ -138,6 +139,7 @@ class Slider
         $_slides = array();
         if (count($slides) > 0) {
             $settings = array(
+                'class' => $atts['class'],
                 'autoplay' => $atts['autoplay'],
                 'container' => $atts['container'],
                 'bullets' => $atts['bullets'],
@@ -189,8 +191,8 @@ class Slider
                         } else {
                             $container  = sprintf('<div class="container"><div class="row"><div class="col-md-12">%s</div></div></div>', $content);
                         }
-                    }else{
-                        $container = $content.'<a href="#" class="play-btn-big"></a>';
+                    } else {
+                        $container = $content . '<a href="#" class="play-btn-big"></a>';
                     }
 
                     $_slides[] = array('content' => sprintf('<div style="background-image:url(%s)" class="na-slide-inner">
@@ -212,7 +214,7 @@ class Slider
             if (isset($settings['thumbnails']) && $settings['thumbnails']) {
                 $settings['sync'] = $id . '_thumbnails';
             }
-            include('template/slider.tpl.php');
+            include 'template/slider.tpl.php';
 
             return ob_get_clean();
         }
@@ -221,8 +223,8 @@ class Slider
 class Metabox extends \NaTheme\Inc\Metaboxes\Metabox
 {
     public function show_metabox($post)
-    {
-?>
+    {   
+        ?>
         <table class="form-table">
             <tbody>
                 <tr class="form-field form-required term-name-wrap">
@@ -234,7 +236,6 @@ class Metabox extends \NaTheme\Inc\Metaboxes\Metabox
             </tbody>
         </table>
         <?php
-
     }
     public function get_youtube_video_id($post_id)
     {
@@ -253,9 +254,9 @@ class PostImage extends \NaTheme\Inc\Metaboxes\Admin\PostColumn
     {
         $images = $this->meta_box->_metabox_image_value($post_id, 'image', 'slide');
         foreach ($images as $image) {
-        ?>
+            ?>
             <img src="<?php echo $image[0]; ?>" style="height:50px" />
-<?php
+            <?php
         }
     }
 }

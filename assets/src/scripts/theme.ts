@@ -5,8 +5,9 @@ import { animate, backOut } from "popmotion";
 import Parallax from "./parallax";
 import { counter } from "./counter";
 import { Team } from "./team";
+import Alpine from "alpinejs";
 
-declare let ScrollMagic, TimelineMax, Linear, app, options, fullpage;
+declare let ScrollMagic, TimelineMax, Linear, app, options, fullpage, window: Window | any;
 
 (function () {
 	if (window.CustomEvent) return false;
@@ -35,7 +36,7 @@ class Theme {
 	innerScroll: any;
 	headerOffset: number;
 	Parallax: Parallax;
-    team: Team;
+	team: Team;
 	constructor(options = {}) {
 		this.options = options;
 		this.controller = null;
@@ -75,6 +76,8 @@ class Theme {
 			});
 		}
 
+		window.Alpine = Alpine;
+		Alpine.start();
 		this.load();
 	}
 	load() {
@@ -589,7 +592,7 @@ class Theme {
 		return val.toString().split(".")[1].length || 0;
 	};
 
-	format = (num, separator) => String(num).replace(/(?<!\..*)(\d)(?=(?:\d{3})+(?:\.|$))/g, "$1" + separator);
+	format = (num, separator) => String(num).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1" + separator);
 
 	initCounters() {
 		document.body.addEventListener("section.in", (e: CustomEvent) => {

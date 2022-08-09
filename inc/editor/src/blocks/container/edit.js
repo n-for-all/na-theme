@@ -13,7 +13,7 @@ import * as BlockEditor from '@wordpress/block-editor';
 import * as Editor from '@wordpress/editor';
 
 
-const { InnerBlocks, InspectorControls } = BlockEditor || Editor; // Fallback to deprecated '@wordpress/editor' for backwards compatibility
+const { InnerBlocks, InspectorControls } = BlockEditor || Editor;
 
 let marginAfterOptions = [
 	{

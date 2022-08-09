@@ -9,12 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@wordpress/components": "^13.0.0"
+    "@wordpress/components": "^13.0.0",
+    "gulp-sass": "^5.1.0",
+    "sass": "^1.53.0"
   },
   "devDependencies": {
     "@wordpress/scripts": "^14.0.1",
     "copy-webpack-plugin": "^8.1.0",
-    "gulp-sass": "^4.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-util": "^3.0.8",
     "ts-loader": "^8.1.0",

@@ -2,7 +2,7 @@
 console.log((new Date).getTime());
 var gulp = require('gulp');
 var gutil = require("gulp-util");
-var sass = require('gulp-sass');
+var sass = require('gulp-sass')(require('sass'));
 var sourcemaps = require('gulp-sourcemaps');
 
 

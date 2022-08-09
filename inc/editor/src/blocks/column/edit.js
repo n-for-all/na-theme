@@ -22,7 +22,7 @@ import {
 } from '../../icons';
 
 const { InnerBlocks, InspectorControls, BlockControls, AlignmentToolbar } =
-	BlockEditor || Editor; // Fallback to deprecated '@wordpress/editor' for backwards compatibility
+	BlockEditor || Editor;
 
 const contentVerticalAlignmentControls = [
 	{

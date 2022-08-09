@@ -147,7 +147,8 @@ body:not(.branch-5-2):not(.branch-5-3) [data-type="na-theme-blocks/row"]:not([da
             >[data-type="na-theme-blocks/column"] {
                 padding-left: $block-padding;
                 padding-right: $block-padding;
-            }
+                box-sizing: border-box;
+            }  
         }
     }
 }

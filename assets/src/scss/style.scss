@@ -149,6 +149,11 @@ section div.content.inner-content>.inner>.entry-content {
     height: 100%;
 }
 
+section .post-edit-link{
+    position: absolute;
+    z-index: 8;
+}
+
 .section-nav ul li.active {
     background-color: rgba(255, 255, 255, 0.7);
 }

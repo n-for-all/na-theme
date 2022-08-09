@@ -435,7 +435,8 @@
 @media (min-width: 600px) {
   body:not(.branch-5-2):not(.branch-5-3) [data-type="na-theme-blocks/row"]:not([data-editor-stack-columns="true"]) .wp-block-na-theme-blocks-row > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="na-theme-blocks/column"] {
     padding-left: 14px;
-    padding-right: 14px; } }
+    padding-right: 14px;
+    box-sizing: border-box; } }
 
 .na-theme-blocks-template-selector-list {
   display: flex;

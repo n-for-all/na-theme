@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Template Name: Page Sub Nav
+ * Template Name: Page Sub Nav Parent
  * The template for displaying pages
  *
  * This is the template that displays all pages by default.
@@ -30,7 +30,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                     <img src="<?php echo $featured_image; ?>" />
                 </figure>
             <?php endif; ?>
-            <div class="container">
+            <div class="container"> 
                 <div class="row">
                     <div class="col-md-12"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
                 </div>
@@ -48,17 +48,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                     if ($parent == 0) {
                         $parent = get_the_ID();
                         $is_parent = true;
-                    } else {
-                        $children = get_children([
-                            'post_parent'    => get_the_ID(),
-                            'post_type'   => 'page',
-                            'post_status' => 'publish'
-                        ]);
-                        if ($children && count($children) > 0) {
-                            $parent = get_the_ID();
-                            $is_parent = true;
-                        }
-                    }
+                    } 
                     
                     $args = array(
                         'post_parent' => $parent,

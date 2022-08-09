@@ -12,13 +12,11 @@ global $naTheme, $post;
 <?php
 /**
  * Featured Image
- */
+ */ 
 $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 
 ?>
-
 <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-
     <div class="<?php $naTheme->classes('content', 'entry-content'); ?> <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">

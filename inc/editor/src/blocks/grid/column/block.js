@@ -11,17 +11,17 @@ import * as Editor from "@wordpress/editor";
 import edit, { bgColorOptions } from "./edit";
 import { column } from "../../../icons";
 
-const { InnerBlocks } = BlockEditor || Editor; // Fallback to deprecated '@wordpress/editor' for backwards compatibility
+const { InnerBlocks } = BlockEditor || Editor;
 
 registerBlockType("na-theme-blocks/grid-column", {
-	// Block name. Block names must be string that contains a namespace prefix. Example: my-plugin/my-custom-block.
-	title: __("Grid Column", "na-theme"), // Block title.
-	icon: column, // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
-	category: "na-theme", // Block category — Group blocks together based on common traits E.g. common, formatting, layout widgets, embed.
+	
+	title: __("Grid Column", "na-theme"),
+	icon: column,
+	category: "na-theme",
 	keywords: [__("Grid Column", "na-theme"), __("Bootstrap Column", "na-theme"), __("Bootstrap", "na-theme")],
 	parent: ["na-theme-blocks/grid"],
 
-	// attributes are defined server side with register_block_type(). This is needed to make default attributes available in the blocks render callback.
+	
 
 	getEditWrapperProps(attributes) {
 		const { sizeXxl, sizeXl, sizeLg, sizeMd, sizeSm, sizeXs, bgColor, padding, contentVerticalAlignment } = attributes;

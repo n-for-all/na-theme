@@ -6,18 +6,17 @@ import * as Editor from '@wordpress/editor';
 
 import edit from './edit';
 import transforms from './transforms';
-import { columns } from '../../icons';
+import { tabs } from '../../icons';
 
 const { InnerBlocks } = BlockEditor || Editor;
 
-registerBlockType( 'na-theme-blocks/row', {
-	
-	title: __( 'Row', 'na-theme' ),
-	icon: columns,
+registerBlockType( 'na-theme-blocks/tabs', {
+	title: __( 'Tabs', 'na-theme' ),
+	icon: tabs, 
 	category: 'na-theme',
 	keywords: [
-		__( 'Row', 'na-theme' ),
-		__( 'Bootstrap Row', 'na-theme' ),
+		__( 'Tabs', 'na-theme' ),
+		__( 'Bootstrap Tabs', 'na-theme' ),
 		__( 'Bootstrap', 'na-theme' ),
 	],
 
@@ -26,8 +25,6 @@ registerBlockType( 'na-theme-blocks/row', {
 	},
 
 	transforms,
-
-	
 
 	getEditWrapperProps( attributes ) {
 		return {

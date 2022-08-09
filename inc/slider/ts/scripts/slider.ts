@@ -288,6 +288,7 @@ class NaSlider {
 			vertical: 0,
 			minWidth: 200,
 			height: "auto",
+			class: "",
 			sync: "",
 		};
 		this.settings = { ...defaults, ...settings };
@@ -295,6 +296,10 @@ class NaSlider {
 
 		this.inner = document.createElement("div");
 		this.inner.classList.add("na-slider");
+
+        if(this.settings.class != ''){
+            this.inner.classList.add(this.settings.class);
+        }
 
 		this.innerSlider = document.createElement("ul");
 		this.innerSlider.classList.add("na-slides");

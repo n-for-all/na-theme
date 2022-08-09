@@ -1,6 +1,6 @@
 // WordPress dependencies
 import { __ } from "@wordpress/i18n";
-import { CheckboxControl, ColorPalette, PanelBody, RangeControl, SelectControl } from "@wordpress/components";
+import { CheckboxControl, ColorPalette, PanelBody, RangeControl, SelectControl, TextControl } from "@wordpress/components";
 import { Component, Fragment } from "@wordpress/element";
 import { withSelect } from "@wordpress/data";
 import { compose } from "@wordpress/compose";
@@ -9,7 +9,7 @@ import { applyFilters } from "@wordpress/hooks";
 import * as BlockEditor from "@wordpress/block-editor";
 import * as Editor from "@wordpress/editor";
 
-import { verticalAlignBottom, verticalAlignCenter, verticalAlignTop } from "../../../icons";
+import { verticalAlignBottom, verticalAlignCenter, verticalAlignTop } from "../../icons";
 
 const { InnerBlocks, InspectorControls, BlockControls, AlignmentToolbar } = BlockEditor || Editor;
 
@@ -31,7 +31,7 @@ const contentVerticalAlignmentControls = [
 	},
 ];
 
-const SizeRangeControl = ({ label, attributeName, value, setAttributes, ...props }) => {
+const ColumnSizeRangeControl = ({ label, attributeName, value, setAttributes, ...props }) => {
 	return (
 		<RangeControl
 			label={label}
@@ -63,7 +63,7 @@ let paddingOptions = [
 class BootstrapColumnEdit extends Component {
 	render() {
 		const { attributes, className, setAttributes, hasChildBlocks } = this.props;
-		const { sizeXxl, sizeXl, sizeLg, sizeMd, sizeSm, sizeXs, equalWidthXxl, equalWidthXl, equalWidthLg, equalWidthMd, equalWidthSm, equalWidthXs, bgColor, padding, centerContent, contentVerticalAlignment } = attributes;
+		const { label, bgColor, padding, centerContent, contentVerticalAlignment } = attributes;
 
 		// Migrate deprecated centerContent to new contentVerticalAlignment attribute
 		if (centerContent) {
@@ -76,38 +76,15 @@ class BootstrapColumnEdit extends Component {
 		return (
 			<Fragment>
 				<InspectorControls>
-					<PanelBody title={__("Column size", "na-theme")} initialOpen={false}>
-						<SizeRangeControl label={__("Xs Column count", "na-theme")} attributeName="sizeXs" value={sizeXs} disabled={equalWidthXs} setAttributes={setAttributes} />
-						<hr />
-						<SizeRangeControl label={__("Sm Column count", "na-theme")} attributeName="sizeSm" value={sizeSm} disabled={equalWidthSm} setAttributes={setAttributes} />
-						<hr />
-						<SizeRangeControl label={__("Md Column count", "na-theme")} attributeName="sizeMd" value={sizeMd} disabled={equalWidthMd} setAttributes={setAttributes} />
-						<hr />
-						<SizeRangeControl label={__("Lg Column count", "na-theme")} attributeName="sizeLg" value={sizeLg} disabled={equalWidthLg} setAttributes={setAttributes} />
-						<hr />
-						<SizeRangeControl label={__("Xl Column count", "na-theme")} attributeName="sizeXl" value={sizeXl} disabled={equalWidthXl} setAttributes={setAttributes} />
-					</PanelBody>
-					<PanelBody title={__("Background color", "na-theme")} initialOpen={false}>
-						<ColorPalette
-							colors={bgColorOptions}
-							value={bgColor}
-							onChange={(value) => {
-								// Value is undefined if color gets cleared
-								if (!value) {
-									setAttributes({
-										bgColor: "",
-										centerContent: false,
-									});
-								} else {
-									const selectedColor = bgColorOptions.find((c) => c.color === value);
-									if (selectedColor) {
-										setAttributes({
-											bgColor: selectedColor.name,
-										});
-									}
-								}
-							}}
-							disableCustomColors
+					<PanelBody title={__("Label", "na-theme")} initialOpen={false}>
+						<TextControl
+							label={__("Tab Label")} 
+							value={label}
+							onChange={(value) =>
+								setAttributes({
+									label: value,
+								})
+							}
 						/>
 					</PanelBody>
 					<PanelBody title={__("Padding (inside column)", "na-theme")} initialOpen={false}>
