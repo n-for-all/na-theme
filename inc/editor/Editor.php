@@ -23,6 +23,8 @@ class Editor
      * `wp-i18n`: To internationalize the block's text.
      *
      * @since 1.0.0
+     * 
+     * @return void
      */
     public function editor_assets()
     {
@@ -46,6 +48,8 @@ class Editor
      * Enqueue the block's assets for the frontend.
      *
      * @since 1.0.0
+     * 
+     * @return void
      */
     public function block_assets()
     {
@@ -74,6 +78,8 @@ class Editor
 
     /**
      * Registers block type
+     * 
+     * @return void
      */
     public function register_blocks()
     {
@@ -85,9 +91,9 @@ class Editor
          * @param array $default_attributes Default attributes of block.
          */
 
-        $backgroundData = require_once(dirname(__FILE__) . '/src/blocks/background/block.php');
-        $linkwithiconData = require_once(dirname(__FILE__) . '/src/blocks/linkwithicon/block.php');
-        $counterData = require_once(dirname(__FILE__) . '/src/blocks/counter/block.php');
+        $backgroundData = include_once dirname(__FILE__) . '/src/blocks/background/block.php';
+        $linkwithiconData = include_once dirname(__FILE__) . '/src/blocks/linkwithicon/block.php';
+        $counterData = include_once dirname(__FILE__) . '/src/blocks/counter/block.php';
 
         $blocks = [
             'background' => [
@@ -328,7 +334,7 @@ class Editor
 
         ob_start();
 
-        require $located;
+        include $located;
 
         // Record output.
         $html = ob_get_contents();

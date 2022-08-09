@@ -14,7 +14,7 @@ const { registerPlugin } = wp.plugins;
 const { __ } = wp.i18n;
 const { Fragment } = wp.element;
 const { InspectorAdvancedControls } = wp.editor;
-const { createHigherOrderComponent, withState, compose } = wp.compose;
+const { createHigherOrderComponent, compose } = wp.compose;
 const { ToggleControl, SelectControl, TextControl } = wp.components;
 const { PluginDocumentSettingPanel, PluginSidebarMoreMenuItem, PluginSidebar } = wp.editPost;
 const { withSelect, withDispatch } = wp.data;
@@ -73,23 +73,6 @@ const withAdvancedControls = createHigherOrderComponent((BlockEdit) => {
 		);
 	};
 }, 'withAdvancedControls');
-
-const MySelectControl = withState({
-	size: '50%',
-})(({ size, setState }) => (
-	<SelectControl
-		label="Size"
-		value={size}
-		options={[
-			{ label: 'Big', value: '100%' },
-			{ label: 'Medium', value: '50%' },
-			{ label: 'Small', value: '25%' },
-		]}
-		onChange={(size) => {
-			setState({ size });
-		}}
-	/>
-));
 
 
 var MetaTextControl = compose(
