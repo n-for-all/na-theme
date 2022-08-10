@@ -63,7 +63,7 @@ let paddingOptions = [
 class BootstrapColumnEdit extends Component {
 	render() {
 		const { attributes, className, setAttributes, hasChildBlocks } = this.props;
-		const { label, bgColor, padding, centerContent, contentVerticalAlignment } = attributes;
+		const { tab_id, label, bgColor, padding, centerContent, contentVerticalAlignment } = attributes;
 
 		// Migrate deprecated centerContent to new contentVerticalAlignment attribute
 		if (centerContent) {
@@ -76,13 +76,24 @@ class BootstrapColumnEdit extends Component {
 		return (
 			<Fragment>
 				<InspectorControls>
-					<PanelBody title={__("Label", "na-theme")} initialOpen={false}>
+					<PanelBody title={__("Settings", "na-theme")} initialOpen={false}>
 						<TextControl
 							label={__("Tab Label")} 
 							value={label}
+                            required={true}
 							onChange={(value) =>
 								setAttributes({
 									label: value,
+								})
+							}
+						/>
+						<TextControl
+							label={__("Tab ID")} 
+							value={tab_id}
+                            required={true}
+							onChange={(value) =>
+								setAttributes({
+									tab_id: value,
 								})
 							}
 						/>

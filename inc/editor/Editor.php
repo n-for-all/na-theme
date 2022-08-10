@@ -12,8 +12,25 @@ class Editor
 
         add_filter('block_categories_all', array($this, 'add_category'), 10, 2);
         add_action('init', array($this, 'register_blocks'));
+        add_filter('render_block_data', [$this, 'parse_block'], 10, 3);
     }
-
+    public function parse_block($parsed_block, $source_block, $parent_block)
+    {
+        if (isset($parsed_block['blockName']) && $parsed_block['blockName'] == 'na-theme-blocks/tabs') {
+            $parsed_block['attrs']['labels'] = [];
+            foreach ($parsed_block['innerBlocks'] as $key => &$tab) {
+                $id = $tab['attrs']['tab_id'] ?? '';
+                if ($id == '') {
+                    $id = sanitize_title($tab['attrs']['label']);
+                }
+                $parsed_block['attrs']['labels'][] = ['tab_id' => $id, 'label' => $tab['attrs']['label']];
+            }
+            return $parsed_block;
+        } else if (isset($parsed_block['innerBlocks']) && sizeof($parsed_block['innerBlocks']) > 0) {
+            $parsed_block['innerBlocks'] = $this->parse_block($parsed_block['innerBlocks'], $source_block, $parent_block);
+        }
+        return $parsed_block;
+    }
 
     /**
      * Enqueue the block's assets for the editor.
@@ -302,6 +319,10 @@ class Editor
                     'label' => array(
                         'type' => 'string',
                         'default' => '',
+                    ),
+                    'tab_id' => array(
+                        'type' => 'string',
+                        'default' => '',
                     )
                 ),
                 'template' => 'tab',
@@ -312,7 +333,6 @@ class Editor
                 'na-theme-blocks/' . $name,
                 array(
                     'render_callback' => function ($block_attributes, $content) use ($block) {
-
                         return $this->get_template($block['template'], $block_attributes, $content);
                     },
                     'attributes' => $block['attributes'],

@@ -43,6 +43,7 @@ class NaSliderBullets {
 		if (!this.slider) {
 			return;
 		}
+
 		this.bullets = this.slider.getElement().querySelector("bullets");
 		if (this.bullets) {
 			this.load(pagination, columns, initial);
@@ -54,9 +55,9 @@ class NaSliderBullets {
 		let total = slides.length;
 		if (pagination == 1) {
 			total = Math.ceil(slides.length / columns);
-		}else{
-            total = slides.length - (columns - 1);
-        }
+		} else {
+			total = slides.length - (columns - 1);
+		}
 		let totalArray = new Array(total);
 		[...totalArray].map((_, index) => {
 			let span = document.createElement("span");
@@ -68,7 +69,7 @@ class NaSliderBullets {
 				this.update(index);
 			});
 		});
-		this.update(initial); 
+		this.update(initial);
 	}
 
 	update(index) {
@@ -239,6 +240,7 @@ class NaSlider {
 	private _fpsTime: number = 0;
 	data: NaSliderData;
 	animationframe: number;
+	resizeObserver: ResizeObserver;
 	/**
 	 * __construct
 	 */
@@ -297,9 +299,9 @@ class NaSlider {
 		this.inner = document.createElement("div");
 		this.inner.classList.add("na-slider");
 
-        if(this.settings.class != ''){
-            this.inner.classList.add(this.settings.class);
-        }
+		if (this.settings.class != "") {
+			this.inner.classList.add(this.settings.class);
+		}
 
 		this.innerSlider = document.createElement("ul");
 		this.innerSlider.classList.add("na-slides");
@@ -588,7 +590,13 @@ class NaSlider {
 
 		document.addEventListener("keydown", (event) => {
 			var divRect = this.element.getBoundingClientRect();
-			if (mousePosition.clientX >= divRect.left && mousePosition.clientX <= divRect.right && mousePosition.clientY >= divRect.top && mousePosition.clientY <= divRect.bottom && keyhandle) {
+			if (
+				mousePosition.clientX >= divRect.left &&
+				mousePosition.clientX <= divRect.right &&
+				mousePosition.clientY >= divRect.top &&
+				mousePosition.clientY <= divRect.bottom &&
+				keyhandle
+			) {
 				// Mouse is inside element.
 				event.preventDefault();
 				if (event.keyCode == 38 || event.keyCode == 37) {
@@ -703,18 +711,26 @@ class NaSlider {
 			}
 		};
 
+		if ("ResizeObserver" in window) {
+			this.resizeObserver = new ResizeObserver((entries) => {
+				callback();
+			});
+
+			this.resizeObserver.observe(this.element);
+		}
+
 		// Listen to the window resize event
 		window.addEventListener("resize", onResizeElem["checkForChanges"]);
-	}
+	}   
 
 	trigger(element: Element | NodeListOf<Element>, eventName: string, detail: any = null) {
 		let event = null;
 		if (detail) {
 			event = new CustomEvent(eventName, { detail });
-		} else {
-			event = new Event(eventName);
+		} else { 
+			event = new Event(eventName); 
 		}
-		if (element instanceof NodeList) {
+		if (element instanceof NodeList) { 
 			element.forEach((elm) => {
 				elm.dispatchEvent(event);
 			});
@@ -725,7 +741,9 @@ class NaSlider {
 
 	isString(obj) {
 		const type = typeof obj;
-		return type == "string" || (type == "object" && obj != null && !Array.isArray(obj) && Object.prototype.toString.call(obj) === "[object String]");
+		return (
+			type == "string" || (type == "object" && obj != null && !Array.isArray(obj) && Object.prototype.toString.call(obj) === "[object String]")
+		);
 	}
 
 	cloneAttributes(from: HTMLElement, to: HTMLElement) {

@@ -37,12 +37,10 @@ if (array_key_exists('className', $attributes) && !empty($attributes['className'
 if (array_key_exists('padding', $attributes) && !empty($attributes['padding'])) {
     array_push($column_content_classes, $attributes['padding']);
 }
-
+$tab_id = $attributes['tab_id'];
 $column_content_classes = array_unique($column_content_classes);
-
 ?>
-
-<div class="<?php echo esc_attr(implode(' ', $classes)); ?>">
+<div class="tab-pane fade <?php echo esc_attr(implode(' ', $classes)); ?>" :class="{'active show': show == '<?php echo $tab_id; ?>'}">
     <?php if (!empty($column_content_classes)) : ?>
         <div class="<?php echo esc_attr(implode(' ', $column_content_classes)); ?>">
             <?php echo $content; ?>

@@ -22,6 +22,7 @@ module.exports = {
 		typescript({
 			exclude: path.resolve(__dirname, "./node_modules"),
 			tsconfig: path.resolve(__dirname, "./tsconfig.json"),
+            sourceMap: !production,
 		}),
 		replace({
 			ENVIRONMENT: JSON.stringify(production ? "production" : "development"),

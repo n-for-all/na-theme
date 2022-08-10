@@ -1,7 +1,6 @@
 <?php
 
 /**
- * Twenty Fifteen functions and definitions
  *
  * Set up the theme and provides some helper functions, which are used in the
  * theme as custom template tags. Others are attached to action and filter
@@ -21,9 +20,6 @@
  * For more information on hooks, actions, and filters,
  * {@link https://codex.wordpress.org/Plugin_API}
  *
- * @package WordPress
- * @subpackage Twenty_Fifteen
- * @since Twenty Fifteen 1.0
  */
 
 define('NA_THEME_TEXT_DOMAIN', 'na_theme');
@@ -36,18 +32,18 @@ remove_filter('the_title', 'capital_P_dangit', 11);
 remove_filter('the_content', 'capital_P_dangit', 11);
 remove_filter('comment_text', 'capital_P_dangit', 31);
 
-remove_action( 'wp_head', 'feed_links_extra', 3 ); // Display the links to the extra feeds such as category feeds
-remove_action( 'wp_head', 'feed_links', 2 ); // Display the links to the general feeds: Post and Comment Feed
-remove_action( 'wp_head', 'rsd_link' ); // Display the link to the Really Simple Discovery service endpoint, EditURI link
-remove_action( 'wp_head', 'wlwmanifest_link' ); // Display the link to the Windows Live Writer manifest file.
-remove_action( 'wp_head', 'index_rel_link' ); // index link
-remove_action( 'wp_head', 'parent_post_rel_link', 10, 0 ); // prev link
-remove_action( 'wp_head', 'start_post_rel_link', 10, 0 ); // start link
-remove_action( 'wp_head', 'adjacent_posts_rel_link', 10, 0 ); // Display relational links for the posts adjacent to the current post.
-remove_action( 'wp_head', 'wp_generator' );
-remove_action( 'wp_head', 'wp_resource_hints', 2, 99 );
+remove_action('wp_head', 'feed_links_extra', 3); // Display the links to the extra feeds such as category feeds
+remove_action('wp_head', 'feed_links', 2); // Display the links to the general feeds: Post and Comment Feed
+remove_action('wp_head', 'rsd_link'); // Display the link to the Really Simple Discovery service endpoint, EditURI link
+remove_action('wp_head', 'wlwmanifest_link'); // Display the link to the Windows Live Writer manifest file.
+remove_action('wp_head', 'index_rel_link'); // index link
+remove_action('wp_head', 'parent_post_rel_link', 10, 0); // prev link
+remove_action('wp_head', 'start_post_rel_link', 10, 0); // start link
+remove_action('wp_head', 'adjacent_posts_rel_link', 10, 0); // Display relational links for the posts adjacent to the current post.
+remove_action('wp_head', 'wp_generator');
+remove_action('wp_head', 'wp_resource_hints', 2, 99);
 
-add_filter( 'wp_lazy_loading_enabled', '__return_false' );
+add_filter('wp_lazy_loading_enabled', '__return_false');
 
 add_action(
     'admin_menu',
@@ -64,7 +60,7 @@ if (WP_DEBUG) {
     // add_filter('pre_http_request', function () {
     //     return true;
     // });
-   
+
     add_filter(
         'wp_php_error_message',
         function ($message, $error) {
@@ -108,7 +104,7 @@ require get_template_directory() . '/inc/theme.php';
 require get_template_directory() . '/admin/customizer.php';
 //}
 if (class_exists('woocommerce')) {
-    require get_template_directory() . '/woocommerce-functions.php';
+    include get_template_directory() . '/woocommerce-functions.php';
 }
 
 add_shortcode('na_gallery', 'na_gallery_shortcode');
@@ -282,7 +278,7 @@ function na_gallery_shortcode($attr)
 add_shortcode('language-switcher', function () {
     ob_start();
     if (function_exists('pll_the_languages')) {
-        pll_the_languages(array('show_flags' => 1, 'show_names' => 1, 'hide_if_empty' => 0));
+        \pll_the_languages(array('show_flags' => 1, 'show_names' => 1, 'hide_if_empty' => 0));
     }
     $flags = ob_get_clean();
     return sprintf('<div class="language-switcher"><ul>%s</ul></div>', $flags);

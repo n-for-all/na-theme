@@ -179,12 +179,12 @@ class Theme
     {
 
         $this->remove_json_api();
-        /*
-		 * Make theme available for translation.
-		 * Translations can be filed in the /languages/ directory.
-		 * If you're building a theme based on na_theme, use a find and replace
-		 * to change NA_THEME_TEXT_DOMAIN to the name of your theme in all the template files
-		 */
+        /**
+         * Make theme available for translation.
+         * Translations can be filed in the /languages/ directory.
+         * If you're building a theme based on na_theme, use a find and replace
+         * to change NA_THEME_TEXT_DOMAIN to the name of your theme in all the template files
+         */
         load_theme_textdomain(NA_THEME_TEXT_DOMAIN, get_template_directory() . '/languages');
 
         // Add default posts and comments RSS feed links to head.
@@ -193,19 +193,19 @@ class Theme
         add_theme_support('wc-product-gallery-zoom');
         add_theme_support('wc-product-gallery-lightbox');
         add_theme_support('wc-product-gallery-slider');
-        /*
-		 * Let WordPress manage the document title.
-		 * By adding theme support, we declare that this theme does not use a
-		 * hard-coded <title> tag in the document head, and expect WordPress to
-		 * provide it for us.
-		 */
+        /**
+         * Let WordPress manage the document title.
+         * By adding theme support, we declare that this theme does not use a
+         * hard-coded <title> tag in the document head, and expect WordPress to
+         * provide it for us.
+         */
         add_theme_support('title-tag');
 
-        /*
-		 * Enable support for Post Thumbnails on posts and pages.
-		 *
-		 * See: https://codex.wordpress.org/Function_Reference/add_theme_support#Post_Thumbnails
-		 */
+        /**
+         * Enable support for Post Thumbnails on posts and pages.
+         *
+         * See: https://codex.wordpress.org/Function_Reference/add_theme_support#Post_Thumbnails
+         */
         add_theme_support('post-thumbnails');
         set_post_thumbnail_size(825, 510, true);
 
@@ -216,19 +216,19 @@ class Theme
             'social'  => __('Social Links Menu', NA_THEME_TEXT_DOMAIN),
         ));
 
-        /*
-		 * Switch default core markup for search form, comment form, and comments
-		 * to output valid HTML5.
-		 */
+        /**
+         * Switch default core markup for search form, comment form, and comments
+         * to output valid HTML5.
+         */
         add_theme_support('html5', array(
             'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
         ));
 
-        /*
-		 * Enable support for Post Formats.
-		 *
-		 * See: https://codex.wordpress.org/Post_Formats
-		 */
+        /**
+         * Enable support for Post Formats.
+         *
+         * See: https://codex.wordpress.org/Post_Formats
+         */
         add_theme_support('post-formats', array(
             'aside', 'image', 'video', 'quote', 'link', 'gallery', 'status', 'audio', 'chat'
         ));
@@ -236,19 +236,23 @@ class Theme
 
         add_image_size('news', 300, 300, true);
 
-        /*
-		 * This theme styles the visual editor to resemble the theme style,
-		 * specifically font, colors, icons, and column width.
-		 */
+        /**
+         * This theme styles the visual editor to resemble the theme style,
+         * specifically font, colors, icons, and column width.
+         */
     }
-    /*
-		Print the credits in the footer
-	*/
+
+    /**
+     * Credits hook
+     *
+     * @date 2022-08-09
+     *
+     * @return string
+     */
     function credits()
     {
 ?>
         <span class="copyright"><?php echo do_shortcode($this->copyright); ?></span>
-
         <?php
     }
 
@@ -267,9 +271,13 @@ class Theme
         $src = add_query_arg('_', $this->cache_id, $src);
         return $src;
     }
+
     /**
      * This will stop mce from removing html code
+     * 
+     * @param array $initArray
      *
+     * @return array
      */
     function override_mce_options($initArray)
     {
@@ -302,6 +310,8 @@ class Theme
      * Register widget area.
      *
      * @link https://codex.wordpress.org/Function_Reference/register_sidebar
+     * 
+     * @return void
      */
     function widgets_init()
     {
@@ -693,7 +703,7 @@ class Theme
         if (empty($text)) {
             $text = $content;
         }
-        $id = function_exists('pll_get_post') ? pll_get_post($id) : $id;
+        $id = function_exists('pll_get_post') ? \pll_get_post($id) : $id;
         if (!empty($text)) {
             $url = get_permalink($id);
             return sprintf('<a class="%s" href="%s">%s</a>', $class, $url, $text);
@@ -1107,7 +1117,7 @@ class Theme
                     continue;
                 }
                 if (isset($this->modules[$key])) {
-                    require_once $this->modules[$key];
+                    include_once $this->modules[$key];
                 }
             }
         } elseif (isset($this->modules[$module])) {
@@ -1115,7 +1125,7 @@ class Theme
                 $class = new \ReflectionClass($this->module_classes[$key]);
                 $class->newInstanceArgs([$this]);
             } else {
-                require_once $this->modules[$module];
+                include_once $this->modules[$module];
             }
         }
     }
@@ -1126,7 +1136,7 @@ class Theme
     public function enable_preset($name)
     {
         if (file_exists(get_template_directory() . '/preset/' . $name . '/loader.php')) {
-            require get_template_directory() . '/preset/' . $name . '/loader.php';
+            include get_template_directory() . '/preset/' . $name . '/loader.php';
         }
     }
     public function search_filter($query)
@@ -1153,6 +1163,8 @@ class Theme
      *
      * @since  1.0.0
      * @date   2018-04-24
+     * 
+     * @return string
      */
     public function redirect_author_link()
     {
@@ -1163,22 +1175,25 @@ class Theme
      *
      * @since  1.0.0
      * @date   2018-04-24
+     * 
+     * @return void
      */
     public function disable_author_page()
     {
-        global $wp_query;
         if (is_author()) {
             wp_redirect(home_url('/'), 301);
             exit;
         }
     }
+
     /**
-     * remove 'Archives', 'Categories' labels from titles
+     * Remove 'Archives', 'Categories' labels from titles
      *
      * @since  1.0.0
      * @date   2018-04-24
-     * @param  [type]     $title
-     * @return [type]            [description]
+     * @param string $title
+     * 
+     * @return string
      */
     public function get_the_archive_title($title)
     {
@@ -1193,7 +1208,7 @@ class Theme
     }
 
 
-    public function  widget_form_extend($instance, $widget)
+    public function widget_form_extend($instance, $widget)
     {
         $row = '';
         if (!isset($instance['classes']))
