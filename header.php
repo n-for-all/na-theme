@@ -53,7 +53,7 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
     ?>
         <span class="loading-overlay" style="background-image:url(<?php echo $naTheme->loading_logo; ?>)"></span>
     <?php endif; ?>
-    <header id="masthead" class="site-header <?php echo $naTheme->navbar; ?>" role="banner">
+    <header id="masthead" class="site-header <?php echo $naTheme->navbar; ?> <?php echo $naTheme->menu_dark == 1 ? 'dark' : ''; ?>" role="banner">
         <!-- Start navbar -->
         <?php if (trim($naTheme->top_bar) != '' || has_nav_menu('social')) : ?>
             <?php
@@ -93,7 +93,6 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
         <div class="container">
             <div class="row">
                 <nav id="main-nav-collapse" class="navbar navbar-light navbar-expand-lg navbar-default <?php echo $naTheme->menu_expanded == 1 ? 'in' : ''; ?> col-12">
-
                     <?php include(get_template_directory() . '/inc/menu/logo.php'); ?>
                     <button type="button" class="navbar-toggler <?php echo $naTheme->menu_expanded == 1 ? 'collapsed' : ''; ?> <?php echo $naTheme->btn_menu_style; ?>" data-toggle="collapse" data-target="#main-navbar-collapse" aria-expanded="false"> <span class="icon-bar navbar-toggler-icon"></span> <span class="icon-bar"></span> <span class="icon-bar"></span><span class="icon-bar"></span> <span class="sr-only">Menu</span></button>
                     <?php do_action('na-theme.navbar.header'); ?>

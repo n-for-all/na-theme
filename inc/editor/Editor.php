@@ -14,7 +14,7 @@ class Editor
         add_action('init', array($this, 'register_blocks'));
         add_filter('render_block_data', [$this, 'parse_block'], 10, 3);
     }
-    public function parse_block($parsed_block, $source_block, $parent_block)
+    public function parse_block($parsed_block, $source_block = null, $parent_block = null)
     {
         if (isset($parsed_block['blockName']) && $parsed_block['blockName'] == 'na-theme-blocks/tabs') {
             $parsed_block['attrs']['labels'] = [];

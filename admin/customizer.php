@@ -132,6 +132,20 @@ class Na_Theme_Admin
             'label' => __('Header Btn Style'),
             'description' => __(''),
         ));
+        $setting = 'menu_dark';
+        $wp_customize->add_setting($setting, array(
+            'default' => '',
+            'type' => 'theme_mod',
+        ));
+        $wp_customize->add_control($setting, array(
+            'type' => 'checkbox',
+            'default' => '',
+            'priority' => 5, // Within the section.
+            'section' => $section, // Required, core or custom.
+            'label' => __('Dark'),
+            'description' => __('Dark Mode'),
+        ));
+
         $setting = 'menu_expanded';
         $wp_customize->add_setting($setting, array(
             'default' => '',

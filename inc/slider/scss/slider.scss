@@ -124,7 +124,7 @@ slider {
         transition: transform .4s ease, opacity .8s ease-in-out;
         transform-origin: 0 100%;
 
-        >div {
+        >div.na-slide-inner {
             height: 100%;
         }
     }

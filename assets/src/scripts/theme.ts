@@ -476,6 +476,8 @@ class Theme {
 				});
 			});
 		}
+
+		let delayLoading = window.delayLoading ? window.delayLoading : 2000;
 		window.addEventListener("load", function () {
 			document.body.classList.remove("loading");
 			setTimeout(function () {
@@ -484,7 +486,7 @@ class Theme {
 				if (loadingOverlay && loadingOverlay.parentNode) {
 					loadingOverlay.parentNode.removeChild(loadingOverlay);
 				}
-			}, 2000);
+			}, delayLoading);
 			var pos = window.scrollY;
 			if (pos > 100) {
 				document.body.classList.add("scrolling");
@@ -693,13 +695,25 @@ class Theme {
 						this.trigger(document.body, "section.out", { section: entry.target });
 					}
 				});
-			});
-			document.querySelectorAll(".section").forEach((section) => {
-				if (section.getAttribute("is-observed") != "true") {
-					section.setAttribute("is-observed", "true");
-					observer.observe(section);
-				}
-			});
+			}, {
+                threshold: [0.4]
+              });
+			let obsevables = document.querySelectorAll(".observe");
+			let sections = document.querySelectorAll(".section");
+			sections &&
+				sections.forEach((section) => {
+					if (section.getAttribute("is-observed") != "true") {
+						section.setAttribute("is-observed", "true");
+						observer.observe(section);
+					}
+				});
+			obsevables &&
+				obsevables.forEach((section) => {
+					if (section.getAttribute("is-observed") != "true") {
+						section.setAttribute("is-observed", "true");
+						setTimeout(() => observer.observe(section), 2000);
+					}
+				});
 		}
 	};
 

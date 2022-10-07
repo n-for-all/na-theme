@@ -28,4 +28,4 @@ $classes = [];
 $column_content_classes = array();
 
 ?>
-		<?php echo $content; ?>
+<?php echo $content; ?>

@@ -12,7 +12,7 @@
  *   'className' (string) => Additional class names which should be added to block.
  * )
  */
-
+/** @var array */
 $classes = array();
 
 if (array_key_exists('isFluid', $attributes) && $attributes['isFluid']) {

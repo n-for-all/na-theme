@@ -11,7 +11,7 @@ abstract class Metabox
      *      <?php $this->_metabox_text($post->ID, 'test_txt', 'group'); ?>
      * }
      *      
-     * @param string $post
+     * @param \WP_POST $post
      *
      * @return void
      */
@@ -27,6 +27,9 @@ abstract class Metabox
 
     /**
      * Hook into the appropriate actions when the class is constructed.
+     * 
+     * @param array $post_types
+     * @param sring $title
      */
     public function __construct($post_types, $title)
     {
@@ -121,28 +124,33 @@ abstract class Metabox
     {
 
         // Check if our nonce is set.
-        if (!isset($_POST['na_metabox_inner_custom_box_nonce']))
+        if (!isset($_POST['na_metabox_inner_custom_box_nonce'])) {
             return $post_id;
+        }
 
         $nonce = $_POST['na_metabox_inner_custom_box_nonce'];
 
         // Verify that the nonce is valid.
-        if (!wp_verify_nonce($nonce, 'na_metabox_inner_custom_box'))
+        if (!wp_verify_nonce($nonce, 'na_metabox_inner_custom_box')) {
             return $post_id;
+        }
 
         // If this is an autosave, our form has not been submitted, so we don't want to do anything.
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return $post_id;
+        }
 
         // Check the user's permissions.
         if ('page' == $_POST['post_type']) {
 
-            if (!current_user_can('edit_page', $post_id))
+            if (!current_user_can('edit_page', $post_id)) {
                 return $post_id;
+            }
         } else {
 
-            if (!current_user_can('edit_post', $post_id))
+            if (!current_user_can('edit_post', $post_id)) {
                 return $post_id;
+            }
         }
 
         /* OK, its safe for us to save the data now. */
@@ -175,10 +183,10 @@ abstract class Metabox
     function _inner_custom_box($post)
     {
         $this->create_nonce();
-        /*
-		* Use get_post_meta() to retrieve an existing value
-		* from the database and use the value for the form.
-		*/
+        /**
+         * Use get_post_meta() to retrieve an existing value
+         * from the database and use the value for the form.
+         */
         $this->show_metabox($post);
     }
     function _metabox_text($post_id, $_name, $group = '', $attributes = [])
@@ -220,10 +228,10 @@ abstract class Metabox
             }
         }
         if ($this->repeater) {
-        ?>
+            ?>
             <input type="<?php echo $type; ?>" value="{{{data.<?php echo $_name; ?>}}}" name="<?php echo $name; ?>" />
         <?php } else {
-        ?>
+            ?>
             <input type="<?php echo $type; ?>" value="<?php echo $p; ?>" name="<?php echo $name; ?>" />
         <?php }
     }
@@ -244,7 +252,7 @@ abstract class Metabox
             <ul class="repeater-fields"></ul>
         </div>
 
-    <?php
+        <?php
         echo sprintf('<script type="text/html" id="tmpl-repeater-%s">', $this->repeater);
         $this->repeater_script = true;
         return $this->repeater;
@@ -255,14 +263,14 @@ abstract class Metabox
         global $post;
         $repeater_values = $this->_metabox_repeater_value($post->ID, $this->repeater, $this->repeater_group);
         echo '</script>';
-    ?>
+        ?>
         <script type="text/javascript">
             repeater_values[repeater_values.length] = {
                 "id": "<?php echo $this->repeater; ?>",
                 'values': <?php echo json_encode($repeater_values); ?>
             };
         </script>
-    <?php
+        <?php
         $this->repeater = null;
         $this->repeater_group = '';
     }
@@ -274,7 +282,7 @@ abstract class Metabox
         } else {
             $name = "_meta_na[{$name}]";
         }
-    ?>
+        ?>
         <label><input type="checkbox" <?php echo !empty($p) ? 'checked="checked"' : ''; ?> value="1" name="<?php echo $name; ?>" /><?php echo $label; ?></label>
         <?php
     }
@@ -287,9 +295,9 @@ abstract class Metabox
             $name = "_meta_na[{$name}]";
         }
         foreach ($options as $key => $label) :
-        ?>
+            ?>
             <label><input type="radio" <?php echo $p == $key ? 'checked="checked"' : '' ?> value="<?php echo $key; ?>" name="<?php echo $name; ?>" /><?php echo $label; ?></label>
-        <?php
+            <?php
         endforeach;
     }
     function _metabox_select($post_id, $options, $name, $group = '', $multiple = false)
@@ -307,12 +315,12 @@ abstract class Metabox
         <select <?php echo $multiple ? 'multiple' : ''; ?> name="<?php echo $name; ?>">
             <?php
             foreach ($options as $key => $label) {
-            ?><option <?php echo (in_array($key, $p) ? 'selected="selected"' : ''); ?> value="<?php echo $key; ?>"><?php echo $label; ?></option>
-            <?php
+                ?><option <?php echo (in_array($key, $p) ? 'selected="selected"' : ''); ?> value="<?php echo $key; ?>"><?php echo $label; ?></option>
+                <?php
             }
             ?>
         </select>
-    <?php
+        <?php
     }
     function _metabox_image($post_id, $name, $group = '', $multiple = true)
     {
@@ -325,42 +333,42 @@ abstract class Metabox
         if ($multiple) {
             $name = $name . "[]";
         }
-    ?>
+        ?>
         <div class="na-meta-image" data-multiple="<?php echo (int)$multiple; ?>" data-name="<?php echo $name; ?>">
             <div class="na-meta-msg"></div>
             <div class="na-meta-inner"><?php
-                                        if ($p) {
-                                            if ($multiple) {
-                                        ?>
+            if ($p) {
+                if ($multiple) {
+                    ?>
                         <ul>
                             <?php
-                                                foreach ((array)$p as $v) {
-                            ?>
+                            foreach ((array)$p as $v) {
+                                ?>
                                 <li class="na-meta-image-item"><a class="na-meta-image-remove" href="#" onclick="jQuery(this).parent().remove();return false;">x</a>
                                     <div class="na-meta-image-thumb">
                                         <div class="na-centered"><img src="<?php echo $v[0]; ?>" /></div><input type="hidden" name="<?php echo $name; ?>" class="na-meta-input" value="<?php echo $v[4]; ?>" />
                                     </div>
                                 </li>
-                            <?php
-                                                } ?>
+                                        <?php
+                            } ?>
                         </ul>
                     <?php
-                                            } else {
+                } else {
                     ?>
                         <ul>
-                            <?php
+                    <?php
                                                 $v = $p;
-                            ?>
+                    ?>
                             <li class="na-meta-image-item"><a class="na-meta-image-remove" href="#" onclick="jQuery(this).parent().remove();return false;">x</a>
                                 <div class="na-meta-image-thumb">
                                     <div class="na-centered"><img src="<?php echo $v[0]; ?>" /></div><input type="hidden" name="<?php echo $name; ?>" class="na-meta-input" value="<?php echo $v[4]; ?>" />
                                 </div>
                             </li>
                         </ul>
-                <?php
-                                            }
-                                        }
-                ?>
+                    <?php
+                }
+            }
+            ?>
             </div>
             <button class="button button-secondary" disabled><?php $multiple ? _e('Add Images') : _e('Select Image'); ?></button>
         </div>
@@ -386,13 +394,13 @@ abstract class Metabox
             }
         }
         if ($this->repeater) {
-        ?>
+            ?>
             <input type="<?php echo $type; ?>" value="{{{data.<?php echo $_name; ?>}}}" name="<?php echo $name; ?>" />
-        <?php
+            <?php
         } else {
-        ?>
+            ?>
             <input type="<?php echo $type; ?>" value="<?php echo $p; ?>" name="<?php echo $name; ?>" />
-        <?php
+            <?php
         }
     }
     function _term_metabox_checkbox($_name, $group = '', $term_id = false)
@@ -415,12 +423,12 @@ abstract class Metabox
             }
         }
         if ($this->repeater) {
-        ?>
+            ?>
             <input type="checkbox" <# data.<?php echo $_name; ?>==1 ? 'checked="checked"' : '' ; #> value="1" name="<?php echo $name; ?>" />
-        <?php
+            <?php
         } else {
-        ?><input type="checkbox" <?php echo $p == 1 ? 'checked="checked"' : ''; ?> value="1" name="<?php echo $name; ?>" />
-        <?php
+            ?><input type="checkbox" <?php echo $p == 1 ? 'checked="checked"' : ''; ?> value="1" name="<?php echo $name; ?>" />
+            <?php
         }
     }
     function _term_metabox_image($term_id, $name, $multiple = true, $group = '')
@@ -445,24 +453,26 @@ abstract class Metabox
                 <?php
                 if ($p) {
                     if (is_array($p)) {
-                ?><ul>
+                        ?>
+                        <ul>
                             <?php
                             foreach ($p as $v) {
                                 $v = wp_get_attachment_image_src($p, 'thumbnail');
-                            ?>
+                                ?>
                                 <li class="na-meta-image-item"><a class="na-meta-image-remove" href="#" onclick="jQuery(this).parent().remove();return false;">x</a>
                                     <div class="na-meta-image-thumb">
                                         <div class="na-centered"><img src="<?php echo $v[0]; ?>" /></div><input type="hidden" name="<?php echo $name; ?>" class="na-meta-input" value="<?php echo $p; ?>" />
                                     </div>
                                 </li>
-                            <?php
+                                <?php
                             } ?>
                         </ul>
-                    <?php
+                        <?php
                     } else {
-                    ?><ul><?php
+                        ?>
+                        <ul>
+                            <?php
                             $v = wp_get_attachment_image_src($p, 'thumbnail');
-
                             ?>
                             <li class="na-meta-image-item"><a class="na-meta-image-remove" href="#" onclick="jQuery(this).parent().remove();return false;">x</a>
                                 <div class="na-meta-image-thumb">
@@ -470,12 +480,13 @@ abstract class Metabox
                                 </div>
                             </li>
                         </ul><?php
-                            }
-                        }
-                                ?></div>
+                    }
+                }
+                ?>
+            </div>
             <button class="button button-secondary" disabled><?php $multiple ? _e('Add Images') : _e('Select Image'); ?></button>
         </div>
-<?php
+        <?php
     }
     function _metabox_image_value($post_id, $name, $group = '', $size = 'thumbnail')
     {
@@ -616,9 +627,11 @@ abstract class Metabox
     private function attributes(array $in = null, $exclude = []): string
     {
         $in = $in ?? [];
-        $in = array_filter($in, function ($item) use ($exclude) {
-            return !in_array($item, $exclude);
-        });
+        $in = array_filter(
+            $in, function ($item) use ($exclude) {
+                return !in_array($item, $exclude);
+            }
+        );
         $out = '';
         $out .= array_reduce(
             array_keys($in),
@@ -642,35 +655,35 @@ Example usage
 Function show_metabox must be implemented in the child class
 
 class Example extends \NaTheme\Inc\Metabox{
-	function show_metabox($post){
-		?>
-		<table class="form-table">
-			<tbody>
-				<tr class="form-field form-required term-name-wrap">
-					<th scope="row"><label for="name">Choose images</label></th>
-					<td><?php $this->_metabox_text($post->ID, 'test_txt', 'group'); ?>
-					<p class="description">Choose your portfolio images, those images will appear in the portfolio page of your website.</p></td>
-				</tr>
-				<tr class="form-field term-slug-wrap">
-					<th scope="row"><label for="slug">Slug</label></th>
-					<td><?php $this->_metabox_image($post->ID, 'test_image', 'group'); ?>
-					<p class="description">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p></td>
-				</tr>
-				<tr class="form-field term-parent-wrap">
-					<th scope="row"><label for="parent">Parent</label></th>
-					<td><?php $this->_metabox_select($post->ID, array('s', 's1', 's2', 's3'), 'test_select', 'group'); ?>
-					<p class="description">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p>
-					</td>
-				</tr>
-				<tr class="form-field term-description-wrap">
-					<th scope="row"><label for="description">Description</label></th>
-					<td><textarea name="description" id="description" rows="5" cols="50" class="large-text"></textarea>
-					<p class="description">The description is not prominent by default; however, some themes may show it.</p></td>
-				</tr>
-			</tbody>
-		</table>
-		<?php
-	}
+    function show_metabox($post){
+        ?>
+        <table class="form-table">
+            <tbody>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Choose images</label></th>
+                    <td><?php $this->_metabox_text($post->ID, 'test_txt', 'group'); ?>
+                    <p class="description">Choose your portfolio images, those images will appear in the portfolio page of your website.</p></td>
+                </tr>
+                <tr class="form-field term-slug-wrap">
+                    <th scope="row"><label for="slug">Slug</label></th>
+                    <td><?php $this->_metabox_image($post->ID, 'test_image', 'group'); ?>
+                    <p class="description">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p></td>
+                </tr>
+                <tr class="form-field term-parent-wrap">
+                    <th scope="row"><label for="parent">Parent</label></th>
+                    <td><?php $this->_metabox_select($post->ID, array('s', 's1', 's2', 's3'), 'test_select', 'group'); ?>
+                    <p class="description">The “slug” is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.</p>
+                    </td>
+                </tr>
+                <tr class="form-field term-description-wrap">
+                    <th scope="row"><label for="description">Description</label></th>
+                    <td><textarea name="description" id="description" rows="5" cols="50" class="large-text"></textarea>
+                    <p class="description">The description is not prominent by default; however, some themes may show it.</p></td>
+                </tr>
+            </tbody>
+        </table>
+        <?php
+    }
 }
 new Example(array('project', 'page'), 'test metabox');
  ***********************************/

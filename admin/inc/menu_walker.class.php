@@ -44,11 +44,11 @@ function na_wp_update_nav_menu($nav_menu_selected_id)
         foreach ($_POST['menu-item-attr-hash'] as $id => $value) {
             if (isset($value['slug'])) {
                 update_post_meta($id, '_menu_item_hash_slug', 1);
-                delete_post_meta($id, '_menu_item_hash_hash');
-            } else {
+                // delete_post_meta($id, '_menu_item_hash_hash');
+            } else { 
                 delete_post_meta($id, '_menu_item_hash_slug');
                 if (trim($value['hash']) != "") {
-                    update_post_meta($id, '_menu_item_hash_hash', sanitize_title($value['hash']));
+                    update_post_meta($id, '_menu_item_hash_hash', strpos($value['hash'], '#') !== false ? $value['hash'] : sanitize_title($value['hash']));
                 } else {
                     delete_post_meta($id, '_menu_item_hash_hash');
                 }
@@ -94,13 +94,15 @@ function na_nav_menu_link_attributes($atts, $item, $args, $depth)
             $suri = explode('/', $uri);
             $name = array_pop($suri);
             $atts['href'] = home_url('/') . implode('/', $suri) . "#" . $name;
+            $atts['data-uri'] = $uri;
             $atts['data-anchor'] = $atts['href'];
             $atts['data-object'] = $item->object_id;
         }
     } else {
         $hash = get_post_meta($item->ID, '_menu_item_hash_hash', true);
         if (trim($hash) != "") {
-            $atts['href'] = '#' . str_replace('#', '', $hash);
+            $atts['href'] = strpos($hash, '#') !== false ? $hash : '#' . str_replace('#', '', $hash);
+            $atts['data-uri'] = $hash;
             $atts['data-anchor'] = $atts['href'];
             $atts['data-object'] = $item->object_id;
         }

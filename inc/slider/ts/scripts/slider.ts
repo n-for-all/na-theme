@@ -300,7 +300,7 @@ class NaSlider {
 		this.inner.classList.add("na-slider");
 
 		if (this.settings.class != "") {
-			this.inner.classList.add(this.settings.class);
+			this.inner.classList.add(...this.settings.class.split(" "));
 		}
 
 		this.innerSlider = document.createElement("ul");

@@ -26,8 +26,9 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     }
     public function shortcodes()
     {
-        add_shortcode('events-list', array(&$this, 'shortcode'));
-        add_shortcode('events', array(&$this, 'shortcodeCarousel'));
+        add_shortcode('events', array(&$this, 'shortcode'));
+        add_shortcode('events-slider', array(&$this, 'shortcodeCarousel'));
+        add_shortcode('events-carousel', array(&$this, 'shortcodeCarousel'));
     }
     public function scripts()
     {
@@ -38,18 +39,18 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     }
     public function inline_scripts()
     {
-?>
+        ?>
         <script type="text/javascript">
             var events_ajax = "<?php echo admin_url('admin-ajax.php'); ?>";
         </script>
         <script id="tmpl-event" type="text/template">
-            <?php include('template/popup.php'); ?>
+            <?php include 'template/popup.php'; ?>
         </script>
-    <?php
+        <?php
     }
     public function on_term_add($taxonomy)
     {
-    ?>
+        ?>
         <div class="form-field term-slug-wrap">
             <label for="tag-slug">Date from</label>
             <label><?php $this->_term_metabox_checkbox('date_from_today', 'events'); ?> Use today</label>
@@ -67,14 +68,14 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
             <?php $this->_term_metabox_image(false, 'image', false); ?>
             <p>Add an image for this service</p>
         </div>
-    <?php
+        <?php
     }
     public function on_term_update($term, $taxonomy)
     {
         if ($taxonomy != 'events') {
             return;
         }
-    ?>
+        ?>
         <tr class="form-field term-slug-wrap">
             <th scope="row"><label for="tag-slug">Date from</label></th>
             <td><label><?php $this->_term_metabox_checkbox('date_from_today', 'events', $term->term_id); ?> Use today</label>
@@ -95,7 +96,7 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                 <p class="description">Add/update an image for this service.</p>
             </td>
         </tr>
-    <?php
+        <?php
     }
     public function get_event()
     {
@@ -218,12 +219,15 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     {
         if (isset($meta['events']['range'])) {
             $ranges = (array)$meta['events']['range'];
-            usort($ranges, function ($a, $b) {
-                $dateTimestamp1 = strtotime($a['date']);
-                $dateTimestamp2 = strtotime($b['date']);
+            usort(
+                $ranges,
+                function ($a, $b) {
+                    $dateTimestamp1 = strtotime($a['date']);
+                    $dateTimestamp2 = strtotime($b['date']);
 
-                return $dateTimestamp1 < $dateTimestamp2 ? -1 : 1;
-            });
+                    return $dateTimestamp1 < $dateTimestamp2 ? -1 : 1;
+                }
+            );
             update_post_meta($post_id, '_events_from', strtotime($ranges[0]['date']));
             update_post_meta($post_id, '_events_to', strtotime($ranges[count($ranges) - 1]['date']));
         }
@@ -231,20 +235,24 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
 
     public function shortcodeCarousel($atts)
     {
-        $atts = shortcode_atts(array(
-            'autoplay' => false,
-            'bullets' => true,
-            'pagination' => false,
-            'columns' => '4',
-            'minWidth' => '0',
-            'vertical' => false,
-            'type' => 'carousel',
-            'height' => 'auto',
-            'slider' => '',
-            'category' => '',
-            'outer' => false,
-            'columns' => '1'
-        ), $atts, 'event-shortcode');
+        $atts = shortcode_atts(
+            array(
+                'autoplay' => false,
+                'bullets' => true,
+                'pagination' => false,
+                'columns' => '4',
+                'minWidth' => '0',
+                'vertical' => false,
+                'type' => 'carousel',
+                'height' => 'auto',
+                'slider' => '1',
+                'category' => '',
+                'outer' => false,
+                'columns' => '1'
+            ),
+            $atts,
+            'event-shortcode'
+        );
         $categories = (array) explode(",", $atts['category']);
         $args = array(
             'post_type' => 'event',
@@ -280,25 +288,33 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
                     $style[] = "background-image:url($image[0])";
                 }
-                $inner = '';
-                $outer = '';
 
                 $label = $atts['label'] != '' ? $atts['label'] : __('Learn more');
 
                 $dates = $this->get_event_date(get_the_ID());
-                $outer = sprintf('<div class="event-header">
+                $outer = sprintf(
+                    '<div class="event-header">
                         <h3 class="event-title">%s</h3><div class="event-meta">%s</div>
-                    </div>', get_the_title(), $dates);
+                    </div>',
+                    get_the_title(),
+                    $dates
+                );
                 $has_content = trim(get_the_content()) != '';
                 $link =  sprintf('<a href="%s" class="btn btn-default event-button">%s</a>', get_permalink(), $label);
 
 
                 $excerpt = $post->post_excerpt;
-                $output[] = sprintf('<div class="event">
-                <div class="event-inner %s">%s%s
-                    %s
-                </div>
-                <div class="event-image"><span style="%s" class="image"></span></div></div>', $has_content ? '' : 'no-content', $outer,  sprintf('<div class="event-content">%s</div>', $excerpt), $link, implode(";", $style));
+                $output[] = [sprintf(
+                    '<div class="event">
+                        <div class="event-image"><span style="%s" class="image"></span></div>
+                        <div class="event-inner %s">%s%s%s</div>
+                    </div>',
+                    implode(";", $style),
+                    $has_content ? '' : 'no-content',
+                    $outer,
+                    sprintf('<div class="event-content">%s</div>', $excerpt),
+                    $link
+                ), $post];
             }
         }
         wp_reset_postdata();
@@ -311,13 +327,13 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                 'columns' => $atts['columns'] ?? 1,
                 'minWidth' => $atts['min-width'],
                 'vertical' => $atts['vertical'],
-                'class' => sprintf("na-events na-events-columns-%s", $atts['columns']),
+                'class' => sprintf("na-events-slider", $atts['columns']),
                 'type' => 'carousel',
                 'height' => $atts['height']
             );
             $slides = [];
             foreach ($output as $value) {
-                $slides[] = ['content' => $value];
+                $slides[] = ['content' => $value[0], 'post' => $value[1]];
             }
             return $slider->addSlider($slides, $settings);
         }
@@ -325,13 +341,17 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     }
     public function shortcode($atts)
     {
-        $atts = shortcode_atts(array(
-            'category' => '',
-            'columns' => '4',
-            'orderby' => 'post_date',
-            'limit' => -1,
-            'order' => 'DESC',
-        ), $atts, 'events-shortcode');
+        $atts = shortcode_atts(
+            array(
+                'category' => '',
+                'columns' => '4',
+                'orderby' => 'post_date',
+                'limit' => -1,
+                'order' => 'DESC',
+            ),
+            $atts,
+            'events-shortcode'
+        );
         $categories = (array)explode(",", $atts['category']);
         $categories = array_filter($categories);
         $args = array(
@@ -355,10 +375,12 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
             );
         }
         if (empty($categories)) {
-            $categories = get_terms(array(
-                'taxonomy' => 'events',
-                'hide_empty' => false,
-            ));
+            $categories = get_terms(
+                array(
+                    'taxonomy' => 'events',
+                    'hide_empty' => false,
+                )
+            );
         } else {
             foreach ($categories as &$category) {
                 $category = get_term($category, 'events');
@@ -457,33 +479,33 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
         $meta = $this->get_meta($id, 'events');
         $dates = '';
         switch ($meta['type']) {
-            case 'range':
-                for ($i = 0; $i < sizeof((array)$meta['range']); $i = $i + 2) {
-                    $from = '';
-                    if (isset($meta['range'][$i]['date'])) {
-                        list($year, $month, $day) = explode('-', date('Y-M-d', strtotime($meta['range'][0]['date'])));
-                        $from = '<span><span class="day">' . $day . '</span><span class="month">' . $month . '</span><span class="year">' . $year . '</span></span>';
-                    }
-                    $to = '';
-                    if (isset($meta['range'][$i + 1]['date'])) {
-                        list($year, $month, $day) = explode('-', date('Y-M-d', strtotime($meta['range'][1]['date'])));
-                        $to = '<span><span class="day">' . $day . '</span><span class="month">' . $month . '</span><span class="year">' . $year . '</span></span>';
-                    }
-                    $dates .= '<div class="event-date-range">' . $from . ($from != '' && $to != '' ? '<span class="events-to-label">to</span>' : '') . $to . '</div>';
+        case 'range':
+            for ($i = 0; $i < sizeof((array)$meta['range']); $i = $i + 2) {
+                $from = '';
+                if (isset($meta['range'][$i]['date'])) {
+                    list($year, $month, $day) = explode('-', date('Y-M-d', strtotime($meta['range'][0]['date'])));
+                    $from = '<span><span class="day">' . $day . '</span><span class="month">' . $month . '</span><span class="year">' . $year . '</span></span>';
                 }
-                $dates = '<div class="event-range">' . $dates . '</div>';
-                break;
-            default:
-                for ($i = 0; $i < sizeof((array)$meta['range']); $i++) {
-                    $from = '';
-                    if (isset($meta['range'][$i]['date'])) {
-                        list($year, $month, $day) = explode('-', date('Y-M-d', strtotime($meta['range'][$i]['date'])));
-                        $from = '<span><span class="day">' . $day . '</span><span class="month">' . $month . '</span><span class="year">' . $year . '</span></span>';
-                    }
-                    $dates .= '<div class="event-date-single">' . $from . '</div>';
+                $to = '';
+                if (isset($meta['range'][$i + 1]['date'])) {
+                    list($year, $month, $day) = explode('-', date('Y-M-d', strtotime($meta['range'][1]['date'])));
+                    $to = '<span><span class="day">' . $day . '</span><span class="month">' . $month . '</span><span class="year">' . $year . '</span></span>';
                 }
-                $dates = '<div class="event-range">' . $dates . '</div>';
-                break;
+                $dates .= '<div class="event-date-range">' . $from . ($from != '' && $to != '' ? '<span class="events-to-label">to</span>' : '') . $to . '</div>';
+            }
+            $dates = '<div class="event-range">' . $dates . '</div>';
+            break;
+        default:
+            for ($i = 0; $i < sizeof((array)$meta['range']); $i++) {
+                $from = '';
+                if (isset($meta['range'][$i]['date'])) {
+                    list($year, $month, $day) = explode('-', date('Y-M-d', strtotime($meta['range'][$i]['date'])));
+                    $from = '<span><span class="day">' . $day . '</span><span class="month">' . $month . '</span><span class="year">' . $year . '</span></span>';
+                }
+                $dates .= '<div class="event-date-single">' . $from . '</div>';
+            }
+            $dates = '<div class="event-range">' . $dates . '</div>';
+            break;
         }
         return $dates;
     }
@@ -497,7 +519,7 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     }
     public function show_metabox($post)
     {
-    ?>
+        ?>
         <table class="form-table">
             <tbody>
                 <tr class="form-field form-required term-name-wrap">
@@ -508,16 +530,16 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                 </tr>
                 <tr class="form-field form-required term-name-wrap">
                     <th scope="row"><label for="name"></label></th>
-                    <td><?php $this->_metabox_checkbox($post->ID, 'Use only popup, no internal page', 'use_popup', 'events'); ?>
-                    </td>
-                </tr>
-                <tr class="form-field form-required term-name-wrap">
-                    <th scope="row"><label for="name"></label></th>
                     <td>
                         <?php $this->_metabox_repeater_start('range', 'events') ?>
                         <div><label>Date</label></div>
                         <?php $this->_metabox_custom($post->ID, 'date', 'date', 'events'); ?>
                         <?php $this->_metabox_repeater_end() ?>
+                    </td>
+                </tr>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name"></label></th>
+                    <td><?php $this->_metabox_checkbox($post->ID, 'Use only popup, no internal page', 'use_popup', 'events'); ?>
                     </td>
                 </tr>
                 <tr class="form-field form-required term-name-wrap">
@@ -532,7 +554,7 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                 </tr>
             </tbody>
         </table>
-<?php
+        <?php
     }
 }
 ?>
