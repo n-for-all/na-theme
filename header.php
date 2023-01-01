@@ -51,7 +51,7 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
 <body <?php body_class(implode(' ', $body_class)); ?>>
     <?php if ($naTheme->loading_logo) :
     ?>
-        <span class="loading-overlay" style="background-image:url(<?php echo $naTheme->loading_logo; ?>)"></span>
+        <span class="loading-overlay" style="background-image:url(<?php echo \add_query_arg( '_', uniqid(), $naTheme->loading_logo ); ?>)"></span>
     <?php endif; ?>
     <header id="masthead" class="site-header <?php echo $naTheme->navbar; ?> <?php echo $naTheme->menu_dark == 1 ? 'dark' : ''; ?>" role="banner">
         <!-- Start navbar -->

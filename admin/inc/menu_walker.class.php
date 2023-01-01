@@ -14,8 +14,7 @@ class Na_Walker_Nav_Menu_Edit extends Walker_Nav_Menu_Edit
         $text = get_post_meta($item_id, '_menu_item_hash_hash', true);
         $html = 'id="menu-item-settings-' . $item_id . '"><p class="field-hash-attribute field-attr-hash description description-wide">
 					<label style="background-color:#EBF5F9;display:block;padding:8px" for="edit-menu-item-attr-hash-' . $item_id . '">' . _('Hash Attribute') . '<br />
-						<input type="text" id="edit-menu-item-attr-hash-' . $item_id . '" class="widefat edit-menu-item-attr-hash" name="menu-item-attr-hash[' . $item_id . '][hash]" value="' . $text . '" />
-            <br />
+						<input type="text" id="edit-menu-item-attr-hash-' . $item_id . '" class="widefat edit-menu-item-attr-hash" name="menu-item-attr-hash[' . $item_id . '][hash]" value="' . $text . '" /><br />
 						<label><input type="checkbox" id="edit-menu-item-attr-hash-slug-' . $item_id . '" class="widefat edit-menu-item-attr-hash" name="menu-item-attr-hash[' . $item_id . '][slug]" ' . ($slug ? 'checked="checked"' : '') . 'value="1" /> Use slug for hash</label><br/>
             <span class="description">' . _('- if set, it will open the link in the same page using javascript') . '</span>
             <br/>
@@ -45,7 +44,7 @@ function na_wp_update_nav_menu($nav_menu_selected_id)
             if (isset($value['slug'])) {
                 update_post_meta($id, '_menu_item_hash_slug', 1);
                 // delete_post_meta($id, '_menu_item_hash_hash');
-            } else { 
+            } else {
                 delete_post_meta($id, '_menu_item_hash_slug');
                 if (trim($value['hash']) != "") {
                     update_post_meta($id, '_menu_item_hash_hash', strpos($value['hash'], '#') !== false ? $value['hash'] : sanitize_title($value['hash']));
@@ -88,24 +87,39 @@ function na_nav_menu_link_attributes($atts, $item, $args, $depth)
 {
     $slug = get_post_meta($item->ID, '_menu_item_hash_slug', true);
     if ($slug) {
-        $uri = get_page_uri($item->object_id);
-        if ($uri) {
-            $uri = trim($uri, '/');
-            $suri = explode('/', $uri);
-            $name = array_pop($suri);
-            $atts['href'] = home_url('/') . implode('/', $suri) . "#" . $name;
-            $atts['data-uri'] = $uri;
+        $id = $item->object_id;
+        if (function_exists('pll_get_post')) {
+            $id = \pll_get_post($item->object_id);
+        }
+        $opst = get_post($id);
+        $name = $opst->post_name;
+        $pst = get_post_parent($id);
+        if (!$pst) {
+            $pageID = get_option('page_on_front');
+            if (function_exists('pll_get_post')) {
+                $pageID = \pll_get_post($pageID);
+            }
+            $pst = get_post_parent($pageID);
+        }
+        if ($pst) {
+            $atts['href'] = get_permalink($pst) . "#" . $name;
+            // $atts['data-uri'] = $uri;
             $atts['data-anchor'] = $atts['href'];
             $atts['data-object'] = $item->object_id;
+            $atts['data-parent'] = $pst->ID;
         }
-    } else {
-        $hash = get_post_meta($item->ID, '_menu_item_hash_hash', true);
+    } else {  
+        $id = $item->ID;
+        if (function_exists('pll_get_post')) {
+            $id = \pll_get_post($item->ID);
+        }
+        $hash = get_post_meta($id, '_menu_item_hash_hash', true);
         if (trim($hash) != "") {
             $atts['href'] = strpos($hash, '#') !== false ? $hash : '#' . str_replace('#', '', $hash);
             $atts['data-uri'] = $hash;
             $atts['data-anchor'] = $atts['href'];
-            $atts['data-object'] = $item->object_id;
+            $atts['data-object'] = $item->object_id; 
         }
-    }
+    } 
     return $atts;
 }

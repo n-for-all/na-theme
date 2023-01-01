@@ -174,7 +174,7 @@ function BackgroundEdit({ attributes, isSelected, setAttributes }) {
 					}}
 				/>
 				<div {...innerBlocksProps}>
-					<InnerBlocks template={TEMPLATE_TEXT} templateLock="all" />
+					<InnerBlocks template={TEMPLATE_TEXT} templateLock={false} />
 				</div>
 			</div>
 		</Fragment>

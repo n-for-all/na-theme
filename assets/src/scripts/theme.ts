@@ -477,21 +477,30 @@ class Theme {
 			});
 		}
 
-		let delayLoading = window.delayLoading ? window.delayLoading : 2000;
-		window.addEventListener("load", function () {
-			document.body.classList.remove("loading");
+		let delayLoading = window.delayLoading ? window.delayLoading : 1000;
+		let endLoading = () => {
 			setTimeout(function () {
-				var loadingOverlay = document.querySelector(".loading-overlay");
-				document.body.classList.add("loaded");
-				if (loadingOverlay && loadingOverlay.parentNode) {
-					loadingOverlay.parentNode.removeChild(loadingOverlay);
-				}
+				document.body.classList.remove("loading");
+				setTimeout(() => {
+                    document.body.classList.add("loaded");
+					var loadingOverlay = document.querySelector(".loading-overlay");
+
+					if (loadingOverlay && loadingOverlay.parentNode) {
+						loadingOverlay.parentNode.removeChild(loadingOverlay);
+					}
+				}, 2000);
 			}, delayLoading);
 			var pos = window.scrollY;
 			if (pos > 100) {
 				document.body.classList.add("scrolling");
 			}
-		});
+		};
+		app &&
+			app.ready(() => {
+				endLoading();
+				endLoading = () => {};
+			});
+		window.addEventListener("load", endLoading);
 
 		this.sectionObserver();
 		this.initCounters();
@@ -681,23 +690,26 @@ class Theme {
 
 	sectionObserver = () => {
 		if ("IntersectionObserver" in window) {
-			const observer = new IntersectionObserver((entries) => {
-				entries.forEach((entry) => {
-					if (entry.intersectionRatio > 0) {
-						entry.target.classList.add("in-once");
-						entry.target.classList.add("in");
-						entry.target.classList.remove("out");
-						this.trigger(document.body, "section.in", { section: entry.target });
-						// observer.unobserve(entry.target);
-					} else {
-						entry.target.classList.add("out");
-						entry.target.classList.remove("in");
-						this.trigger(document.body, "section.out", { section: entry.target });
-					}
-				});
-			}, {
-                threshold: [0.4]
-              });
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (entry.intersectionRatio > 0) {
+							entry.target.classList.add("in-once");
+							entry.target.classList.add("in");
+							entry.target.classList.remove("out");
+							this.trigger(document.body, "section.in", { section: entry.target });
+							// observer.unobserve(entry.target);
+						} else {
+							entry.target.classList.add("out");
+							entry.target.classList.remove("in");
+							this.trigger(document.body, "section.out", { section: entry.target });
+						}
+					});
+				},
+				{
+					threshold: [0.4],
+				}
+			);
 			let obsevables = document.querySelectorAll(".observe");
 			let sections = document.querySelectorAll(".section");
 			sections &&
@@ -745,14 +757,4 @@ app.ready(function () {
 		var mac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
 		if (!mac) document.body.classList.add("custom-scrollbar");
 	} catch (error) {}
-	setTimeout(function () {
-		document.body.classList.remove("loading");
-		setTimeout(function () {
-			var loadingOverlay = document.querySelector(".loading-overlay");
-			document.body.classList.add("loaded");
-			if (loadingOverlay && loadingOverlay.parentNode) {
-				loadingOverlay.parentNode.removeChild(loadingOverlay);
-			}
-		}, 2000);
-	}, 4000);
 });

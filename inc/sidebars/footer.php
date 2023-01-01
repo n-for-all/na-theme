@@ -41,7 +41,7 @@ $columns = $count > 0 ? intval(12 / $count) : 4;
                     ob_start();
                     dynamic_sidebar($sidebar);
                     $content = ob_get_clean();
-                    $template[$row_count][] = sprintf('<div class="col-lg-%s col-sm-%s col-xs-12 d-flex align-items-center">
+                    $template[$row_count][] = sprintf('<div class="col-lg-%s col-sm-%s col-xs-12 d-flex">
                         <div class="sidebar %s">
                             %s
                         </div>

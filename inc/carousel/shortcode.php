@@ -7,7 +7,10 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
 {
     public function __construct()
     {
-        // parent::__construct(array('carousel'), 'Item', 'normal', 'high');
+        parent::__construct(array('carousel'), 'Item', 'normal', 'high');
+
+        add_filter('manage_carousel_posts_columns', array(&$this, 'add_img_column'));
+        add_filter('manage_carousel_posts_custom_column', array(&$this, 'manage_img_column'), 10, 2);
 
         $this->actions();
         $this->shortcodes();
@@ -30,8 +33,21 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
 
     public function scripts()
     {
-        wp_enqueue_style('carousel-shortcode', get_template_directory_uri().'/inc/carousel/css/carousel.css', array(), '1.0.0', 'screen');
-        wp_enqueue_script('carousel-shortcode-js', get_template_directory_uri().'/inc/carousel/js/carousel.js', array(), '1.0.0');
+        wp_enqueue_style('carousel-shortcode', get_template_directory_uri() . '/inc/carousel/css/carousel.css', array(), '1.0.0', 'screen');
+        wp_enqueue_script('carousel-shortcode-js', get_template_directory_uri() . '/inc/carousel/js/carousel.js', array(), '1.0.0');
+    }
+
+    public function add_img_column($columns) 
+    {
+        $columns['img'] = 'Image';
+        return $columns;
+    }
+    public function manage_img_column($column_name, $post_id)
+    {
+        if ($column_name == 'img') {
+            echo get_the_post_thumbnail($post_id, 'thumbnail');
+        }
+        return $column_name;
     }
 
     public function init()
@@ -108,9 +124,10 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     {
         global $slider;
         $atts = shortcode_atts(array(
-            'bullets' => false,
+            'show_title' => false,
+            'bullets' => true,
             'category' => '',
-            'pagination' => '0',
+            'pagination' => '1',
             'height' => 'auto',
             'type' => '',
             'min-height' => false,
@@ -138,11 +155,9 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                 ),
                 'orderby' => 'menu_order',
                 'order' => 'ASC',
-             );
+            );
         }
-        $output = '';
         $query = new \WP_Query($args);
-        $id = time() + rand(1, 100);
         $slides = array();
         global $post;
         if ($query->have_posts()) {
@@ -151,15 +166,15 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                 $inner = '';
                 if (has_post_thumbnail()) {
                     $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
-                    if($image && isset($image[0])){
-                        $inner = sprintf('<div class="carousels-inner" style="%s"><span style="background-image:url(%s)"></span><img src="%s" /></div>', $atts['min-height'] ? 'min-height:'.$atts['min-height']: '', $image[0], $image[0]);
+                    if ($image && isset($image[0])) {
+                        $inner = sprintf('<div class="carousels-inner" style="%s"><span style="background-image:url(%s)"></span><img src="%s" /></div>', $atts['min-height'] ? 'min-height:' . $atts['min-height'] : '', $image[0], $image[0]);
                     }
                 }
-                if(trim($post->post_title) != ''){
-                    $inner .= '<div class="carousels-title">'.get_the_title().'</div>';
+                if (trim($post->post_title) != '' && $atts['show_title']) {
+                    $inner .= '<div class="carousels-title">' . get_the_title() . '</div>';
                 }
-                if(trim($post->post_content) != ''){
-                    $inner .= '<div class="carousels-content">'.get_the_content().'</div>';
+                if (trim($post->post_content) != '') {
+                    $inner .= '<div class="carousels-content">' . get_the_content() . '</div>';
                 }
                 $slides[] = array('content' => $inner, 'post' => $post);
             }
@@ -181,17 +196,35 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     public function show_metabox($post)
     {
         return;
+?>
+        <table class="form-table">
+            <tbody>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Position</label></th>
+                    <td><?php $this->_metabox_text($post->ID, 'position', 'carousels'); ?>
+                        <p class="description">The person position.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <?php
+    }
+}
+
+class PostImage extends \NaTheme\Inc\Metaboxes\Admin\PostColumn
+{
+    public function set_meta_box($meta_box)
+    {
+        $this->meta_box = $meta_box;
+    }
+    public function show_content($column, $post_id)
+    {
+        $images = $this->meta_box->_metabox_image_value($post_id, 'image', 'slide');
+        foreach ($images as $image) {
         ?>
-		<table class="form-table">
-			<tbody>
-				<tr class="form-field form-required term-name-wrap">
-					<th scope="row"><label for="name">Position</label></th>
-					<td><?php $this->_metabox_text($post->ID, 'position', 'carousels'); ?>
-					<p class="description">The person position.</p></td>
-				</tr>
-			</tbody>
-		</table>
-		<?php
+            <img src="<?php echo $image[0]; ?>" style="height:50px" />
+<?php
+        }
     }
 }
 new Shortcode();
