@@ -54,7 +54,8 @@ class Theme
             if (!is_admin() && pll_current_language() == pll_default_language()) {
                 $strings = new \ArrayObject();
                 add_filter(
-                    'gettext', function ($translation, $text, $domain) use (&$strings) {
+                    'gettext',
+                    function ($translation, $text, $domain) use (&$strings) {
                         if ($translation == $text) {
                             $strings[$text] = $text;
                             if ($domain != 'pll_string') {
@@ -63,15 +64,20 @@ class Theme
                         }
 
                         return $translation;
-                    }, 10, 3
+                    },
+                    10,
+                    3
                 );
 
                 add_action(
-                    'wp_footer', function () use ($strings) {
+                    'wp_footer',
+                    function () use ($strings) {
                         $old = (array) get_option('_na_translations');
                         $new = array_diff((array) $strings, $old) + $old;
                         update_option('_na_translations', array_values($new), false);
-                    }, 10, 3
+                    },
+                    10,
+                    3
                 );
             }
         }
@@ -101,48 +107,56 @@ class Theme
     public function init()
     {
         register_meta(
-            'post', '_wp_page_template_part', array(
-            'object_subtype'        => 'page',
-            'type'        => 'string',
-            'single'    => true,
-            'show_in_rest'    => true,
-            'auth_callback' => function () {
-                return current_user_can('edit_posts');
-            }
+            'post',
+            '_wp_page_template_part',
+            array(
+                'object_subtype'        => 'page',
+                'type'        => 'string',
+                'single'    => true,
+                'show_in_rest'    => true,
+                'auth_callback' => function () {
+                    return current_user_can('edit_posts');
+                }
             )
         );
         register_meta(
-            'post', '_wp_page_template_layout', array(
-            'object_subtype'        => 'page',
-            'type'        => 'string',
-            'single'    => true,
-            'show_in_rest'    => true,
-            'auth_callback' => function () {
-                return current_user_can('edit_posts');
-            }
+            'post',
+            '_wp_page_template_layout',
+            array(
+                'object_subtype'        => 'page',
+                'type'        => 'string',
+                'single'    => true,
+                'show_in_rest'    => true,
+                'auth_callback' => function () {
+                    return current_user_can('edit_posts');
+                }
             )
         );
         register_meta(
-            'post', '_wp_section_class', array(
-            'object_subtype'        => 'page',
-            'type'        => 'string',
-            'single'    => true,
-            'show_in_rest'    => true,
-            'auth_callback' => function () {
-                return current_user_can('edit_posts');
-            }
+            'post',
+            '_wp_section_class',
+            array(
+                'object_subtype'        => 'page',
+                'type'        => 'string',
+                'single'    => true,
+                'show_in_rest'    => true,
+                'auth_callback' => function () {
+                    return current_user_can('edit_posts');
+                }
             )
         );
 
         register_meta(
-            'post', '_wp_section_id', array(
-            'object_subtype'        => 'page',
-            'type'        => 'string',
-            'single'    => true,
-            'show_in_rest'    => true,
-            'auth_callback' => function () {
-                return current_user_can('edit_posts');
-            }
+            'post',
+            '_wp_section_id',
+            array(
+                'object_subtype'        => 'page',
+                'type'        => 'string',
+                'single'    => true,
+                'show_in_rest'    => true,
+                'auth_callback' => function () {
+                    return current_user_can('edit_posts');
+                }
             )
         );
     }
@@ -174,24 +188,32 @@ class Theme
 
         //remove wordpress links
         add_filter(
-            'wp_headers', function ($headers, $wp_query) {
+            'wp_headers',
+            function ($headers, $wp_query) {
                 if (array_key_exists('X-Pingback', $headers)) {
                     unset($headers['X-Pingback']);
                 }
                 return $headers;
-            }, 11, 2
+            },
+            11,
+            2
         );
 
         add_filter(
-            'bloginfo_url', function ($output, $property) {
+            'bloginfo_url',
+            function ($output, $property) {
                 return ($property == 'pingback_url') ? null : $output;
-            }, 11, 2
+            },
+            11,
+            2
         );
 
         add_action(
-            'wp', function () {
+            'wp',
+            function () {
                 remove_action('wp_head', 'rsd_link');
-            }, 11
+            },
+            11
         );
     }
 
@@ -232,9 +254,9 @@ class Theme
         // This theme uses wp_nav_menu() in three locations.
         register_nav_menus(
             array(
-            'primary' => __('Primary Left Menu',      NA_THEME_TEXT_DOMAIN),
-            'primary-right'  => __('Primary Right Menu', NA_THEME_TEXT_DOMAIN),
-            'social'  => __('Social Links Menu', NA_THEME_TEXT_DOMAIN),
+                'primary' => __('Primary Left Menu',      NA_THEME_TEXT_DOMAIN),
+                'primary-right'  => __('Primary Right Menu', NA_THEME_TEXT_DOMAIN),
+                'social'  => __('Social Links Menu', NA_THEME_TEXT_DOMAIN),
             )
         );
 
@@ -243,8 +265,9 @@ class Theme
          * to output valid HTML5.
          */
         add_theme_support(
-            'html5', array(
-            'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
+            'html5',
+            array(
+                'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
             )
         );
 
@@ -254,8 +277,9 @@ class Theme
          * See: https://codex.wordpress.org/Post_Formats
          */
         add_theme_support(
-            'post-formats', array(
-            'aside', 'image', 'video', 'quote', 'link', 'gallery', 'status', 'audio', 'chat'
+            'post-formats',
+            array(
+                'aside', 'image', 'video', 'quote', 'link', 'gallery', 'status', 'audio', 'chat'
             )
         );
 
@@ -277,7 +301,7 @@ class Theme
      */
     function credits()
     {
-        ?>
+?>
         <span class="copyright"><?php echo do_shortcode($this->copyright); ?></span>
         <?php
     }
@@ -343,142 +367,142 @@ class Theme
     {
         register_sidebar(
             array(
-            'name'          => __('Top Header Widget Area', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'header-sidebar-top',
-            'description'   => __('Add widgets here to appear in your top header sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Top Header Widget Area', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'header-sidebar-top',
+                'description'   => __('Add widgets here to appear in your top header sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
 
         if (class_exists('woocommerce')) {
             register_sidebar(
                 array(
-                'name'          => __('Shop Widget Area', NA_THEME_TEXT_DOMAIN),
-                'id'            => 'shop',
-                'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</div></aside>',
-                'before_title'  => '<h2 class="widget-title">',
-                'after_title'   => '</h2><div class="widget-inner">',
+                    'name'          => __('Shop Widget Area', NA_THEME_TEXT_DOMAIN),
+                    'id'            => 'shop',
+                    'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
+                    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                    'after_widget'  => '</div></aside>',
+                    'before_title'  => '<h2 class="widget-title">',
+                    'after_title'   => '</h2><div class="widget-inner">',
                 )
             );
         }
 
         register_sidebar(
             array(
-            'name'          => __('Blog Widget Area', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'blog-sidebar',
-            'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Blog Widget Area', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'blog-sidebar',
+                'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
 
         register_sidebar(
             array(
-            'name'          => __('Service Widget Area', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'sidebar-service',
-            'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Service Widget Area', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'sidebar-service',
+                'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
 
 
         register_sidebar(
             array(
-            'name'          => __('Footer Widget Area 1', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'footer-1',
-            'description'   => __('Add widgets here to appear in your top header sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Footer Widget Area 1', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'footer-1',
+                'description'   => __('Add widgets here to appear in your top header sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
         register_sidebar(
             array(
-            'name'          => __('Footer Widget Area 2', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'footer-2',
-            'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Footer Widget Area 2', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'footer-2',
+                'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
 
         register_sidebar(
             array(
-            'name'          => __('Footer Widget Area 3', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'footer-3',
-            'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Footer Widget Area 3', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'footer-3',
+                'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
         register_sidebar(
             array(
-            'name'          => __('Footer Widget Area 4', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'footer-4',
-            'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Footer Widget Area 4', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'footer-4',
+                'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
         register_sidebar(
             array(
-            'name'          => __('Footer Widget Area 5', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'footer-5',
-            'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Footer Widget Area 5', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'footer-5',
+                'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
         register_sidebar(
             array(
-            'name'          => __('Footer Widget Area 6', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'footer-6',
-            'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Footer Widget Area 6', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'footer-6',
+                'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
         register_sidebar(
             array(
-            'name'          => __('Footer Widget Area 7', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'footer-7',
-            'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Footer Widget Area 7', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'footer-7',
+                'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
         register_sidebar(
             array(
-            'name'          => __('Footer Widget Area 8', NA_THEME_TEXT_DOMAIN),
-            'id'            => 'footer-8',
-            'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-            'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-            'after_widget'  => '</aside>',
-            'before_title'  => '<h2 class="widget-title">',
-            'after_title'   => '</h2>',
+                'name'          => __('Footer Widget Area 8', NA_THEME_TEXT_DOMAIN),
+                'id'            => 'footer-8',
+                'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
+                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                'after_widget'  => '</aside>',
+                'before_title'  => '<h2 class="widget-title">',
+                'after_title'   => '</h2>',
             )
         );
     }
@@ -515,8 +539,9 @@ class Theme
         if ($fonts) {
             $fonts_url = add_query_arg(
                 array(
-                'family' => urlencode(implode('|', $fonts))
-                ), 'https://fonts.googleapis.com/css'
+                    'family' => urlencode(implode('|', $fonts))
+                ),
+                'https://fonts.googleapis.com/css'
             );
         }
 
@@ -526,12 +551,12 @@ class Theme
     function head()
     {
         if ($this->browser_color) {
-            ?>
+        ?>
             <meta name="theme-color" content="<?php echo $this->browser_color; ?>">
             <meta name="msapplication-navbutton-color" content="<?php echo $this->browser_color; ?>">
             <meta name="apple-mobile-web-app-capable" content="yes">
             <meta name="apple-mobile-web-app-status-bar-style" content="<?php echo $this->browser_color; ?>">
-            <?php
+        <?php
         }
         ?>
         <script type="text/javascript">
@@ -642,9 +667,11 @@ class Theme
             }
         }
         wp_localize_script(
-            'na_theme-script', 'screenReaderText', array(
-            'expand'   => '<span class="screen-reader-text">' . __('expand child menu', NA_THEME_TEXT_DOMAIN) . '</span>',
-            'collapse' => '<span class="screen-reader-text">' . __('collapse child menu', NA_THEME_TEXT_DOMAIN) . '</span>',
+            'na_theme-script',
+            'screenReaderText',
+            array(
+                'expand'   => '<span class="screen-reader-text">' . __('expand child menu', NA_THEME_TEXT_DOMAIN) . '</span>',
+                'collapse' => '<span class="screen-reader-text">' . __('collapse child menu', NA_THEME_TEXT_DOMAIN) . '</span>',
             )
         );
 
@@ -680,10 +707,21 @@ class Theme
             wp_enqueue_style('na_theme-admin', get_template_directory_uri() . '/admin/css/admin.css', array(), '1.0');
             wp_enqueue_script('na_theme-admin-scripts', get_template_directory_uri() . '/admin/js/admin.js', array('jquery'), '1.0.0', true);
             wp_enqueue_script('na_theme-blocks-scripts', get_template_directory_uri() . '/admin/js/app.js', array('wp-blocks', 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-i18n', 'wp-element', 'jquery'), '1.0.0', true);
+
+            $attachedMedia = [];
+            if (is_single()) {
+                $attachedMedia = array_map(function ($image) {
+                    return wp_get_attachment_image_src($image->ID, 'thumbnail');
+                }, get_attached_media('image', get_the_ID()));
+            }
+
             wp_localize_script(
                 'na_theme-blocks-scripts',
                 'naThemeData',
-                ['templates' => $x]
+                [
+                    'templates' => $x,
+                    'images' => $attachedMedia
+                ]
             );
         }
     }
@@ -720,7 +758,8 @@ class Theme
     function truncate($string, $limit, $break = ".", $pad = "...")
     {
         // return with no change if string is shorter than $limit
-        if (strlen($string) <= $limit) { return $string;
+        if (strlen($string) <= $limit) {
+            return $string;
         }
 
         // is $break present between $limit and the end of the string?
@@ -775,7 +814,7 @@ class Theme
         }
 
         if (is_singular()) :
-            ?>
+        ?>
 
             <div class="post-thumbnail">
                 <?php the_post_thumbnail(); ?>
@@ -918,16 +957,16 @@ class Theme
     public function __get($name)
     {
         switch (strtolower($name)) {
-        case 'logo':
-        case 'logo_dark':
-        case 'loading_logo':
-        case 'favicon':
-        case 'logo_footer':
-            $logo = get_theme_mod($name, $default = '');
-            $src = wp_get_attachment_image_src($logo, 'full');
-            return $src ? $src[0] : null;
-        default:
-            return $this->mergeTags(get_theme_mod($name, $default = ''));
+            case 'logo':
+            case 'logo_dark':
+            case 'loading_logo':
+            case 'favicon':
+            case 'logo_footer':
+                $logo = get_theme_mod($name, $default = '');
+                $src = wp_get_attachment_image_src($logo, 'full');
+                return $src ? $src[0] : null;
+            default:
+                return $this->mergeTags(get_theme_mod($name, $default = ''));
         }
     }
     public function mergeTags($out)
@@ -951,7 +990,7 @@ class Theme
             if (!$sidebars) {
                 $sidebars = array();
             }
-            ?>
+        ?>
             <div class="sidebar-columns">
                 <form action="<?php echo admin_url('admin-ajax.php'); ?>" method="post">
                     <input type="hidden" name="sidebar" value="<?php echo $index; ?>" />
@@ -965,7 +1004,7 @@ class Theme
                     </select>
                 </form>
             </div>
-            <?php
+        <?php
         }
     }
 
@@ -990,13 +1029,13 @@ class Theme
             return;
         }
         switch ($tag) {
-        case 'header':
-            $class = trim($class) . " pattern-1";
-            break;
-        case 'content':
-            break;
-        default:
-            break;
+            case 'header':
+                $class = trim($class) . " pattern-1";
+                break;
+            case 'content':
+                break;
+            default:
+                break;
         }
         echo $class;
     }
@@ -1070,7 +1109,7 @@ class Theme
                 <small class="help">Select the template layout.</small>
             </p>
         <?php endif; ?>
-        <?php
+    <?php
     }
     function save_page_template_part($post_ID, $post, $update)
     {
@@ -1104,29 +1143,29 @@ class Theme
     {
         $part = $this->get_template_layout($post_id, 'container');
         switch ($part) {
-        case 'container-fluid':
-        case 'container':
-            echo '<div class="row"><div class="col-md-12">';
-            break;
-        case 'container boxed-offset':
-        case 'boxed-offset':
-            echo '<div class="row"><div class="col-md-10 offset-md-1 col-xs-12">';
-            break;
-        default:
-            break;
+            case 'container-fluid':
+            case 'container':
+                echo '<div class="row"><div class="col-md-12">';
+                break;
+            case 'container boxed-offset':
+            case 'boxed-offset':
+                echo '<div class="row"><div class="col-md-10 offset-md-1 col-xs-12">';
+                break;
+            default:
+                break;
         }
     }
     function get_template_layout_after($post_id)
     {
         $part = $this->get_template_layout($post_id, 'container');
         switch ($part) {
-        case 'container-fluid':
-        case 'container':
-        case 'boxed-offset':
-            echo '</div></div>';
-            break;
-        default:
-            break;
+            case 'container-fluid':
+            case 'container':
+            case 'boxed-offset':
+                echo '</div></div>';
+                break;
+            default:
+                break;
         }
     }
     function get_section_id($post_id, $default)
@@ -1136,7 +1175,7 @@ class Theme
     }
     public function woocommerce_before_shop_loop()
     {
-        ?>
+    ?>
         <div class="col-md-9 col-sm-9 col-xs-12">
         <?php
 
@@ -1147,13 +1186,13 @@ class Theme
         ?>
         </div>
         </div>
-        <?php
+    <?php
 
     }
 
     public function woocommerce_before_main_content()
     {
-        ?>
+    ?>
         <div class="container">
         <?php
     }
@@ -1161,7 +1200,7 @@ class Theme
     {
         ?>
         </div>
-        <?php
+<?php
     }
     public function enable($module)
     {
@@ -1319,7 +1358,8 @@ new \NaTheme\Inc\Metaboxes\Section();
 
 
 add_action(
-    'widgets_init', function () {
+    'widgets_init',
+    function () {
         return register_widget(new \NaTheme\Inc\Widgets\Posts());
     }
 );
