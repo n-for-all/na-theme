@@ -101,6 +101,8 @@ class Theme
             add_action('wp_ajax_na_save_sidebars', array(&$this, 'save_sidebars'));
             add_action('page_attributes_misc_attributes', array(&$this, 'page_attributes_misc_attributes'), 10, 2);
             add_action('save_post_page', array(&$this, 'save_page_template_part'), 10, 3);
+            add_action('wp_ajax_unattach_attachment', [&$this, 'unattach_attachment']);
+            add_action('wp_ajax_attach_attachment', [&$this, 'attach_attachment']);
         }
         add_action('init', array(&$this, 'init'));
     }
@@ -694,6 +696,7 @@ class Theme
 
     public function admin_scripts()
     {
+
         //admin styles for this theme
         $parts = self::get_template_parts();
         $x = [];
@@ -704,15 +707,18 @@ class Theme
         }
 
         if (is_admin()) {
+            global $pagenow;
+
             wp_enqueue_style('na_theme-admin', get_template_directory_uri() . '/admin/css/admin.css', array(), '1.0');
             wp_enqueue_script('na_theme-admin-scripts', get_template_directory_uri() . '/admin/js/admin.js', array('jquery'), '1.0.0', true);
             wp_enqueue_script('na_theme-blocks-scripts', get_template_directory_uri() . '/admin/js/app.js', array('wp-blocks', 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-i18n', 'wp-element', 'jquery'), '1.0.0', true);
 
             $attachedMedia = [];
-            if (is_single()) {
-                $attachedMedia = array_map(function ($image) {
-                    return wp_get_attachment_image_src($image->ID, 'thumbnail');
-                }, get_attached_media('image', get_the_ID()));
+            if (($pagenow == 'post.php')) {
+                $attachedMedia = array_values(array_map(function ($image) {
+                    $src = wp_get_attachment_image_src($image->ID, 'thumbnail');
+                    return array('url' => $src[0], 'id' => $image->ID);
+                }, get_attached_media('image', intval($_GET['post'] ?? 0))));
             }
 
             wp_localize_script(
@@ -720,6 +726,7 @@ class Theme
                 'naThemeData',
                 [
                     'templates' => $x,
+                    'post_id' => intval($_GET['post'], 0),
                     'images' => $attachedMedia
                 ]
             );
@@ -1006,6 +1013,39 @@ class Theme
             </div>
         <?php
         }
+    }
+
+    function unattach_attachment()
+    {
+        $attachment_id = intval($_POST['attachment_id'] ?? -1);
+        if ($attachment_id === -1) {
+            echo wp_json_encode(array('status' => 'error', 'message' => 'Invalid attachment'));
+            wp_die();
+        }
+        $update_attachment = array(
+            'ID' => $attachment_id,
+            'post_parent' => 0
+        );
+        wp_update_post($update_attachment);
+        echo wp_json_encode(array('status' => 'success', 'message' => 'Attachment deleted'));
+        wp_die();
+    }
+
+    function attach_attachment()
+    {
+        $attachment_id = intval($_POST['attachment_id'] ?? -1);
+        $post_id = intval($_POST['post_id'] ?? -1);
+        if ($attachment_id === -1 || $post_id === -1) {
+            echo wp_json_encode(array('status' => 'error', 'message' => 'Invalid attachment'));
+            wp_die();
+        }
+        $update_attachment = array(
+            'ID' => $attachment_id,
+            'post_parent' => $post_id
+        );
+        wp_update_post($update_attachment);
+        echo wp_json_encode(array('status' => 'success', 'message' => 'Attachment deleted'));
+        wp_die();
     }
 
     public function save_sidebars()
