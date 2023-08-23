@@ -144,8 +144,7 @@ section.content-section .inner-content .entry-inner>.entry-title {
 
 section>div,
 section div.content.inner-content,
-section div.content.inner-content>.inner,
-section div.content.inner-content>.inner>.entry-content {
+section div.content.inner-content>.inner {
     height: 100%;
 }
 
@@ -2738,22 +2737,6 @@ ul.na-services-category:after {
     -webkit-perspective: none;
 }
 
-#inner-scroll>.scrollmagic-pin-spacer:nth-child(odd) {
-    background: #f8f8f8;
-}
-
-#inner-scroll>.scrollmagic-pin-spacer:nth-child(even) {
-    background: #fff;
-}
-
-#inner-scroll>section:nth-child(odd) {
-    background-color: #f8f8f8;
-}
-
-#inner-scroll>section:nth-child(even) {
-    background-color: #fff;
-}
-
 #inner-scroll {
     width: 100%;
     height: 100% !important;
@@ -2984,15 +2967,6 @@ div.wpcf7-acceptance-missing {
     padding: 10px 15px;
     width: 100%;
     text-align: left;
-}
-
-/*
- * Fullpage css
- */
-.fp-auto-height.fp-section,
-.fp-auto-height .fp-slide,
-.fp-auto-height .fp-tableCell {
-    height: auto !important;
 }
 
 .single-team-member {

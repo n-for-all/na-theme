@@ -11,7 +11,7 @@
 ?>
 
     <!-- Start footer -->
-    <footer class="site-footer fp-auto-height">
+    <footer class="site-footer">
         <?php include(locate_template('/inc/sidebars/footer.php')); ?>
         <section class="subfooter">
             <div class="container">

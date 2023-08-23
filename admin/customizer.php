@@ -520,7 +520,7 @@ class Na_Theme_Admin
             'description' => __(''),
             'choices' => array(
                 '' => 'Normal',
-                '1' => 'Full Screen',
+                // '1' => 'Full Screen',
                 '2' => 'Slides Manual',
                 '3' => 'Slides Natural',
                 '4' => 'Slides Left and Right',

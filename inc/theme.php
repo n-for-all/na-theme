@@ -657,16 +657,10 @@ class Theme
 
         if ($this->homepage_scrolling != "") {
             wp_add_inline_script('na_theme-scripts', 'options.scrolling = ' . strval($this->homepage_scrolling) . ';');
-
-            if ($this->homepage_scrolling == 1) {
-                wp_enqueue_script('na_theme-fullpage', get_template_directory_uri() . '/assets/js/plugins/fullpage/javascript.fullPage.min.js', array(), '1.0.0', true);
-                wp_enqueue_style('na_theme-fullpage', get_template_directory_uri() . '/assets/css/plugins/fullpage.min.css', array(), '1.0');
-            } else {
-                wp_enqueue_script('na_theme-tweenmax', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/TweenMax.min.js', array('jquery'), '1.0.0', true);
-                wp_enqueue_script('na_theme-scrollmagic', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollMagic.js', array('jquery'), '1.0.0', true);
-                wp_enqueue_script('na_theme-gsap-animation', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/animation.gsap.js', array('jquery'), '1.0.0', true);
-                wp_enqueue_script('na_theme-gsap-scrollto-plugin', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollToPlugin.min.js', array('jquery'), '1.0.0', true);
-            }
+            wp_enqueue_script('na_theme-tweenmax', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/TweenMax.min.js', array(), '1.0.0', true);
+            wp_enqueue_script('na_theme-scrollmagic', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollMagic.js', array(), '1.0.0', true);
+            wp_enqueue_script('na_theme-gsap-animation', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/animation.gsap.js', array(), '1.0.0', true);
+            wp_enqueue_script('na_theme-gsap-scrollto-plugin', get_template_directory_uri() . '/assets/js/plugins/scrollmagic/ScrollToPlugin.min.js', array('jquery'), '1.0.0', true);
         }
         wp_localize_script(
             'na_theme-script',

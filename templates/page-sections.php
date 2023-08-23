@@ -52,13 +52,12 @@ get_header(); ?>
                 $_class .= " section-" . $post->post_type;
                 $_class .= " " . $naTheme->get_template_part($post->ID, 'content-page-notitle');
                 $_class .= " subsection";
-
-                $extraClass = get_post_meta($post->ID, '_wp_section_class', true);
+                $extraClass = $naTheme->get_meta(get_the_ID(), '_wp_section_class');
                 if ($extraClass) {
                     $_class .= " " . $extraClass;
                 }
 
-                $background = $naTheme->get_post_thumbnail($post, 'full');
+                $background = $naTheme->get_post_thumbnail($post, 'full'); 
                 if ($background) {
                     $_class .= " has-post-thumbnail";
                 }

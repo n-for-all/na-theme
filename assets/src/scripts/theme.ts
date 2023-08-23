@@ -1,13 +1,12 @@
 import css from "dom-helpers/css";
 import closest from "dom-helpers/closest";
-import contains from "dom-helpers/contains";
 import { animate, backOut } from "popmotion";
 import Parallax from "./parallax";
 import { counter } from "./counter";
 import { Team } from "./team";
 import Alpine from "alpinejs";
 
-declare let ScrollMagic, TimelineMax, Linear, app, options, fullpage, window: Window | any;
+declare let ScrollMagic, TimelineMax, Linear, app, options, window: Window | any;
 
 (function () {
 	if (window.CustomEvent) return false;
@@ -30,7 +29,6 @@ class Theme {
 	options: any;
 	controller: any;
 	scene: any;
-	fullpage: any;
 	sections: any;
 	handler: any;
 	innerScroll: any;
@@ -41,7 +39,6 @@ class Theme {
 		this.options = options;
 		this.controller = null;
 		this.scene = null;
-		this.fullpage = null;
 		this.sections = null;
 		this.Parallax = new Parallax();
 		this.team = new Team();
@@ -126,7 +123,7 @@ class Theme {
 							.addTo(this.controller);
 						var _current = 0;
 						var offset = 0.3; //offset in percentage
-						this.scene.on("progress", function (event) {
+						this.scene.on("progress", (event) => {
 							var v = event.progress * count + offset + 1;
 							if (v > count) {
 								v = count;
@@ -137,7 +134,7 @@ class Theme {
 									slide.classList.remove("in");
 								});
 
-								this.innerScroll.children[v].classList.add("in");
+								this.innerScroll.children[v]?.classList.add("in");
 								_current = v;
 							}
 						});
@@ -210,7 +207,7 @@ class Theme {
 							if (i % 2 == 0 && i != 0) {
 								is_x = !is_x;
 							}
-							wipeAnimation.fromTo(slides[i], 1, dir, {
+							this.innerScroll.children[i] && wipeAnimation.fromTo(this.innerScroll.children[i], 1, dir, {
 								x: "0%",
 								y: "0%",
 								ease: Linear.easeNone,
@@ -266,51 +263,8 @@ class Theme {
 							let li = document.createElement("li");
 							li.setAttribute("data-index", index);
 							li.innerHTML = index;
-							li.addEventListener("click", (e) => {
-								this.fullpage?.moveTo(index + 1);
-							});
-
 							sectionInner.appendChild(li);
 						});
-						let sectionInnerHandler = function (index) {
-							[].forEach.call(sectionInner.children, function (item, i) {
-								if (i == index) {
-									item.classList.add("active");
-								} else {
-									item.classList.remove("active");
-								}
-							});
-						};
-
-						var createFullPage = function (selector) {
-							return new fullpage(selector, {
-								sectionSelector: section_selector,
-								afterLoad: function (anchorLink, index) {
-									sectionInnerHandler(index - 1);
-									if (index > 1) {
-										setTimeout(function () {
-											document.body.classList.add("scrolling");
-										}, 100);
-									} else {
-										document.body.classList.remove("scrolling");
-									}
-								},
-								onLeave: function (index, nextIndex, direction) {
-									let section = this.sections[index - 1];
-									sectionInnerHandler(nextIndex - 1);
-									if (nextIndex > 1) {
-										document.body.classList.add("scrolling");
-									} else {
-										document.body.classList.remove("scrolling");
-									}
-									section.classList.remove("in");
-									section = this.sections[nextIndex - 1];
-									section?.classList.add("in");
-								},
-							});
-						};
-
-						this.fullpage = createFullPage(scroll_selector);
 
 						break;
 					}
@@ -482,7 +436,7 @@ class Theme {
 			setTimeout(function () {
 				document.body.classList.remove("loading");
 				setTimeout(() => {
-                    document.body.classList.add("loaded");
+					document.body.classList.add("loaded");
 					var loadingOverlay = document.querySelector(".loading-overlay");
 
 					if (loadingOverlay && loadingOverlay.parentNode) {
@@ -526,16 +480,6 @@ class Theme {
 				this.scrollTo(offset * (index + 1));
 			}
 			return true;
-		} else if (this.fullpage && this.sections) {
-			const index = [...this.sections].indexOf(section);
-			if (index >= 0) this.fullpage.moveTo(index + 1);
-			else {
-				[].forEach.call(this.sections, (sec, index) => {
-					if (contains(sec, section)) {
-						this.fullpage.moveTo(index + 1);
-					}
-				});
-			}
 		} else {
 			this.scrollIfNeeded(section);
 		}

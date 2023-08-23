@@ -283,11 +283,13 @@ class Team extends \NaTheme\Inc\Metaboxes\Metabox
         } else if ($atts['filter']) {
             $terms = get_terms(['taxonomy' => 'team', 'hide_empty' => false]);
             $list = [];
-
+            $header = '';
             foreach ($terms as $key => $term) {
                 $list[] = sprintf('<li><a class="%s" href="#!team/%s">%s</a></li>', $key == 0 ? 'active' : '', $term->term_id, $term->name);
             }
-            $header = sprintf('<ul class="na-team-header">%s</ul>', implode('', $list));
+            if (count($list) > 1) {
+                $header = sprintf('<ul class="na-team-header">%s</ul>', implode('', $list));
+            }
             $header = '<div class="na-team-wrapper">' . $header . '%s</div>';
             $first = isset($terms[0]) ? $terms[0]->term_id : '';
             $output = array_map(function ($item) use ($first) {
