@@ -5,7 +5,7 @@
             <# if(data.image != '') { #><span class="service-tpl-image" style="background-image:url({{data.image}})"></span><# } #>
             <div class="container">
                 <div class="row">
-                    <div class="col-md-8 col-md-offset-2">
+                    <div class="col-md-8 offset-md-2">
                         <h2>
                             {{{data.title}}}
                         </h2>
@@ -18,7 +18,7 @@
         </header>
         <div class="container">
             <div class="row">
-                <div class="col-md-8 col-md-offset-2">
+                <div class="col-md-8 offset-md-2">
                     <div class="entry-content">
                         <div class="service-content-tpl">{{{ data.content }}}</div>
                     </div>

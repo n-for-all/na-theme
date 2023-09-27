@@ -23,8 +23,9 @@ var MetaTextControl = compose(
 		};
 	}),
 	withSelect(function (select, props) {
+		let mt = select("core/editor").getEditedPostAttribute("nameta");
 		return {
-			metaValue: select("core/editor").getEditedPostAttribute("nameta")[props.name],
+			metaValue: mt ? mt[props.name] : '',
 		};
 	})
 )((props) => <TextControl name={props.name} label={props.label} value={props.metaValue} onChange={(content) => props.setMetaValue(content)} />);
@@ -38,11 +39,20 @@ var MetaSelectControl = compose(
 		};
 	}),
 	withSelect(function (select, props) {
+		let mt = select("core/editor").getEditedPostAttribute("nameta");
 		return {
-			metaValue: select("core/editor").getEditedPostAttribute("nameta")[props.name],
+			metaValue: mt ? mt[props.name] : '',
 		};
 	})
-)((props) => <SelectControl name={props.name} label={props.label} value={props.metaValue} onChange={(content) => props.setMetaValue(content)} options={props.options} />);
+)((props) => (
+	<SelectControl
+		name={props.name}
+		label={props.label}
+		value={props.metaValue}
+		onChange={(content) => props.setMetaValue(content)}
+		options={props.options}
+	/>
+));
 
 const SectionTemplate = () => {
 	let sections = naThemeMetaboxes["sections"] || [];
@@ -62,10 +72,14 @@ const SectionTemplate = () => {
 						}
 						return <div key={"metabox-" + indexMetabox}>{control}</div>;
 					});
-				} 
+				}
 				return (
-					<PluginDocumentSettingPanel key={"section-" + index} name={section.name} title={section.label} className={"na-metabox-section na-metabox-section-" + section.name}>
-						{section.description && section.description != '' ? <p>{section.description}</p> : null}
+					<PluginDocumentSettingPanel
+						key={"section-" + index}
+						name={section.name}
+						title={section.label}
+						className={"na-metabox-section na-metabox-section-" + section.name}>
+						{section.description && section.description != "" ? <p>{section.description}</p> : null}
 						{metas}
 					</PluginDocumentSettingPanel>
 				);

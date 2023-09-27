@@ -355,8 +355,9 @@ class NaSlider {
 		}, 100);
 	}
 	maxHeight() {
-		var h = 0;
+		var h = 0; 
 		this.slides.forEach((slide) => {
+            slide.style.minHeight = "0";
 			if (slide.clientHeight > h) {
 				h = slide.clientHeight;
 			}
@@ -405,7 +406,7 @@ class NaSlider {
 		};
 		if (this.settings.vertical) {
 			this.css(this.slides, {
-				height: height + "px",
+				minHeight: height + "px",
 			});
 		} else {
 			this.css(this.slides, {
@@ -413,7 +414,7 @@ class NaSlider {
 			});
 			if (this.settings.height != "auto") {
 				this.css(this.slides, {
-					height: height + "px",
+					minHeight: height + "px",
 				});
 			}
 		}
@@ -711,9 +712,16 @@ class NaSlider {
 			}
 		};
 
-		if ("ResizeObserver" in window) {
+		if ("ResizeObserver" in window) { 
+			let prevWidth = 0;
 			this.resizeObserver = new ResizeObserver((entries) => {
-				callback();
+				for (const entry of entries) {
+					const width = entry.borderBoxSize?.[0].inlineSize;
+					if (typeof width === "number" && width !== prevWidth) {
+						prevWidth = width; 
+						callback();
+					}
+				}
 			});
 
 			this.resizeObserver.observe(this.element);
@@ -721,16 +729,16 @@ class NaSlider {
 
 		// Listen to the window resize event
 		window.addEventListener("resize", onResizeElem["checkForChanges"]);
-	}   
+	}
 
 	trigger(element: Element | NodeListOf<Element>, eventName: string, detail: any = null) {
 		let event = null;
 		if (detail) {
 			event = new CustomEvent(eventName, { detail });
-		} else { 
-			event = new Event(eventName); 
+		} else {
+			event = new Event(eventName);
 		}
-		if (element instanceof NodeList) { 
+		if (element instanceof NodeList) {
 			element.forEach((elm) => {
 				elm.dispatchEvent(event);
 			});

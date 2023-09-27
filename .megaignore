@@ -1,0 +1,15 @@
+﻿-:*.sb-????????-??????
+-:*.tmp
+-:*node_modules
+-:*~.*
+-:.*
+-:.history
+-:desktop.ini
+-:node_modules
+-:Thumbs.db
+-:uploads
+-:vendor
+-:wp-admin
+-:wp-config.php
+-:wp-includes
+-:~*

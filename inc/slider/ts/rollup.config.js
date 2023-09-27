@@ -13,8 +13,8 @@ module.exports = {
 		file: path.resolve(__dirname, "../js/slider.js"),
 		format: "iife",
 		name: "slider",
-		sourcemap: !production ? true : false,
-		sourcemapFile: path.resolve(__dirname, "../js/"),
+		// sourcemap: !production ? true : 'inline',
+		// sourcemapFile: path.resolve(__dirname, "../js/"),
 	},
 
 	plugins: [
@@ -22,7 +22,9 @@ module.exports = {
 		typescript({
 			exclude: path.resolve(__dirname, "./node_modules"),
 			tsconfig: path.resolve(__dirname, "./tsconfig.json"),
-            sourceMap: !production,
+            sourceMap: true,
+            inlineSources: !production,
+            
 		}),
 		replace({
 			ENVIRONMENT: JSON.stringify(production ? "production" : "development"),
