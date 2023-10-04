@@ -91,54 +91,43 @@ class NaSliderBullets {
 }
 class NaSliderNavigation {
 	slider: NaSlider;
-	_prev: any;
-	_next: any;
 	current: any = 0;
 	columns: number = 1;
 	sliderElement: any;
 	pagination: number;
 	loop: boolean;
 	bullets: NaSliderBullets;
-	constructor(slider: NaSlider, pagination = 0, columns = 1, initial = 0, loop = false) {
+    infinite: boolean;
+	onCreate: (index: number) => void;
+	total: number;
+	constructor(slider: NaSlider, pagination = 0, columns = 1, initial = 0, loop = false, infinite = false, onCreate = (index: number) => {}) {
 		this.slider = slider;
+        this.onCreate = onCreate;
 		if (!this.slider) {
 			return;
 		}
 		this.loop = loop;
+        this.infinite = infinite;
 		this.sliderElement = this.slider.getElement();
 		this.columns = columns;
 		this.current = initial;
 		this.pagination = pagination;
+        this.total = this.slider.getTotalSlides();
 
 		this.bullets = new NaSliderBullets(slider, pagination, columns, initial);
-		this._prev = this.slider.getElement().querySelector('[action="prev"]');
-		this._next = this.slider.getElement().querySelector('[action="next"]');
+		let prev = this.slider.getElement().querySelector('.na-slider-actions.prev, [action="prev"]');
+		let next = this.slider.getElement().querySelector('.na-slider-actions.next, [action="next"]');
 
-		if (this._prev) {
-			this._prev.addEventListener("click", (e) => {
+		if (prev) {
+			prev.addEventListener("click", (e) => {
 				e.preventDefault();
-				if (pagination == 1) {
-					this.prevPage();
-					return;
-				}
-				if (this.current > 0) {
-					this.to(this.current - 1);
-				}
+				this.prev();
 			});
 		}
-		if (this._next) {
-			this._next.addEventListener("click", (e) => {
+		if (next) {
+			next.addEventListener("click", (e) => {
 				e.preventDefault();
-				if (pagination == 1) {
-					this.nextPage();
-					return;
-				}
-				if (this.current < this.slider.getTotalSlides() - columns) {
-					this.to(this.current + 1);
-				} else if (loop) {
-					this.slider.fade = true;
-					this.to(0);
-				}
+				this.next();
 			});
 		}
 	}
@@ -157,6 +146,9 @@ class NaSliderNavigation {
 			return;
 		}
 		if (this.current < this.slider.getTotalSlides() - this.columns) {
+			this.to(this.current + 1);
+		} else if (this.infinite) {
+			this.onCreate((this.current + 1) % this.total);
 			this.to(this.current + 1);
 		} else if (this.loop) {
 			this.slider.fade = true;
@@ -193,6 +185,9 @@ class NaSliderNavigation {
 		if (this.pagination == 1) {
 			index = i * this.columns;
 			if (i > this.slider.getTotalSlides() / this.columns || i < 0) {
+                if (i < 0) {
+					return;
+				}
 				return;
 			}
 		}
@@ -234,13 +229,14 @@ class NaSlider {
 	current: number = 0;
 	scroll: boolean = false;
 	slides = [];
-	private _stop: boolean = false;
+	
 	innerSlider: any;
 	navigation: NaSliderNavigation;
-	private _fpsTime: number = 0;
 	data: NaSliderData;
 	animationframe: number;
 	resizeObserver: ResizeObserver;
+    private _stop: boolean = false;
+	private _fpsTime: number = 0;
 	/**
 	 * __construct
 	 */
@@ -285,6 +281,8 @@ class NaSlider {
 			type: "normal",
 			pagination: 0,
 			initial: 0,
+            loop: 1,
+			infinite: 0,
 			columns: 1,
 			autoplay: 0,
 			vertical: 0,
@@ -296,34 +294,28 @@ class NaSlider {
 		this.settings = { ...defaults, ...settings };
 		this.columns = parseInt(this.settings.columns, 10);
 
-		this.inner = document.createElement("div");
+		this.inner = this.element.querySelector(".na-slider") || document.createElement("div");
 		this.inner.classList.add("na-slider");
 
 		if (this.settings.class != "") {
 			this.inner.classList.add(...this.settings.class.split(" "));
 		}
 
-		this.innerSlider = document.createElement("ul");
+		this.innerSlider = this.inner.querySelector("ul.na-slides") || document.createElement("ul");
 		this.innerSlider.classList.add("na-slides");
 
-		let slides = this.element.querySelectorAll("slide");
+		let slides = this.element.querySelectorAll("slide, li.na-slide");
 
 		if (!slides || slides.length == 0) {
 			return;
 		} else {
 			[].forEach.call(slides, (slide) => {
-				let li = document.createElement("li");
-				this.cloneAttributes(slide, li);
-				this.innerSlider.appendChild(li);
-
-				while (slide.children.length > 0) {
-					li.appendChild(slide.children[0]);
-					if (li.hasAttribute("data-youtube-video")) {
-						li["_youtube_video"] = new YouTube(li.getAttribute("data-youtube-video"), li);
-					}
+				if (slide.tagName == "LI") {
+					this.slides.push(slide);
+					return;
 				}
 
-				this.slides.push(li);
+				this.slides.push(this.replicateSlide(slide));
 				slide.parentNode.removeChild(slide);
 			});
 		}
@@ -367,13 +359,87 @@ class NaSlider {
 	load(preserveIndex = false) {
 		this.trigger(this.element, "load", [this.element, this.settings]);
 		this.columns = parseInt(this.settings.columns, 10);
+
+		const { height, width } = this.calculateDimensions();
+		/////
+
+		////
+		var slider: HTMLElement = this.innerSlider;
+
+		if (this.settings.vertical == 1) {
+			this.inner.style.height = height * this.columns + "px";
+			slider.style.height = Math.ceil(this.slides.length * height) + "px";
+		} else {
+			this.inner.style.width = width * this.columns + "px";
+			slider.style.width = Math.ceil(this.slides.length * width) + "px";
+		}
+
+		slider.style.marginLeft = "0px";
+
+		this.slider.transform = slider;
+		this.slider.scroller = this.inner;
+		this.slider.width = Math.ceil(this.columns * width);
+
+		this.adjustSlide();
+
+		if (!this.navigation) {
+			this.navigation = new NaSliderNavigation(
+				this,
+				this.settings.pagination,
+				this.columns,
+				this.settings.initial,
+				this.settings.loop,
+				this.settings.infinite,
+				(index) => {
+					let slide = this.slides[index];
+					this.slides.push(this.replicateSlide(slide, true));
+
+					if (this.settings.vertical == 1) {
+						slider.style.height = Math.ceil(this.slides.length * height) + "px";
+					} else {
+						slider.style.width = Math.ceil(this.slides.length * width) + "px";
+					}
+				}
+			);
+		}
+
+		if (!preserveIndex) {
+			this.current = 0;
+			this.to(this.settings.initial);
+		} else {
+			this.to(this.current);
+		}
+
+		//trigger the events, this can be used to create thumbnail slider
+		this.trigger(this.element, "load-slides", [this.slides, this.current]);
+	}
+
+	replicateSlide(slide, clone = false) {
+		let li = document.createElement("li");
+		this.cloneAttributes(slide, li);
+		this.innerSlider.appendChild(li);
+
+		let i = 0;
+		while (i < slide.children.length) {
+			let child = slide.children[i];
+			li.appendChild(clone ? child.cloneNode(true) : child);
+			if (li.hasAttribute("data-youtube-video")) {
+				li["_youtube_video"] = new YouTube(li.getAttribute("data-youtube-video"), li);
+			}
+			i++;
+		}
+		return li;
+	}
+
+	calculateDimensions() {
 		var height = 0;
+		let offsetHeader = window["naTheme"]?.headerOffset ? (window["naTheme"]?.headerOffset ? window["naTheme"]?.headerOffset : 0) : 0;
 		switch (this.settings.height) {
 			case "auto":
 				height = this.maxHeight();
 				break;
 			case "100%":
-				height = window.innerHeight - window["naTheme"]?.headerOffset;
+				height = window.innerHeight - offsetHeader;
 				break;
 			default:
 				if (this.settings.height.indexOf("%") > 0) {
@@ -400,82 +466,27 @@ class NaSlider {
 				width = Math.round(((this.element.clientWidth / this.columns) * 10) / 10);
 			}
 		}
+		return { height, width };
+	}
+
+	adjustSlide() {
+		const { height, width } = this.calculateDimensions();
+
+		let styles = {};
 		this.slide = {
 			height: height,
 			width: width,
 		};
 		if (this.settings.vertical) {
-			this.css(this.slides, {
-				minHeight: height + "px",
-			});
+			styles = { ...styles, minHeight: height + "px" };
 		} else {
-			this.css(this.slides, {
-				width: width + "px",
-			});
+			styles = { ...styles, width: width + "px" };
 			if (this.settings.height != "auto") {
-				this.css(this.slides, {
-					minHeight: height + "px",
-				});
+				styles = { ...styles, minHeight: height + "px" };
 			}
 		}
 
-		if (this.slides[0].clientWidth > width) {
-			var s_width = this.slides[0].clientWidth;
-			var w_width = this.element.clientWidth;
-			var factor = Math.floor(w_width / s_width);
-			width = w_width / factor;
-
-			this.columns = factor <= 0 ? 1 : factor;
-
-			this.slide = {
-				height: height,
-				width: width,
-			};
-			if (this.settings.vertical) {
-				this.css(this.slides, {
-					height: height + "px",
-				});
-			} else {
-				this.css(this.slides, {
-					width: width + "px",
-				});
-				if (this.settings.height != "auto") {
-					this.css(this.slides, {
-						height: height + "px",
-					});
-				}
-			}
-		}
-
-		var slider: HTMLElement = this.innerSlider;
-
-		if (this.settings.vertical == 1) {
-			this.inner.style.height = height * this.columns + "px";
-			slider.style.height = Math.ceil(this.slides.length * height) + "px";
-		} else {
-			this.inner.style.width = width * this.columns + "px";
-			slider.style.width = Math.ceil(this.slides.length * width) + "px";
-		}
-
-		slider.style.marginLeft = "0px";
-
-		this.slider.transform = slider;
-		this.slider.scroller = this.inner;
-		this.slider.element = slider;
-		this.slider.width = Math.ceil(this.columns * width);
-
-		if (!this.navigation) {
-			this.navigation = new NaSliderNavigation(this, this.settings.pagination, this.columns, this.settings.initial, this.settings.loop);
-		}
-
-		// this.scroll = this.slider.scroller.scrollLeft;
-		if (!preserveIndex) {
-			this.current = 0;
-			this.to(this.settings.initial);
-		}
-
-		//trigger the events, this can be used to create thumbnail slider
-		this.trigger(this.element, "load-slides", [this.slides, this.current]);
+		this.css(this.slides, styles);
 	}
 
 	css(elements, css: Object) {
@@ -641,28 +652,33 @@ class NaSlider {
 		});
 
 		if (this.settings.sync && this.settings.sync != "") {
-			let sync_slider = document.querySelector("#" + this.settings.sync);
-			if (sync_slider) {
-				var slider = this.data.get(sync_slider, "na-slider");
-				if (!slider) {
-					return;
+			setTimeout(() => {
+				let sync_slider = document.querySelector("#" + this.settings.sync);
+				if (sync_slider) {
+					var slider = this.data.get(sync_slider, "na-slider");
+					if (!slider) {
+						return;
+					}
+					//@ts-ignore
+					this.element.addEventListener("active-slide", ((event: CustomEvent) => {
+                        let index = event.detail[0];
+						if (slider && slider.active() != index) slider.to(index);
+						return false;
+					}) as EventListener);
+					//@ts-ignore
+					sync_slider.addEventListener("active-slide", ((event: CustomEvent) => {
+                        let index = event.detail[0];
+						if (this.navigation.getCurrent() != index) this.to(index);
+						return false;
+					}) as EventListener);
+					//@ts-ignore
+					sync_slider.addEventListener("click-slide", ((event: CustomEvent) => {
+                        let index = event.detail[0];
+						if (this.navigation.getCurrent() != index) this.to(index);
+						return false;
+					}) as EventListener);
 				}
-				//@ts-ignore
-				this.element.addEventListener("active-slide", ((event, index) => {
-					if (slider && slider.active() != index) slider.to(index);
-					return false;
-				}) as EventListener);
-				//@ts-ignore
-				sync_slider.addEventListener("active-slide", ((event, index) => {
-					if (this.navigation.getCurrent() != index) this.to(index);
-					return false;
-				}) as EventListener);
-				//@ts-ignore
-				sync_slider.addEventListener("click-slide", ((event, index) => {
-					if (this.navigation.getCurrent() != index) this.to(index);
-					return false;
-				}) as EventListener);
-			}
+			}, 1000);
 		}
 	}
 	visibility() {
