@@ -207,11 +207,12 @@ class Theme {
 							if (i % 2 == 0 && i != 0) {
 								is_x = !is_x;
 							}
-							this.innerScroll.children[i] && wipeAnimation.fromTo(this.innerScroll.children[i], 1, dir, {
-								x: "0%",
-								y: "0%",
-								ease: Linear.easeNone,
-							});
+							this.innerScroll.children[i] &&
+								wipeAnimation.fromTo(this.innerScroll.children[i], 1, dir, {
+									x: "0%",
+									y: "0%",
+									ease: Linear.easeNone,
+								});
 						});
 						this.scene = new ScrollMagic.Scene({
 							loglevel: 2,
@@ -431,31 +432,52 @@ class Theme {
 			});
 		}
 
-		let delayLoading = window.delayLoading ? window.delayLoading : 1000;
-		let endLoading = () => {
-			setTimeout(function () {
-				document.body.classList.remove("loading");
-				setTimeout(() => {
-					document.body.classList.add("loaded");
-					var loadingOverlay = document.querySelector(".loading-overlay");
+		let doneBefore = localStorage ? localStorage.getItem("shown") : false;
+		let expiry = 0;
+		try {
+			expiry = localStorage ? parseFloat(localStorage.getItem("expiry")) : new Date().getTime();
+		} catch (e) {
+			expiry = 0;
+		}
 
-					if (loadingOverlay && loadingOverlay.parentNode) {
-						loadingOverlay.parentNode.removeChild(loadingOverlay);
-					}
-				}, 2000);
-			}, delayLoading);
+		if (!doneBefore || expiry <= new Date().getTime()) {
+			let delayLoading = window.delayLoading ? window.delayLoading : 1000;
+			let endLoading = () => {
+				setTimeout(function () {
+					document.body.classList.remove("loading");
+					setTimeout(() => {
+						document.body.classList.add("loaded");
+						var loadingOverlay = document.querySelector(".loading-overlay");
+
+						if (loadingOverlay && loadingOverlay.parentNode) {
+							loadingOverlay.parentNode.removeChild(loadingOverlay);
+						}
+					}, 2000);
+				}, delayLoading);
+				var pos = window.scrollY;
+				if (pos > 100) {
+					document.body.classList.add("scrolling");
+				}
+			};
+			app &&
+				app.ready(() => {
+					endLoading();
+					endLoading = () => {};
+				});
+			window.addEventListener("load", endLoading);
+
+			if (localStorage) {
+				localStorage.setItem("shown", "1");
+				localStorage.setItem("expiry", (new Date().getTime() + 1000 * 60 * 60 * 24).toString());
+			}
+		} else {
+			document.body.classList.remove("loading");
+			document.body.classList.add("loaded");
 			var pos = window.scrollY;
 			if (pos > 100) {
 				document.body.classList.add("scrolling");
 			}
-		};
-		app &&
-			app.ready(() => {
-				endLoading();
-				endLoading = () => {};
-			});
-		window.addEventListener("load", endLoading);
-
+		}
 		this.sectionObserver();
 		this.initCounters();
 
