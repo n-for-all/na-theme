@@ -105,6 +105,15 @@ class Theme
             add_action('wp_ajax_attach_attachment', [&$this, 'attach_attachment']);
         }
         add_action('init', array(&$this, 'init'));
+
+        add_action('admin_head',  function () {
+            echo '<style type="text/css">
+                  .attachment-266x266, .thumbnail img {
+                       width: 100% !important;
+                       height: auto !important;
+                  }
+                  </style>';
+        });
     }
     public function init()
     {
@@ -217,6 +226,23 @@ class Theme
             },
             11
         );
+
+        add_filter('upload_mimes', function ($mimes = []) {
+            $mimes['svg'] = 'image/svg+xml';
+            $mimes['svgz'] = 'image/svg+xml';
+            return $mimes;
+        }, 99);
+
+        // Allow SVG
+        add_filter('wp_check_filetype_and_ext', function ($data, $file, $filename, $mimes) {
+            $filetype = wp_check_filetype($filename, $mimes);
+
+            return [
+                'ext'             => $filetype['ext'],
+                'type'            => $filetype['type'],
+                'proper_filename' => $data['proper_filename']
+            ];
+        }, 10, 4);
     }
 
     public function setup()
@@ -720,7 +746,7 @@ class Theme
                 'naThemeData',
                 [
                     'templates' => $x,
-                    'post_id' => intval($_GET['post'], 0),
+                    'post_id' => intval($_GET['post'] ?? 0, 0),
                     'images' => $attachedMedia
                 ]
             );
