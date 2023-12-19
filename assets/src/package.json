@@ -12,12 +12,15 @@
   "dependencies": {
     "alpinejs": "^3.10.3",
     "dom-helpers": "^5.2.1",
+    "hammerjs": "^2.0.8",
     "popmotion": "^9.4.0"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^13.0.4",
-    "@rollup/plugin-replace": "^3.0.0",
-    "@rollup/plugin-typescript": "^8.2.5",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-sucrase": "^5.0.2",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.5",
     "autoprefixer": "^10.3.1",
     "browser-sync": "^2.27.5",
     "gulp": "^4.0.2",
@@ -26,9 +29,9 @@
     "gulp-rollup": "^2.17.0",
     "gulp-sass": "^5.1.0",
     "path": "^0.12.7",
-    "rollup": "^2.55.1",
-    "rollup-plugin-terser": "^7.0.2",
+    "rollup": "^4.8.0",
     "rollup-stream": "^1.24.1",
-    "sass": "^1.37.2"
+    "sass": "^1.37.2",
+    "typescript": "^5.3.3"
   }
 }

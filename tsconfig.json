@@ -1,0 +1,12 @@
+{
+	"extends": "./assets/src/tsconfig",
+	"compilerOptions": {
+		"allowJs": true,
+		"baseUrl": ".",
+		"rootDirs": ["./assets/src/node_modules/**/*", "./assets/src/node_modules/*"],
+		"paths": {
+			"*": ["./assets/src/scripts/*", "./assets/src/node_modules/*"]
+		}
+	},
+	"include": ["./assets/src/*", "**/*"]
+}

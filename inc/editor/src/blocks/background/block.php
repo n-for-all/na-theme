@@ -31,6 +31,10 @@ return array(
         array(
             'type' => 'string',
         ),
+        'imageClassName' =>
+        array(
+            'type' => 'string',
+        ),
         'imageFill' =>
         array(
             'type' => 'boolean',

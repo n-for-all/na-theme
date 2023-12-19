@@ -11,7 +11,7 @@ import { __, _x } from "@wordpress/i18n";
 import { useSelect, withSelect } from "@wordpress/data";
 import { useState, useRef, Component, Fragment } from "@wordpress/element";
 import { BlockControls, BlockVerticalAlignmentControl, useInnerBlocksProps, InspectorControls, useBlockProps, __experimentalImageURLInputUI as ImageURLInputUI, __experimentalImageSizeControl as ImageSizeControl, store as blockEditorStore } from "@wordpress/block-editor";
-import { PanelBody, RangeControl, TextareaControl, ToggleControl, ToolbarButton, ExternalLink, FocalPointPicker } from "@wordpress/components";
+import { PanelBody, RangeControl, TextareaControl, ToggleControl, ToolbarButton, ExternalLink, FocalPointPicker, TextControl } from "@wordpress/components";
 import { pullLeft, pullRight } from "@wordpress/icons";
 
 /**
@@ -58,7 +58,7 @@ function attributesFromMedia({ attributes, setAttributes }) {
 }
 
 function BackgroundEdit({ attributes, isSelected, setAttributes }) {
-	const { imageFill, mediaId, mediaPosition, mediaUrl, mediaWidth, verticalAlignment, noRepeat } = attributes;
+	const { imageFill, mediaId, mediaPosition, mediaUrl, mediaWidth, verticalAlignment, noRepeat, imageClassName } = attributes;
 
 	const image = useSelect(
 		(select) => {
@@ -111,6 +111,15 @@ function BackgroundEdit({ attributes, isSelected, setAttributes }) {
 					})
 				}
 			/>
+            <TextControl
+				label={__("Image Class")}
+				value={imageClassName}
+				onChange={(value) =>
+					setAttributes({
+						imageClassName: value,
+					})
+				}
+			/>
 		</PanelBody>
 	);
 
@@ -128,13 +137,14 @@ function BackgroundEdit({ attributes, isSelected, setAttributes }) {
 			</BlockControls>
 			<div {...blockProps}>
 				<MediaContainer
-					className="wp-block-background-image"
+					className={"wp-block-background-image"}
 					onSelectMedia={onSelectMedia}
 					onWidthChange={onWidthChange}
 					commitWidthChange={commitWidthChange}
 					ref={refMediaContainer}
 					{...{
 						noRepeat,
+                        imageClassName,
 						imageFill,
 						isSelected,
 						mediaId,

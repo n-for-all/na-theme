@@ -13,6 +13,20 @@ class Editor
         add_filter('block_categories_all', array($this, 'add_category'), 10, 2);
         add_action('init', array($this, 'register_blocks'));
         add_filter('render_block_data', [$this, 'parse_block'], 10, 3);
+
+        add_filter('register_block_type_args', function ($args, $name) {
+            if ($name == 'core/group') {
+                $args['render_callback'] = [$this, 'modify_blocks'];
+            }
+            return $args;
+        }, 10, 3);
+    }
+
+    public function modify_blocks($attributes, $content)
+    {
+        // var_dump($attributes);
+        return $content;
+        // return str_replace('wp-block-group__inner-container', 'wp-block-group__inner-container '.$attributes['className'], $content);
     }
     public function parse_block($parsed_block, $source_block = null, $parent_block = null)
     {
@@ -48,7 +62,7 @@ class Editor
         // Scripts.
         wp_enqueue_script(
             'na-theme-blocks', // Handle.
-            get_template_directory_uri() . '/inc/editor/build/index.js', // Block.js: We register the block here.
+            get_template_directory_uri() . '/admin/js/editor.js', // Block.js: We register the block here.
             array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor'), // Dependencies, defined above.
         );
 
@@ -111,6 +125,7 @@ class Editor
         $backgroundData = include_once dirname(__FILE__) . '/src/blocks/background/block.php';
         $linkwithiconData = include_once dirname(__FILE__) . '/src/blocks/linkwithicon/block.php';
         $counterData = include_once dirname(__FILE__) . '/src/blocks/counter/block.php';
+        $buttonData = include_once dirname(__FILE__) . '/src/blocks/button/block.php';
 
         $blocks = [
             'background' => [
@@ -127,6 +142,11 @@ class Editor
                 'attributes' => $counterData['attributes'],
                 'template' => 'counter',
                 'title' => 'Counter',
+            ],
+            'button' => [
+                'attributes' => $buttonData['attributes'],
+                'template' => 'button',
+                'title' => 'button',
             ],
             'grid' => [
                 'attributes' => array(

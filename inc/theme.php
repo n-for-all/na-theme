@@ -12,6 +12,8 @@ class Theme
     private $search = [];
     private $modules = [];
     private $module_classes = [];
+    public $svgTool = null;
+    public $imageTool = null;
 
     private $cache_id = false;
 
@@ -36,6 +38,8 @@ class Theme
         );
 
 
+        $this->svgTool = new \NaTheme\Inc\Tools\Svg\Svg();
+        $this->imageTool = new \NaTheme\Inc\Tools\Image\Image();
         $this->actions();
         $this->filters();
         $this->shortcodes();
@@ -170,6 +174,8 @@ class Theme
                 }
             )
         );
+
+        add_post_type_support('page', 'excerpt');
     }
     protected function shortcodes()
     {
@@ -226,23 +232,6 @@ class Theme
             },
             11
         );
-
-        add_filter('upload_mimes', function ($mimes = []) {
-            $mimes['svg'] = 'image/svg+xml';
-            $mimes['svgz'] = 'image/svg+xml';
-            return $mimes;
-        }, 99);
-
-        // Allow SVG
-        add_filter('wp_check_filetype_and_ext', function ($data, $file, $filename, $mimes) {
-            $filetype = wp_check_filetype($filename, $mimes);
-
-            return [
-                'ext'             => $filetype['ext'],
-                'type'            => $filetype['type'],
-                'proper_filename' => $data['proper_filename']
-            ];
-        }, 10, 4);
     }
 
     public function setup()
@@ -1205,11 +1194,11 @@ class Theme
         switch ($part) {
             case 'container-fluid':
             case 'container':
-                echo '<div class="row"><div class="col-md-12">';
+                echo '<div class="row"><div class="col-xl-12">';
                 break;
             case 'container boxed-offset':
             case 'boxed-offset':
-                echo '<div class="row"><div class="col-md-10 offset-md-1 col-xs-12">';
+                echo '<div class="row"><div class="col-xl-10 offset-xl-1 col-12">';
                 break;
             default:
                 break;
@@ -1424,9 +1413,6 @@ add_action(
     }
 );
 
-$naTheme->register('shortcodes', get_template_directory() . '/inc/shortcodes/shortcodes.php');
-$naTheme->register('twitter', get_template_directory() . '/inc/social/twitter.php');
-
 $naTheme->registerClass('services', '\NaTheme\Inc\Services\Services');
 $naTheme->registerClass('team', '\NaTheme\Inc\Team\Team');
 $naTheme->registerClass('events', '\NaTheme\Inc\Events\Shortcode');
@@ -1435,12 +1421,9 @@ $naTheme->registerClass('menu', '\NaTheme\Inc\Menu\Shortcode');
 $naTheme->registerClass('healthcare', '\NaTheme\Inc\Healthcare\Healthcare');
 $naTheme->registerClass('testimonials', '\NaTheme\Inc\Testimonials\Shortcode');
 $naTheme->registerClass('map', '\NaTheme\Inc\Map\Map');
-$naTheme->registerClass('svg', '\NaTheme\Inc\Tools\Svg\Svg');
-$naTheme->registerClass('image', '\NaTheme\Inc\Tools\Image\Image');
 
 
 $naTheme->register('slider', get_template_directory() . '/inc/slider/loader.php');
-$naTheme->register('instagram', get_template_directory() . '/inc/social/instagram.php');
 
 $naTheme->register('case-studies', get_template_directory() . '/inc/case-studies/shortcode.php');
 $naTheme->register('carousel', get_template_directory() . '/inc/carousel/shortcode.php');

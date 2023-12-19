@@ -15,7 +15,7 @@ global $naTheme, $post;
 $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 get_header(); ?>
 
-<div class="wrap pt-5 pb-5">
+<div class="pt-5 pb-5 wrap">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -27,11 +27,13 @@ get_header(); ?>
             </div>
         </div>
     </div>
-    <div id="primary" class="content-area container">
+    <div id="primary" class="container content-area">
         <main id="main" class="site-main search-products" role="main">
             <div class="row">
                 <div class="col-md-12">
                     <?php
+                    global $wp_query;
+                    $posts = $wp_query->get_posts();
                     if (have_posts()) :
                         /* Start the Loop */
                         $args = array(
@@ -43,42 +45,41 @@ get_header(); ?>
                         $operator = 'and'; // 'and' or 'or'
 
                         $post_types = get_post_types($args, $output, $operator);
+
+                        $values = array();
                         foreach ($post_types as $type => $post_type) {
-                            if (!in_array($type, array('product'))) {
-                                continue;
-                            }
-                            if (have_posts()) {
-                    ?>
-                                <h2 class="block-title"><?php echo $post_type->label; ?></h2>
+                            $values[$type] = ['label' => $post_type->label, 'posts' => array_filter($posts, function ($post) use ($type) {
+                                return $post->post_type == $type;
+                            })];
+                        }
+                        foreach ($values as $type => $value) {
+                            if (count($value['posts']) > 0) { ?>
+                                <h2 class="text-2xl block-title"><?php echo $value['label']; ?></h2>
                                 <div class="block-content block-type-<?php echo $type; ?>">
                                     <?php
-                                    while (have_posts()) {
-                                        the_post();
-                                        if ($type == get_post_type()) {
-                                            get_template_part('template-parts/content', 'search');
-                                        }
+                                    foreach ($value['posts'] as $post) {
+                                        setup_postdata($post);
+                                        get_template_part('template-parts/content', 'search');
                                     }
-                                    rewind_posts();
                                     ?>
-                                </div>
-                        <?php
-                            }
-                        }
+                                </div><?php
+                                    }
+                                }
 
-                        the_posts_pagination(array(
-                            'prev_text' =>  '<span class="screen-reader-text">' . __('Previous page', 'twentyseventeen') . '</span>',
-                            'next_text' => '<span class="screen-reader-text">' . __('Next page', 'twentyseventeen') . '</span>',
-                            'before_page_number' => '<span class="meta-nav screen-reader-text">' . __('Page', 'twentyseventeen') . ' </span>',
-                        ));
+                                the_posts_pagination(array(
+                                    'prev_text' =>  '<span class="screen-reader-text">' . __('Previous page', 'twentyseventeen') . '</span>',
+                                    'next_text' => '<span class="screen-reader-text">' . __('Next page', 'twentyseventeen') . '</span>',
+                                    'before_page_number' => '<span class="meta-nav screen-reader-text">' . __('Page', 'twentyseventeen') . ' </span>',
+                                ));
 
-                    else : ?>
+                            else : ?>
                         <p>
                             <?php _e('Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'twentyseventeen'); ?>
                         </p>
                     <?php
-                        get_search_form();
+                                get_search_form();
 
-                    endif;
+                            endif;
                     ?>
                 </div>
             </div>

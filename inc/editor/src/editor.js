@@ -1,6 +1,7 @@
 import "./blocks/background/index";
 import "./blocks/linkwithicon/index";
 import "./blocks/counter/index";
+import "./blocks/button/index";
 import "./blocks/accordion/index";
 import "./blocks/grid/block";
 import "./blocks/grid/column/block";
@@ -8,4 +9,4 @@ import "./blocks/container/block";
 import "./blocks/row/block";
 import "./blocks/column/block";
 import "./blocks/tabs/block";
-import "./blocks/tab/block";
+import "./blocks/tab/block";  

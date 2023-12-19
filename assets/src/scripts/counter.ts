@@ -4,7 +4,7 @@ export const counter = (duration, callback) => {
     let currentTime = Date.now();
 
     //pass the current timestamp to the step function
-    const step = (currentTime) => {
+    const step = () => {
         //if the start time is null, assign the current time to startTime
         if (!startTime) {
             startTime = currentTime;

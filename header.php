@@ -46,6 +46,7 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
         @import url('<?php echo esc_url(get_template_directory_uri()); ?>/assets/css/mobile-reverse.css') only screen and (min-width: <?php echo $naTheme->mobile_breakpoint ? $naTheme->mobile_breakpoint : '767px' ?>);
         @import url('<?php echo esc_url(get_template_directory_uri()); ?>/assets/css/mobile.css') only screen and (max-width: <?php echo $naTheme->mobile_breakpoint ? $naTheme->mobile_breakpoint : '767px' ?>);
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body <?php body_class(implode(' ', $body_class)); ?>>
@@ -53,7 +54,7 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
     ?>
         <span class="loading-overlay" style="background-image:url(<?php echo \add_query_arg( '_', uniqid(), $naTheme->loading_logo ); ?>)"></span>
     <?php endif; ?>
-    <header id="masthead" class="site-header <?php echo $naTheme->navbar; ?> <?php echo $naTheme->menu_dark == 1 ? 'dark' : ''; ?>" role="banner">
+    <header id="masthead" class="site-header <?php echo $naTheme->navbar; ?> bg-white <?php echo $naTheme->menu_dark == 1 ? 'dark' : ''; ?>" role="banner">
         <!-- Start navbar -->
         <?php if (trim($naTheme->top_bar) != '' || has_nav_menu('social')) : ?>
             <?php

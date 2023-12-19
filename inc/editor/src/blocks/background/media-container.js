@@ -73,7 +73,7 @@ function PlaceholderContainer({ className, noticeOperations, noticeUI, mediaUrl,
 }
 
 function MediaContainer(props, ref) {
-	const { className, verticalAlignment, commitWidthChange, imageFill, isSelected, mediaId, mediaPosition, mediaUrl, mediaWidth, onSelectMedia, onWidthChange, noRepeat } = props;
+	const { className, verticalAlignment, commitWidthChange, imageFill, isSelected, mediaId, mediaPosition, mediaUrl, mediaWidth, onSelectMedia, onWidthChange, noRepeat, imageClassName } = props;
 
 	const isTemporaryMedia = !mediaId && isBlobURL(mediaUrl);
 
@@ -99,7 +99,7 @@ function MediaContainer(props, ref) {
 
 		let image = null;
 		image = (
-			<div className="wp-block-background-image" style={backgroundStyles}>
+			<div className={"wp-block-background-image " + imageClassName} style={backgroundStyles}>
 				<div className="wp-block-background-text">
 					<PlaceholderContainer {...props} />
 				</div>

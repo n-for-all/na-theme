@@ -47,6 +47,11 @@ app.ready(function () {
 		popup.addEventListener("DOMMouseScroll", stopPropagation);
 
 		document.body.classList.add("na-popup-active");
+
+		var close = popup.querySelector(".close-popup");
+		if (close) {
+			close.addEventListener("click", onClose);
+		}
 	}
 
 	function showPopupAjax(id, element) {
@@ -80,6 +85,10 @@ app.ready(function () {
 		} else {
 			popupContent = popup.querySelector(".popup-content");
 			popupContent.style.maxHeight = window.innerHeight - 40 + "px";
+			var close = popup.querySelector(".close-popup");
+			if (close) {
+				close.addEventListener("click", onClose);
+			}
 		}
 
 		var formData = new FormData();
@@ -106,7 +115,7 @@ app.ready(function () {
 				}
 			})
 			.catch((error) => {
-                console.error(error);
+				console.error(error);
 				onClose();
 			});
 

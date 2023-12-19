@@ -285,14 +285,10 @@ class Theme {
 				}
 
 				if (window.location.hash == "#!search") {
-					document.body.classList.add("search-closed");
-					document.body.classList.remove("search-active");
-
-					setTimeout(function () {
-						document.body.classList.remove("search-closed");
-					}, 1000);
-
+					document.body.classList.add("search-active");
 					return;
+				} else if (document.body.classList.contains("search-active")) {
+					document.body.classList.remove("search-active");
 				}
 
 				let hash = window.location.hash?.replace("#!", "").replace("#", "");
@@ -332,17 +328,6 @@ class Theme {
 			elm.addEventListener("click", function () {
 				document.querySelector(".content").classList.remove("active");
 				location.hash = "#home";
-			});
-		}
-		var elms = document.querySelectorAll('a[href="#search"]');
-		if (elms.length) {
-			[].forEach.call(elms, function (elm) {
-				elm.addEventListener("click", function (e) {
-					e.preventDefault();
-					document.body.classList.add("search-active");
-					document.body.classList.remove("search-closed");
-					return false;
-				});
 			});
 		}
 

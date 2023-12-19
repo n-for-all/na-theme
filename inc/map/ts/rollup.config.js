@@ -25,6 +25,7 @@ module.exports = {
 			tsconfig: path.resolve(__dirname, "./tsconfig.json"),
 		}),
 		replace({
+            "process.env.NODE_ENV": JSON.stringify(production ? "production" : "development"),
 			ENVIRONMENT: JSON.stringify(production ? "production" : "development"),
 			preventAssignment: true,
 		}),

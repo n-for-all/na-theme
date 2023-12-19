@@ -14,7 +14,7 @@ $terms = get_terms(array(
 
 <div id="primary" class="content-area">
     <main id="main" class="site-main blog-list" role="main">
-        <div class="blog-list-container container">
+        <div class="container blog-list-container">
             <div class="row">
                 <div class="col-md-3">
                     <div class="blog-sidebar sidebar">
@@ -44,7 +44,7 @@ $terms = get_terms(array(
                         // Start the loop.
                         while (have_posts()) : the_post();
                         ?>
-                            <article id="<?php echo $post_id; ?>" class="<?php echo $post_id; ?> post blog-post">
+                            <article id="<?php echo get_the_ID(); ?>" class="post-<?php echo get_the_ID(); ?> post blog-post">
                                 <div class="entry-content">
                                     <?php echo get_the_post_thumbnail($post->ID, 'large'); ?>
                                     <h3 class="post-title"><a href="<?php echo get_permalink(); ?>"><?php echo get_the_title(); ?></a></h3>

@@ -23,6 +23,9 @@
 		},
 		"imageFill": {
 			"type": "boolean"
+		},
+		"imageClassName": {
+			"type": "string"
 		}
 	},
 	"supports": {

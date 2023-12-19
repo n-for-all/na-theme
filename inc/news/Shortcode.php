@@ -19,19 +19,12 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     public function actions()
     {
         add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
-        add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
     }
 
     public function shortcodes()
     {
         add_shortcode('news-list', array(&$this, 'shortcode'));
         add_shortcode('news', array(&$this, 'shortcodeCarousel'));
-    }
-
-    public function enqueue_scripts()
-    {
-        wp_enqueue_style('natheme-news-css', get_template_directory_uri() . '/inc/news/css/style.css');
     }
 
     public function on_term_add($taxonomy)
@@ -56,6 +49,16 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
         </div>
     <?php
     }
+    /**
+     * On Term Update
+     *
+     * @date 2023-12-10
+     *
+     * @param WP_Term $term
+     * @param string $taxonomy
+     *
+     * @return void
+     */
     public function on_term_update($term, $taxonomy)
     {
         if ($taxonomy != 'news') {
@@ -84,6 +87,18 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
         </tr>
     <?php
     }
+
+    /**
+     * Get Meta
+     *
+     * @date 2023-12-10
+     *
+     * @param string  $post_id
+     * @param string  $group
+     * @param boolean $sanitize
+     *
+     * @return void
+     */
     protected function get_meta($post_id, $group = '', $sanitize = false)
     {
         $meta = parent::get_meta($post_id, $group);
@@ -110,6 +125,7 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     }
     public function init()
     {
+        unregister_post_type('article');
         $labels = array(
             'name'               => _x('News', 'post type general name', 'na-theme'),
             'singular_name'      => _x('News', 'post type singular name', 'na-theme'),
@@ -135,6 +151,7 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
             'show_ui'            => true,
             'show_in_menu'       => true,
             'query_var'          => true,
+            'has_archive'        => 'articles',
             'rewrite'            => array('slug' => 'article'),
             'capability_type'    => 'post',
             'has_archive'        => true,
@@ -203,6 +220,8 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
             'type' => 'carousel',
             'height' => 'auto',
             'slider' => '',
+            'no-arrows' => false,
+            'label' => '',
             'category' => '',
             'outer' => false,
             'columns' => '1',
@@ -244,31 +263,39 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
             while ($query->have_posts()) {
                 global $post;
                 $query->the_post();
-                $style = array();
-                if (has_post_thumbnail()) {
-                    $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
-                    $style[] = "background-image:url($image[0])";
-                }
-                $inner = '';
+
                 $outer = '';
 
-                $label = $atts['label'] != '' ? $atts['label'] : __('Learn more');
+                $label = $atts['label'] != '' ? $atts['label'] : __('Read more');
+                $image = "";
+                if (has_post_thumbnail()) {
+                    $thumbnail = wp_get_attachment_image_src(get_post_thumbnail_id(), 'large');
+                    $image = \sprintf('<div alt="%s" style="%s" class="w-full h-56 bg-center bg-cover"></div>', get_the_title(), "background-image:url($thumbnail[0])");
+                }
+                $class = $atts['slider'] == 1 ? 'w-full' : '';
 
                 $dates = $this->get_article_date(get_the_ID());
-                $outer = sprintf('<div class="article-header">
-                        <h3 class="article-title"><a href="%s">%s</a></h3><div class="article-meta">%s</div>
-                    </div>', get_permalink(), get_the_title(), $dates);
-                $has_content = trim(get_the_content()) != '';
-                $link =  sprintf('<a href="%s" class="btn btn-default article-button">%s</a>', get_permalink(), $label);
-
-
-                $has_image = has_post_thumbnail() ? 'has-image' : '';
-                $excerpt = $post->post_excerpt;
-                $output[] = sprintf('<div class="article ' . $has_image . '">
-                <div class="article-inner %s">%s%s
+                $outer = sprintf('
+                <article class="overflow-hidden transition border border-gray-100 rounded-3xl %s">
                     %s
-                </div>
-                <div class="article-image"><span style="%s" class="image"></span></div></div>', $has_content ? '' : 'no-content', $outer,  sprintf('<div class="article-content">%s</div>', $excerpt), $link, implode(";", $style));
+                    <div class="p-4 bg-white sm:p-6">
+                        <time datetime="2022-10-10" class="block text-xs text-gray-500">%s</time>
+
+                        <a href="%s">
+                            <h3 class="mt-1 text-xl font-semibold text-gray-900">%s</h3>
+                        </a>
+
+                        <div class="mt-2 text-gray-500 line-clamp-3 text-sm/relaxed">%s</div>
+                        <a href="%s" class="inline-flex items-center gap-1 mt-4 text-sm font-medium text-blue-600 group">
+                            %s
+                            <span aria-hidden="true" class="block transition-all group-hover:ms-0.5 rtl:rotate-180">
+                            →
+                            </span>
+                        </a>
+                    </div>
+                </article>
+                ', $class, $image, $dates, get_permalink(), get_the_title(), get_the_excerpt(), get_permalink(), $label);
+                $output[] = $outer;
             }
         }
         wp_reset_postdata();
@@ -278,8 +305,9 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
                 'autoplay' => $atts['autoplay'],
                 'bullets' => $atts['bullets'],
                 'pagination' => $atts['pagination'],
+                'no-arrows' => $atts['no-arrows'] ?? false,
                 'columns' => $atts['columns'] ?? 3,
-                'minWidth' => $atts['min-width'],
+                'minWidth' => $atts['minWidth'],
                 'vertical' => $atts['vertical'],
                 'class' => sprintf("na-news na-news-columns-%s", $atts['columns']),
                 'type' => 'carousel',
@@ -291,7 +319,8 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
             }
             return $slider->addSlider($slides, $settings);
         }
-        return $output = sprintf('<ul class="na-news na-news-columns-%s">%s</ul>', $atts['columns'], '<li>' . implode('</li><li>', $output) . '</li>');
+
+        return sprintf('<div class="na-news na-news-columns-%s grid gap-3 grid-cols-1 lg:grid-cols-%s w-full">%s</div>', $atts['columns'], $atts['columns'], implode('', $output));
     }
     public function shortcode($atts)
     {
@@ -427,6 +456,9 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     public function get_article_date($id)
     {
         $meta = $this->get_meta($id, 'news');
+        if (!$meta || $meta == '') {
+            return '';
+        }
         $dates = '';
         switch ($meta['type']) {
             case 'range':

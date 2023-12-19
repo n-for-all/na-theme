@@ -19,7 +19,7 @@ gulp.task("sass:watch", function () {
 gulp.task("sass", function (done) {
 	var sass_files = ["./scss/*.scss", "./scss/**/*.scss"];
 	var src = null;
-	if (gutil.env && gutil.env.NODE_ENV == "development") {
+	if (process.env.dev == "true") {
 		src = gulp
 			.src(sass_files)
 			.pipe(sourcemaps.init({ largeFile: true }))
@@ -42,42 +42,51 @@ gulp.task("sass", function (done) {
 });
 
 gulp.task("rollup:build-dev", function (done) {
-	//watch each alone so we don't have to build everything on change
 	return new Promise(gulp.series("rollup:watch"));
-	// gulp.watch(["./scripts/**/**/*"], gulp.series("rollup:watch")).on("change", function () {
-	// 	gutil.env.NODE_ENV = "development";
-	// });
 });
 
 gulp.task("rollup:build", function (done) {
 	var rollupConfig = require(path.resolve(__dirname, "./rollup.config.js"));
-	rollup(rollupConfig)
-		.then((bundle) => {
-			console.log("Bundle...");
-			bundle
-				.write(rollupConfig.output)
-				.then((e) => {
-					done();
-				})
-				.catch((e) => {
-					console.error(e);
-					done();
-				});
-		})
-		.catch((e) => {
-			console.error(e);
-			done();
-		});
+    console.log(rollupConfig);
+	rollupConfig.map((conf) => {
+		rollup(conf)
+			.then((bundle) => {
+                console.log('output', conf.output);
+				bundle
+					.write(conf.output)
+					.then((e) => {
+						done();
+					})
+					.catch((e) => {
+						console.error(e);
+						done();
+					});
+			})
+			.catch((e) => {
+				console.error('Error', e);
+				done();
+			});
+	});
 });
 
 gulp.task("rollup:watch", function (done) {
 	console.log("Watching...");
 	var rollupConfig = require(path.resolve(__dirname, "./rollup.config.js"));
 	const watcher = watch(rollupConfig);
-	watcher.on("event", ({ result }) => {
-		if (result) {
-			result.close();
-			done();
+	watcher.on("event", (out) => {
+		if (out) {
+			if (out.code == "ERROR") {
+				console.error(out.error);
+				return;
+			}
+			const { result } = out;
+			if (result) {
+				console.log("saving...");
+				result.close && result.close();
+				done();
+			}
+		} else {
+			console.log("failed saving!");
 		}
 	});
 });
@@ -85,24 +94,12 @@ gulp.task("rollup:watch", function (done) {
 gulp.task("dev", function (done) {
 	console.log("Welcome...");
 
-	if (!gutil.env.NODE_ENV) {
-		gutil.env = {
-			NODE_ENV: "development",
-		};
-	}
-
 	process.env.dev = "true";
 	return new Promise(gulp.parallel("sass:watch", "rollup:build-dev"));
 });
 
 gulp.task("build", function () {
 	console.log("Building...");
-
-	if (!gutil.env.NODE_ENV) {
-		gutil.env = {
-			NODE_ENV: "production",
-		};
-	}
 
 	return new Promise(gulp.parallel("sass", "rollup:build"));
 });

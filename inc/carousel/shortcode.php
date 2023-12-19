@@ -19,8 +19,6 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
     public function actions()
     {
         add_action('init', array($this, 'init'));
-        add_action('wp_enqueue_scripts', array($this, 'scripts'));
-        // add_action('wp_footer', array($this, 'inline_scripts'));
 
         add_action('wp_ajax_carousel', array($this, 'get_carousel'));
         add_action('wp_ajax_nopriv_carousel', array($this, 'get_carousel'));
@@ -31,13 +29,7 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
         add_shortcode('carousel', array($this, 'shortcode'));
     }
 
-    public function scripts()
-    {
-        wp_enqueue_style('carousel-shortcode', get_template_directory_uri() . '/inc/carousel/css/carousel.css', array(), '1.0.0', 'screen');
-        wp_enqueue_script('carousel-shortcode-js', get_template_directory_uri() . '/inc/carousel/js/carousel.js', array(), '1.0.0');
-    }
-
-    public function add_img_column($columns) 
+    public function add_img_column($columns)
     {
         $columns['img'] = 'Image';
         return $columns;
@@ -213,6 +205,7 @@ class Shortcode extends \NaTheme\Inc\Metaboxes\Metabox
 
 class PostImage extends \NaTheme\Inc\Metaboxes\Admin\PostColumn
 {
+    private $meta_box;
     public function set_meta_box($meta_box)
     {
         $this->meta_box = $meta_box;

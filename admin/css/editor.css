@@ -513,3 +513,14 @@
     transform: translate(-50%, -50%); }
   [data-type="na-theme-blocks/background"] .wp-block-background-image {
     min-height: 250px; }
+
+[data-type="na-theme-blocks/button"] {
+  position: relative;
+  background-color: #333;
+  color: #fff;
+  display: inline-block;
+  padding: 0.5rem 2rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  max-height: 40px;
+  overflow: auto; }

@@ -1,6 +1,7 @@
-import { YouTube } from "youtube";
+import "../../../../assets/src/node_modules/hammerjs/hammer.js";
+import { YouTube } from "./youtube";
 
-declare var window: Window & typeof globalThis, Hammer: any;
+declare let window: Window & typeof globalThis, Hammer: any;
 
 class NaSliderData {
 	set(element, key, value) {
@@ -97,22 +98,22 @@ class NaSliderNavigation {
 	pagination: number;
 	loop: boolean;
 	bullets: NaSliderBullets;
-    infinite: boolean;
+	infinite: boolean;
 	onCreate: (index: number) => void;
 	total: number;
 	constructor(slider: NaSlider, pagination = 0, columns = 1, initial = 0, loop = false, infinite = false, onCreate = (index: number) => {}) {
 		this.slider = slider;
-        this.onCreate = onCreate;
+		this.onCreate = onCreate;
 		if (!this.slider) {
 			return;
 		}
 		this.loop = loop;
-        this.infinite = infinite;
+		this.infinite = infinite;
 		this.sliderElement = this.slider.getElement();
 		this.columns = columns;
 		this.current = initial;
 		this.pagination = pagination;
-        this.total = this.slider.getTotalSlides();
+		this.total = this.slider.getTotalSlides();
 
 		this.bullets = new NaSliderBullets(slider, pagination, columns, initial);
 		let prev = this.slider.getElement().querySelector('.na-slider-actions.prev, [action="prev"]');
@@ -185,7 +186,7 @@ class NaSliderNavigation {
 		if (this.pagination == 1) {
 			index = i * this.columns;
 			if (i > this.slider.getTotalSlides() / this.columns || i < 0) {
-                if (i < 0) {
+				if (i < 0) {
 					return;
 				}
 				return;
@@ -229,13 +230,13 @@ class NaSlider {
 	current: number = 0;
 	scroll: boolean = false;
 	slides = [];
-	
+
 	innerSlider: any;
 	navigation: NaSliderNavigation;
 	data: NaSliderData;
 	animationframe: number;
 	resizeObserver: ResizeObserver;
-    private _stop: boolean = false;
+	private _stop: boolean = false;
 	private _fpsTime: number = 0;
 	/**
 	 * __construct
@@ -281,7 +282,7 @@ class NaSlider {
 			type: "normal",
 			pagination: 0,
 			initial: 0,
-            loop: 1,
+			loop: 1,
 			infinite: 0,
 			columns: 1,
 			autoplay: 0,
@@ -347,9 +348,9 @@ class NaSlider {
 		}, 100);
 	}
 	maxHeight() {
-		var h = 0; 
+		var h = 0;
 		this.slides.forEach((slide) => {
-            slide.style.minHeight = "0";
+			slide.style.minHeight = "0";
 			if (slide.clientHeight > h) {
 				h = slide.clientHeight;
 			}
@@ -661,19 +662,19 @@ class NaSlider {
 					}
 					//@ts-ignore
 					this.element.addEventListener("active-slide", ((event: CustomEvent) => {
-                        let index = event.detail[0];
+						let index = event.detail[0];
 						if (slider && slider.active() != index) slider.to(index);
 						return false;
 					}) as EventListener);
 					//@ts-ignore
 					sync_slider.addEventListener("active-slide", ((event: CustomEvent) => {
-                        let index = event.detail[0];
+						let index = event.detail[0];
 						if (this.navigation.getCurrent() != index) this.to(index);
 						return false;
 					}) as EventListener);
 					//@ts-ignore
 					sync_slider.addEventListener("click-slide", ((event: CustomEvent) => {
-                        let index = event.detail[0];
+						let index = event.detail[0];
 						if (this.navigation.getCurrent() != index) this.to(index);
 						return false;
 					}) as EventListener);
@@ -721,20 +722,20 @@ class NaSlider {
 			let height = data.element.offsetHeight || data.element.innerHeight;
 			let elmHeight = data.offsetHeight || data.innerHeight;
 
-			if (width !== elmWidth || height !== elmHeight) {
+			if (width !== elmWidth) {
 				data.offsetWidth = width;
 				data.offsetHeight = height;
 				data.callback();
 			}
 		};
 
-		if ("ResizeObserver" in window) { 
+		if ("ResizeObserver" in window) {
 			let prevWidth = 0;
 			this.resizeObserver = new ResizeObserver((entries) => {
 				for (const entry of entries) {
 					const width = entry.borderBoxSize?.[0].inlineSize;
 					if (typeof width === "number" && width !== prevWidth) {
-						prevWidth = width; 
+						prevWidth = width;
 						callback();
 					}
 				}

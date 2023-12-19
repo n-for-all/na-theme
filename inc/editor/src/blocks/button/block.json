@@ -1,0 +1,33 @@
+{
+	"apiVersion": 2,
+	"name": "na-theme-blocks/button",
+	"title": "Button",
+	"category": "na-theme",
+	"description": "Html button link",
+	"keywords": ["button", "link"],
+	"textdomain": "default",
+	"attributes": {
+        "label": {
+			"type": "string",
+			"default": "Read More"
+		},
+        "className": {
+			"type": "string",
+			"default": ""
+		},
+        "href": {
+			"type": "string",
+			"default": "#"
+		},
+        "atts": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"html": true
+	},
+	"editorStyle": "wp-block-button-link-editor",
+	"style": "wp-block-button-link"
+}

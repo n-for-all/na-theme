@@ -1,0 +1,9 @@
+{
+	"frontend": {
+		"ts": {
+			"src": {
+				"slider": "scripts/slider.ts"
+			}
+		}
+	}
+}

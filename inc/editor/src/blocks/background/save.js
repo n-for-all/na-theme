@@ -18,11 +18,11 @@ const DEFAULT_MEDIA_WIDTH = 50;
 
 export default function save({ attributes }) {
 
-	const { mediaPosition, mediaUrl, mediaWidth, mediaId, verticalAlignment, imageFill } = attributes;
+	const { mediaPosition, mediaUrl, mediaWidth, mediaId, verticalAlignment, imageFill, imageClassName } = attributes;
     const backgroundStyles = imageFillStyles(mediaUrl, imageFill, verticalAlignment);
 	let image = null;
 	image = (
-		<div className="wp-block-background-image" style={backgroundStyles}>
+		<div className={"wp-block-background-image " + imageClassName} style={backgroundStyles}>
 			<div className="wp-block-background-text">
 				<InnerBlocks.Content />
 			</div>

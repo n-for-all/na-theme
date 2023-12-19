@@ -67,10 +67,20 @@ gulp.task("rollup:watch", function (done) {
     console.log("Watching...");
 	var rollupConfig = require(path.resolve(__dirname, "./rollup.config.js"));
 	const watcher = watch(rollupConfig);
-	watcher.on("event", ({ result }) => {
-		if (result) {
-			result.close();
-            done();
+	watcher.on("event", (out) => {
+		if (out) {
+			if (out.code == "ERROR") {
+				console.error(out.error);
+				return;
+			}
+			const { result } = out;
+			if (result) {
+				console.log("saving...");
+				result.close && result.close();
+				done();
+			}
+		} else {
+			console.log("failed saving!");
 		}
 	});
 });

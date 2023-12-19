@@ -6,8 +6,8 @@
 	"author": "Naji Amer",
 	"license": "MIT",
 	"scripts": {
-		"build": "wp-scripts build & node-sass --include-path node_modules -rw src/sass/editor.scss -o ../../admin/css & node-sass --include-path node_modules -rw src/sass/styles.scss -o ../../assets/css/blocks",
-		"dev:watch": "wp-scripts start & node-sass --include-path node_modules -rw src/sass/editor.scss -o ../../admin/css & node-sass --include-path node_modules -rw src/sass/styles.scss -o ../../assets/css/blocks",
+		"build": "wp-scripts build ./src/editor.js --output-path=../../admin/js/ & node-sass --include-path node_modules -rw src/sass/editor.scss -o ../../admin/css & node-sass --include-path node_modules -rw src/sass/styles.scss -o ../../assets/css/blocks",
+		"dev:watch": "wp-scripts start ./src/editor.js --output-path=../../admin/js/ & node-sass --include-path node_modules -rw src/sass/editor.scss -o ../../admin/css & node-sass --include-path node_modules -rw src/sass/styles.scss -o ../../assets/css/blocks",
 		"sass:watch": "node-sass --include-path node_modules -rw src/sass/editor.scss -o ../../admin/css & node-sass --include-path node_modules -rw src/sass/styles.scss -o ../../assets/css/blocks"
 	},
 	"devDependencies": {
