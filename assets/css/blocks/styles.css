@@ -3,21 +3,15 @@
   margin-right: 0; }
 
 a.wp-block-background-text {
-  display: block;
-  padding: 2rem;
-  background-color: #ffffff26;
+  display: flex;
   position: relative; }
   a.wp-block-background-text .wp-block-background-image {
     width: 60px;
     height: 60px;
     background-repeat: no-repeat;
     background-position: center;
-    left: 2rem;
-    top: 2rem;
-    position: absolute; }
+    margin-right: 1rem; }
   a.wp-block-background-text .block-title {
-    height: 60px;
-    margin-left: 70px;
     margin-bottom: 1rem;
     display: flex;
     align-items: center; }
@@ -25,11 +19,7 @@ a.wp-block-background-text {
     font-weight: bold;
     font-size: 1rem !important; }
   a.wp-block-background-text .block-bottomcontent {
-    font-weight: 300;
-    font-size: 0.7rem !important;
-    line-height: 1.2;
     padding-top: 0.6rem;
-    margin: 0;
     border-top: 1px solid #ffffff29; }
 
 .wp-block-na-theme-blocks-accordion {

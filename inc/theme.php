@@ -52,10 +52,10 @@ class Theme
             if (is_admin()) {
                 $strings =  (array) get_option('_na_translations');
                 foreach ($strings as $string) {
-                    pll_register_string('na-theme', $string);
+                    \pll_register_string('na-theme', $string);
                 }
             }
-            if (!is_admin() && pll_current_language() == pll_default_language()) {
+            if (!is_admin() && \pll_current_language() == \pll_default_language()) {
                 $strings = new \ArrayObject();
                 add_filter(
                     'gettext',
@@ -258,7 +258,7 @@ class Theme
          * hard-coded <title> tag in the document head, and expect WordPress to
          * provide it for us.
          */
-        add_theme_support('title-tag');
+        // add_theme_support('title-tag');
 
         /**
          * Enable support for Post Thumbnails on posts and pages.
@@ -307,6 +307,8 @@ class Theme
          * This theme styles the visual editor to resemble the theme style,
          * specifically font, colors, icons, and column width.
          */
+        new \NaTheme\Inc\Metaboxes\Handler();
+        new \NaTheme\Inc\Metaboxes\Section();
     }
 
     /**
@@ -629,16 +631,12 @@ class Theme
     public function scripts()
     {
         wp_deregister_script('jquery');
-        //bootstrap styles for this theme
-        wp_enqueue_style('na_theme-bootstrap', get_template_directory_uri() . '/assets/css/bootstrap.min.css', array(), '1.0');
+        //bootstrap grid styles for this theme
+        wp_enqueue_style('na_theme-bootstrap', get_template_directory_uri() . '/assets/css/bootstrap-grid.min.css', array(), '1.0');
 
         // Add custom fonts, used in the main stylesheet
         $fonts = $this->fonts_url();
         wp_enqueue_style('na_theme-fonts', $fonts, array(), null);
-
-        //main styles for this theme
-
-        wp_enqueue_style('main-edge', get_template_directory_uri() . '/assets/css/edge.css', array(), '1.0');
 
         // font awesome icons
         wp_enqueue_style('font-awesome', get_template_directory_uri() . '/assets/css/font-awesome.min.css', array(), '3.2');
@@ -655,17 +653,12 @@ class Theme
             wp_enqueue_style('na_woocommerce', get_template_directory_uri() . '/assets/css/woocommerce.css', array('na_theme-main', 'woocommerce-general'), '1.0');
         }
 
-        if (function_exists('pll_current_language') && pll_current_language() == "ar") {
+        if (function_exists('pll_current_language') && \pll_current_language() == "ar") {
             wp_enqueue_style('na_theme-rtl', get_template_directory_uri() . '/rtl.css', '1.0');
         }
         if (is_singular() && comments_open() && get_option('thread_comments')) {
             wp_enqueue_script('comment-reply');
         }
-
-        //main scripts
-        wp_enqueue_script('bootstrap', get_template_directory_uri() . '/assets/js/bootstrap.min.js', array(), '1.0.0', true);
-
-
 
         wp_enqueue_script('na_theme-scripts', get_template_directory_uri() . '/assets/js/theme.js', array(), '1.0.0', true);
         wp_enqueue_script('na_theme-custom', get_template_directory_uri() . '/assets/js/custom.js', array('na_theme-scripts'), '1.0.0', true);
@@ -686,7 +679,7 @@ class Theme
             )
         );
 
-        wp_enqueue_style('na_theme-main', get_template_directory_uri() . '/assets/css/style.css', array('na_theme-bootstrap'), '1.0');
+        wp_enqueue_style('na_theme-main', get_template_directory_uri() . '/assets/css/style.css', array(), '1.0');
 
         // Load our main stylesheet.
         wp_enqueue_style('na_theme-style', get_stylesheet_uri(), array('na_theme-main'));
@@ -719,8 +712,6 @@ class Theme
             global $pagenow;
 
             wp_enqueue_style('na_theme-admin', get_template_directory_uri() . '/admin/css/admin.css', array(), '1.0');
-            wp_enqueue_script('na_theme-admin-scripts', get_template_directory_uri() . '/admin/js/admin.js', array('jquery'), '1.0.0', true);
-            wp_enqueue_script('na_theme-blocks-scripts', get_template_directory_uri() . '/admin/js/app.js', array('wp-blocks', 'wp-plugins', 'wp-edit-post', 'wp-editor', 'wp-i18n', 'wp-element', 'jquery'), '1.0.0', true);
 
             $attachedMedia = [];
             if (($pagenow == 'post.php')) {
@@ -1193,12 +1184,14 @@ class Theme
         $part = $this->get_template_layout($post_id, 'container');
         switch ($part) {
             case 'container-fluid':
+                echo '<div class="mx-auto">';
+                break;
             case 'container':
-                echo '<div class="row"><div class="col-xl-12">';
+                echo '<div class="mx-auto max-w-7xl">';
                 break;
             case 'container boxed-offset':
             case 'boxed-offset':
-                echo '<div class="row"><div class="col-xl-10 offset-xl-1 col-12">';
+                echo '<div class="mx-auto max-w-7xl">';
                 break;
             default:
                 break;
@@ -1211,7 +1204,7 @@ class Theme
             case 'container-fluid':
             case 'container':
             case 'boxed-offset':
-                echo '</div></div>';
+                echo '</div>';
                 break;
             default:
                 break;
@@ -1403,7 +1396,7 @@ global $naTheme;
 $naTheme = new \NaTheme\Inc\Theme();
 new \NaTheme\Inc\User\Filter();
 new \NaTheme\Inc\Editor\Editor();
-new \NaTheme\Inc\Metaboxes\Section();
+
 
 
 add_action(
@@ -1433,5 +1426,7 @@ $naTheme->register('switcher', get_template_directory() . '/inc/switcher/loader.
 $naTheme->register('popup', get_template_directory() . '/inc/popup/loader.php');
 
 do_action('theme_init', $naTheme);
+
+
 
 ?>

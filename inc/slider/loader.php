@@ -106,7 +106,7 @@ class Slider
             'id' => 0,
             'category' => 0,
             'class' => '',
-            'container' => 'container',
+            'container' => false,
             'height' => '100%',
             'type' => '',
             'max' => false,
@@ -185,7 +185,7 @@ class Slider
                     }
 
                     $container  = '';
-                    $content = sprintf('<div class="na-slide-text">%s</div>', apply_filters('the_content', $slide->post_content));
+                    $content = sprintf('<div class="w-full na-slide-text">%s</div>', apply_filters('the_content', $slide->post_content));
                     if ($settings['container'] == 'container') {
                         if ($video_id) {
                             $container  = sprintf('<div class="container"><div class="row"><div class="col-md-6">%s</div><div class="col-md-6"><a href="#" class="play-btn-big"></a></div></div></div>', $content);
@@ -193,10 +193,10 @@ class Slider
                             $container  = sprintf('<div class="container"><div class="row"><div class="col-md-12">%s</div></div></div>', $content);
                         }
                     } else {
-                        $container = $content . '<a href="#" class="play-btn-big"></a>';
+                        $container = $content . ($video_id ? '<a href="#" class="play-btn-big"></a>': '');
                     }
 
-                    $_slides[] = array('content' => sprintf('<div style="background-image:url(%s)" class="na-slide-inner">
+                    $_slides[] = array('content' => sprintf('<div style="background-image:url(%s)" class="w-full na-slide-inner">
                         %s
     				</div>', $image, $container), 'post' => $slide, 'video' => $video_id);
                     if ($atts['max'] && $atts['max'] < count($_slides)) {

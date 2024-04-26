@@ -4,6 +4,7 @@ namespace NaTheme\Inc\Healthcare;
 
 class Division
 {
+    private $metabox;
     public function __construct()
     {
         add_action('init', array(&$this, 'init'));

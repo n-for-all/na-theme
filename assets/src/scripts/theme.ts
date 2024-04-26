@@ -45,7 +45,7 @@ class Theme {
 
 		let header = document.querySelector("#masthead");
 		this.headerOffset = 0;
-		if (header && header.classList.contains("fixed-top")) {
+		if (header && header.classList.contains("fixed") && header.classList.contains("top-0")) {
 			this.headerOffset = header.clientHeight;
 		}
 

@@ -9,26 +9,52 @@ abstract class GutenbergMetabox
     public $repeater = false;
     public $repeater_group = '';
     public $repeater_script = false;
-    private $after_save = null;
     private $term_after_save = null;
     private $metaboxes = [];
     private $sections = [];
+    private $section_name = '';
+
+    public static $instances = [];
+
 
     /**
-     * Hook into the appropriate actions when the class is constructed.
+     * Construct a new Gutenberg Metabox
+     *
+     * @date 2024-04-12
+     *
+     * @param array $post_types
+     * @param string $section_name
+     * @param string $section_title
+     * @param string $section_description
      */
-    public function __construct($post_types, $title, $description = '')
+    public function __construct($post_types, $section_name, $section_title, $section_description = '')
     {
         $this->post_types = (array)$post_types;
-        $this->title = $title;
+        $this->title = $section_name;
+        $this->section_name = $section_name;
 
-        $this->register_section('main', $title, $description);
+        if(empty($this->section_name)){
+            throw new \Exception('Section name cannot be empty');
+        }
+
+        $this->register_section($section_name, $section_title, $section_description);
         add_action('add_meta_boxes', array(&$this, 'add_meta_box'));
         add_action('init', array(&$this, 'init'));
-        add_action('admin_enqueue_scripts', array(&$this, 'admin_enqueue_scripts'));
+
         add_action('rest_api_init', array(&$this, 'rest_init'));
+
+        self::$instances[] = $this;
     }
 
+    /**
+     * Check if array is associative
+     *
+     * @date 2024-04-12
+     *
+     * @param array $arr
+     *
+     * @return boolean
+     */
     function isAssociative(array $arr)
     {
         if (array() === $arr) {
@@ -37,6 +63,13 @@ abstract class GutenbergMetabox
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
+    /**
+     * Init wordpress rest api
+     *
+     * @date 2024-04-12
+     *
+     * @return void
+     */
     public function rest_init()
     {
         register_rest_field(
@@ -61,6 +94,14 @@ abstract class GutenbergMetabox
             )
         );
     }
+
+    /**
+     * Init the metabox
+     *
+     * @date 2024-04-12
+     *
+     * @return void
+     */
     public function init()
     {
         register_meta('post', '_meta', array(
@@ -105,20 +146,6 @@ abstract class GutenbergMetabox
         }
     }
 
-    public function admin_enqueue_scripts()
-    {
-        wp_enqueue_media();
-
-        wp_enqueue_script('na-metabox-js-scripts', get_template_directory_uri() . '/inc/metaboxes/js/app.js', array('wp-blocks', 'wp-i18n', 'wp-element', 'wp-plugins', 'jquery'), '1.0.0', true);
-        wp_localize_script(
-            'na-metabox-js-scripts',
-            'naThemeMetaboxes',
-            ['sections' => $this->sections, 'metaboxes' => $this->metaboxes]
-        );
-
-        wp_register_style('na-metabox', get_template_directory_uri() . '/inc/metaboxes/css/styles.css', array(), '1.0', 'all');
-        wp_enqueue_style('na-metabox');
-    }
     /**
      * Adds the meta box container. 
      */
@@ -158,22 +185,27 @@ abstract class GutenbergMetabox
             throw new \Exception("Section $name doesn't exist, please register the section with 'register_section' function");
         }
     }
-    public function register_text_box($name, $label, $section = 'main')
+    public function register_text_box($name, $label)
     {
-        $this->check_section($section);
-        if (!isset($this->metaboxes[$section])) {
-            $this->metaboxes[$section] = [];
+        if (!isset($this->metaboxes[$this->section_name])) {
+            $this->metaboxes[$this->section_name] = [];
         }
-        $this->metaboxes[$section][] = ['name' => $name, 'label' => $label, 'type' => 'text'];
+        $this->metaboxes[$this->section_name][] = ['name' => $name, 'label' => $label, 'type' => 'text'];
+    }
+    public function register_textarea_box($name, $label)
+    {
+        if (!isset($this->metaboxes[$this->section_name])) {
+            $this->metaboxes[$this->section_name] = [];
+        }
+        $this->metaboxes[$this->section_name][] = ['name' => $name, 'label' => $label, 'type' => 'textarea'];
     }
 
-    public function register_select_box($name, $label, $options, $section = 'main')
+    public function register_select_box($name, $label, $options)
     {
-        $this->check_section($section);
-        if (!isset($this->metaboxes[$section])) {
-            $this->metaboxes[$section] = [];
+        if (!isset($this->metaboxes[$this->section_name])) {
+            $this->metaboxes[$this->section_name] = [];
         }
-        $this->metaboxes[$section][] = ['name' => $name, 'label' => $label, 'type' => 'select', 'options' => array_map(function ($key) use ($options) {
+        $this->metaboxes[$this->section_name][] = ['name' => $name, 'label' => $label, 'type' => 'select', 'options' => array_map(function ($key) use ($options) {
             return ['label' => $options[$key], 'value' => $key];
         }, array_keys($options))];
     }
@@ -184,15 +216,13 @@ abstract class GutenbergMetabox
         return $classes;
     }
 
-    function after_save($callback)
-    {
-        $this->after_save = $callback;
-    }
-
-    protected function get_meta($post_id, $name)
+    protected function get_meta($post_id, $name = false)
     {
         $meta_name = '';
         $meta_name = "_meta";
+        if (!$name) {
+            return get_post_meta($post_id, $meta_name, true);
+        }
         if ($a = get_post_meta($post_id, $meta_name, true)) {
             return $a[$name] ?? '';
         }
@@ -207,7 +237,7 @@ abstract class GutenbergMetabox
         }
         return "";
     }
-    function get_meta_value($post_id, $name, $group = '')
+    public function get_meta_value($post_id, $name, $group = '')
     {
         $meta_name = '';
         if ($group != "") {
@@ -222,6 +252,16 @@ abstract class GutenbergMetabox
             return $a;
         }
         return "";
+    }
+
+    public function get_sections()
+    {
+        return $this->sections;
+    }
+
+    public function get_metaboxes()
+    {
+        return $this->metaboxes;
     }
 }
 /******************************

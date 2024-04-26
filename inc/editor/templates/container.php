@@ -33,14 +33,11 @@ if (array_key_exists('className', $attributes) && !empty($attributes['className'
     $className = $attributes['className'];
 }
 
+if ($className) {
+    array_push($classes, $className);
+}
 ?>
-<?php if ($className) : ?>
-    <div class="<?php echo $className; ?>">
-    <?php endif; ?>
-    <div class="<?php echo esc_attr(implode(' ', $classes)); ?>">
-        <?php echo $content; // phpcs:ignore 
-        ?>
-    </div>
-    <?php if ($className) : ?>
-    </div>
-<?php endif; ?>
+<div class="<?php echo esc_attr(implode(' ', $classes)); ?>">
+    <?php echo $content;
+    ?>
+</div>

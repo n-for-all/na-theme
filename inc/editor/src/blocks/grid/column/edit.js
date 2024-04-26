@@ -56,8 +56,8 @@ export let bgColorOptions = [
 let paddingOptions = [
 	{ label: __("None", "na-theme"), value: "" },
 	{ label: __("Small", "na-theme"), value: "p-2" },
-	{ label: __("Medium", "na-theme"), value: "p-3" },
-	{ label: __("Large", "na-theme"), value: "p-5" },
+	{ label: __("Medium", "na-theme"), value: "p-2 lg:p-3" },
+	{ label: __("Large", "na-theme"), value: "p-2 lg:p-5" },
 ];
 
 class BootstrapColumnEdit extends Component {

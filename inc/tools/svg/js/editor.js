@@ -1,4 +1,4 @@
-if (wp.media.view.Attachment && wp.media.view.Attachment.Details && wp.media.view.Attachment.Details.TwoColumn) {
+if (wp.media && wp.media.view.Attachment && wp.media.view.Attachment.Details && wp.media.view.Attachment.Details.TwoColumn) {
 	wp.media.view.Attachment.Details.TwoColumn = wp.media.view.Attachment.Details.TwoColumn.extend({
 		editAttachment: function (event) {
 			if (event) {
@@ -56,7 +56,7 @@ if (wp.media.view.Attachment && wp.media.view.Attachment.Details && wp.media.vie
 		},
 	});
 }
-if (wp.media.view.EditImage) {
+if (wp.media && wp.media.view.EditImage) {
 	wp.media.view.EditImage = wp.media.view.EditImage.extend({
 		loadEditor: function () {
 			var element = this.$el;

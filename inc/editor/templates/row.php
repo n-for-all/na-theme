@@ -16,6 +16,7 @@
  *   'className' (string) => Additional class names which should be added to block.
  * )
  */
+
 $classes = array('row');
 if (array_key_exists('className', $attributes) && !empty($attributes['className'])) {
     array_push($classes, $attributes['className']);

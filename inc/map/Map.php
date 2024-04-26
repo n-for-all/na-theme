@@ -14,7 +14,7 @@ class Map
     {
 
         add_action('wp_enqueue_scripts', array(&$this, 'enqueue_scripts'));
-        add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
+        // add_action('admin_enqueue_scripts', array(&$this, 'enqueue_scripts'));
 
         add_action('admin_menu', array(&$this, 'menu_pages'));
 
@@ -62,6 +62,7 @@ class Map
     {
         register_setting('natheme-map-settings-general', 'natheme-map-key');
         register_setting('natheme-map-settings-general', 'natheme-map-version');
+        register_setting('natheme-map-settings-general', 'natheme-map-styles');
     }
 
     public function menu_pages()
@@ -93,6 +94,12 @@ class Map
                         <th scope="row">Api Version</th>
                         <td><input type="text" name="natheme-map-version" value="<?php echo esc_attr(get_option('natheme-map-version')); ?>" />
                             <p class="description"><small>keep empty to use latest</small></p>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">Styles</th>
+                        <td><textarea name="natheme-map-styles"><?php echo get_option('natheme-map-styles'); ?></textarea>
+                            <p class="description"><small>Styles to use for the maps</small></p>
                         </td>
                     </tr>
                 </table>
@@ -155,11 +162,9 @@ class Map
 
     public function enqueue_scripts()
     {
-        wp_enqueue_script('jquery');
         $key = get_option('natheme-map-key');
         wp_enqueue_script('natheme-map-js', get_template_directory_uri() . '/inc/map/js/plugin.js', array(), '1.0.1', true);
-        wp_enqueue_script('google-jspai', '//maps.googleapis.com/maps/api/js?libraries=places&callback=initMap&key=' . $key, array('natheme-map-js'), '1.0.1', true);
-
+        wp_enqueue_script('google-jspai', '//maps.googleapis.com/maps/api/js?libraries=places&callback=initMap&loading=async&key=' . $key, array('natheme-map-js'), '1.0.1', true);
         $this->enqueue_styles();
     }
 
@@ -171,6 +176,7 @@ class Map
     public function head()
     {
         $key = get_option('natheme-map-key');
+        $styles = get_option('natheme-map-styles');
         $version = get_option('natheme-map-version');
         $map = array(
             'dir' => 'ltr',
@@ -182,9 +188,10 @@ class Map
     ?>
         <script type="text/javascript">
             var NATHEME_MAP = <?php echo json_encode($map); ?>;
-            <?php if (function_exists('pll_current_language') && pll_current_language() == 'ar') : ?>
+            <?php if (function_exists('pll_current_language') && \pll_current_language() == 'ar') : ?>
                 NATHEME_MAP.dir = 'rtl';
             <?php endif; ?>
+            NATHEME_MAP.styles = <?php echo $styles ? $styles: '[]'; ?>;
         </script>
 <?php
     }
@@ -212,7 +219,7 @@ class Map
         $data['markers'] = array_values($data['markers'] ?? []);
         $data['map'] = $data['map'];
         $data['routes'] = array_values(isset($data['routes']) ? $data['routes'] : array());
-        return sprintf('<div id="map-cont">%s<div data-settings=\'%s\' data-map=\'%s\' id="map-canvas" style="height:%s;width:%s"></div></div>', $settings['allow_places']? '<ul id="cont-place-list"></ul>': '', json_encode($settings, JSON_NUMERIC_CHECK), json_encode($data, JSON_NUMERIC_CHECK), $settings['height'], $settings['width'] ?? '100%');
+        return sprintf('<div id="map-cont">%s<div data-settings=\'%s\' data-map=\'%s\' id="map-canvas" style="height:%s;width:%s"></div></div>', $settings['allow_places'] ? '<ul id="cont-place-list"></ul>' : '', json_encode($settings, JSON_NUMERIC_CHECK), json_encode($data, JSON_NUMERIC_CHECK), $settings['height'], $settings['width'] ?? '100%');
     }
 }
 

@@ -70,7 +70,6 @@ class Metabox
      */
     public function save($post_id)
     {
-
         /*
          * We need to verify this came from the our screen and with proper authorization,
          * because save_post can be triggered at other times.
@@ -126,7 +125,6 @@ class Metabox
             }
         }
         if (sizeof($data) > 0 && is_array($data)) {
-            // Update the meta field.
             update_post_meta($post_id, 'natheme-map-markers', $data);
         }
     }
@@ -140,7 +138,7 @@ class Metabox
     public function render_meta_box_map_content($post)
     {
         $data = get_post_meta($post->ID, 'natheme-map-markers', true);
-        array_walk($this->options, function (&$value, &$key, $data) {
+        array_walk($this->options, function (&$value, $key, $data) {
             if (isset($data['map'][$key])) {
                 $value[2] = $data['map'][$key];
             }
@@ -149,6 +147,7 @@ class Metabox
         <table class="form-table">
             <?php
             foreach ($this->options as $name => $control) {
+        
                 @list($label, $type, $default, $help, $choices) = $control;
                 switch ($type) {
                     case 'boolean':

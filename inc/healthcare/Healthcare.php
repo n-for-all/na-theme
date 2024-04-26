@@ -4,6 +4,11 @@ namespace NaTheme\Inc\Healthcare;
 
 class Healthcare
 {
+    public $departments;
+    public $doctors;
+    public $divisions;
+    public $symptomchecker;
+    
     public function __construct()
     {
         $this->departments = new Department();

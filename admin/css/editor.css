@@ -514,7 +514,7 @@
   [data-type="na-theme-blocks/background"] .wp-block-background-image {
     min-height: 250px; }
 
-[data-type="na-theme-blocks/button"] {
+[data-type="na-theme-blocks/button"] > div {
   position: relative;
   background-color: #333;
   color: #fff;

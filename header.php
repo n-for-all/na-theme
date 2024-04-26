@@ -46,7 +46,6 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
         @import url('<?php echo esc_url(get_template_directory_uri()); ?>/assets/css/mobile-reverse.css') only screen and (min-width: <?php echo $naTheme->mobile_breakpoint ? $naTheme->mobile_breakpoint : '767px' ?>);
         @import url('<?php echo esc_url(get_template_directory_uri()); ?>/assets/css/mobile.css') only screen and (max-width: <?php echo $naTheme->mobile_breakpoint ? $naTheme->mobile_breakpoint : '767px' ?>);
     </style>
-    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body <?php body_class(implode(' ', $body_class)); ?>>
@@ -54,7 +53,8 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
     ?>
         <span class="loading-overlay" style="background-image:url(<?php echo \add_query_arg( '_', uniqid(), $naTheme->loading_logo ); ?>)"></span>
     <?php endif; ?>
-    <header id="masthead" class="site-header <?php echo $naTheme->navbar; ?> bg-white <?php echo $naTheme->menu_dark == 1 ? 'dark' : ''; ?>" role="banner">
+    <header id="masthead" class="site-header z-50 <?php echo $naTheme->navbar; ?> bg-white <?php echo $naTheme->menu_dark == 1 ? 'dark' : ''; ?>" role="banner">
+        <?php do_action('na-theme.nav.top'); ?>
         <!-- Start navbar -->
         <?php if (trim($naTheme->top_bar) != '' || has_nav_menu('social')) : ?>
             <?php
@@ -93,9 +93,9 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
         <?php endif; ?>
         <div class="container">
             <div class="row">
-                <nav id="main-nav-collapse" class="navbar navbar-light navbar-expand-lg navbar-default <?php echo $naTheme->menu_expanded == 1 ? 'in' : ''; ?> col-12">
+                <nav class="navbar navbar-light navbar-expand-lg navbar-default <?php echo $naTheme->menu_expanded == 1 ? 'in' : ''; ?> col-12 flex">
                     <?php include(get_template_directory() . '/inc/menu/logo.php'); ?>
-                    <button type="button" class="navbar-toggler <?php echo $naTheme->menu_expanded == 1 ? 'collapsed' : ''; ?> <?php echo $naTheme->btn_menu_style; ?>" data-toggle="collapse" data-target="#main-navbar-collapse" aria-expanded="false"> <span class="icon-bar navbar-toggler-icon"></span> <span class="icon-bar"></span> <span class="icon-bar"></span><span class="icon-bar"></span> <span class="sr-only">Menu</span></button>
+                    <button type="button" class="navbar-toggler <?php echo $naTheme->menu_expanded == 1 ? 'collapsed' : ''; ?> <?php echo $naTheme->btn_menu_style; ?>"> <span class="icon-bar navbar-toggler-icon"></span> <span class="icon-bar"></span> <span class="icon-bar"></span><span class="icon-bar"></span> <span class="sr-only">Menu</span></button>
                     <?php do_action('na-theme.navbar.header'); ?>
 
                     <?php include(get_template_directory() . '/inc/menu/header.php'); ?>

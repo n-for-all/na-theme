@@ -278,7 +278,7 @@ body:not(.branch-5-2):not(.branch-5-3) [data-type="na-theme-blocks/row"]:not([da
     }
 }
 
-[data-type="na-theme-blocks/button"] {
+[data-type="na-theme-blocks/button"]>div {
     position: relative;
 
     background-color: #333;

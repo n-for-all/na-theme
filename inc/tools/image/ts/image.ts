@@ -1,5 +1,4 @@
 declare let wp: any, jQuery: any, _: any, ajaxurl: any, Backbone: any, __: any;
-
 export class ImageItem extends wp.Backbone.View {
 	template: (properties?: any) => string;
 	items: [];

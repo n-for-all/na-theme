@@ -130,7 +130,7 @@ class GoogleMap {
 
 		if (typeof data.markers != "undefined" && data.markers != null && data.markers.length) {
 			var mapOptions = data.map;
-			mapOptions.styles = roadAtlasStyles;
+			mapOptions.styles = NATHEME_MAP.styles;
 
 			let mapContList: HTMLDivElement = document.querySelector("#cont-place-list");
             let oldSelected = null;

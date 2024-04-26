@@ -30,7 +30,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                             </figure>
                         <?php endif; ?>
                     </div>
-                    <div class="col-md-8 d-flex justify-content-center flex-column">
+                    <div class="flex flex-col col-md-8 justify-content-center">
                         <div class="entry-header"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
 
                         <div class="entry-inner-content">
@@ -38,11 +38,11 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                             the_content();
 
                             wp_link_pages(array(
-                                'before'      => '<div class="page-links"><span class="page-links-title">' . __('Pages:', 'twentysixteen') . '</span>',
+                                'before'      => '<div class="page-links"><span class="page-links-title">' . __('Pages:', 'na-theme') . '</span>',
                                 'after'       => '</div>',
                                 'link_before' => '<span>',
                                 'link_after'  => '</span>',
-                                'pagelink'    => '<span class="screen-reader-text">' . __('Page', 'twentysixteen') . ' </span>%',
+                                'pagelink'    => '<span class="screen-reader-text">' . __('Page', 'na-theme') . ' </span>%',
                                 'separator'   => '<span class="screen-reader-text">, </span>',
                             ));
                             ?>
@@ -57,7 +57,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
     edit_post_link(
         sprintf(
             /* translators: %s: Name of current post */
-            __('Edit<span class="screen-reader-text"> "%s"</span>', 'twentysixteen'),
+            __('Edit<span class="screen-reader-text"> "%s"</span>', 'na-theme'),
             get_the_title()
         ),
         '<footer class="entry-footer"><span class="edit-link">',

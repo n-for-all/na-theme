@@ -31,11 +31,11 @@ if ($post->parent > 0) :
             the_content();
 
             wp_link_pages(array(
-                'before'      => '<div class="page-links"><span class="page-links-title">' . __('Pages:', 'twentysixteen') . '</span>',
+                'before'      => '<div class="page-links"><span class="page-links-title">' . __('Pages:', 'na-theme') . '</span>',
                 'after'       => '</div>',
                 'link_before' => '<span>',
                 'link_after'  => '</span>',
-                'pagelink'    => '<span class="screen-reader-text">' . __('Page', 'twentysixteen') . ' </span>%',
+                'pagelink'    => '<span class="screen-reader-text">' . __('Page', 'na-theme') . ' </span>%',
                 'separator'   => '<span class="screen-reader-text">, </span>',
             ));
             ?>
@@ -60,11 +60,11 @@ else :
                     the_content();
 
                     wp_link_pages(array(
-                        'before'      => '<div class="page-links"><span class="page-links-title">' . __('Pages:', 'twentysixteen') . '</span>',
+                        'before'      => '<div class="page-links"><span class="page-links-title">' . __('Pages:', 'na-theme') . '</span>',
                         'after'       => '</div>',
                         'link_before' => '<span>',
                         'link_after'  => '</span>',
-                        'pagelink'    => '<span class="screen-reader-text">' . __('Page', 'twentysixteen') . ' </span>%',
+                        'pagelink'    => '<span class="screen-reader-text">' . __('Page', 'na-theme') . ' </span>%',
                         'separator'   => '<span class="screen-reader-text">, </span>',
                     ));
                     ?>

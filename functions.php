@@ -45,22 +45,7 @@ remove_action('wp_head', 'wp_resource_hints', 2, 99);
 
 add_filter('wp_lazy_loading_enabled', '__return_false');
 
-add_action(
-    'admin_menu',
-    function () {
-        remove_meta_box('postexcerpt', 'page', 'normal');
-        remove_meta_box('postexcerpt', 'event', 'normal');
-    }
-);
-
-add_action('edit_form_after_title', 'post_excerpt_meta_box');
-
 if (WP_DEBUG) {
-    //disable external requests
-    // add_filter('pre_http_request', function () {
-    //     return true;
-    // });
-
     add_filter(
         'wp_php_error_message',
         function ($message, $error) {

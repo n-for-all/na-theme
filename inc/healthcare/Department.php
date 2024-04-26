@@ -4,6 +4,7 @@ namespace NaTheme\Inc\Healthcare;
 
 class Department
 {
+    private $metabox;
     public function __construct()
     {
         add_action('init', array(&$this, 'init'));
@@ -173,7 +174,7 @@ class Department
             'suppress_filters' => false
         );
 
-        if(!empty($atts['exclude'])){
+        if (!empty($atts['exclude'])) {
             $args['post__not_in'] = explode(',', $atts['exclude']);
         }
 

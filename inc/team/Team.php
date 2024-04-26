@@ -272,7 +272,7 @@ class Team extends \NaTheme\Inc\Metaboxes\Metabox
                 'bullets' => $atts['bullets'],
                 'pagination' => $atts['pagination'],
                 'columns' => $atts['columns'],
-                'minWidth' => $atts['min-width'],
+                'minWidth' => $atts['min-width'] ?? 'none',
                 'vertical' => $atts['vertical'],
                 'class' => sprintf("na-team na-team-columns-%s", $atts['columns']),
                 'type' => 'carousel',

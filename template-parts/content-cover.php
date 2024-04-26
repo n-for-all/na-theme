@@ -27,16 +27,16 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 		<?php
             /* translators: %s: Name of current post */
             the_content(sprintf(
-                __('Continue reading<span class="screen-reader-text"> "%s"</span>', 'twentysixteen'),
+                __('Continue reading<span class="screen-reader-text"> "%s"</span>', 'na-theme'),
                 get_the_title()
             ));
 
             wp_link_pages(array(
-                'before'      => '<div class="page-links"><span class="page-links-title">' . __('Pages:', 'twentysixteen') . '</span>',
+                'before'      => '<div class="page-links"><span class="page-links-title">' . __('Pages:', 'na-theme') . '</span>',
                 'after'       => '</div>',
                 'link_before' => '<span>',
                 'link_after'  => '</span>',
-                'pagelink'    => '<span class="screen-reader-text">' . __('Page', 'twentysixteen') . ' </span>%',
+                'pagelink'    => '<span class="screen-reader-text">' . __('Page', 'na-theme') . ' </span>%',
                 'separator'   => '<span class="screen-reader-text">, </span>',
             ));
         ?>

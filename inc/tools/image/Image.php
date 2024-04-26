@@ -22,7 +22,7 @@ class Image
      */
     function scripts()
     {
-        wp_enqueue_script('image-editor-script', get_template_directory_uri() . '/inc/tools/image/js/script.js', array('media'), '1.0.0', true);
+        wp_enqueue_script('image-editor-script', get_template_directory_uri() . '/inc/tools/image/js/script.js', array('wp-media', 'wp-backbone'), '1.0.0', true);
     }
 
     public function getimagesize_mimes_to_exts($mimes)

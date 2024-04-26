@@ -1,5 +1,5 @@
 <?php if($naTheme->logo): ?>
-    <a class="navbar-brand" href="<?php echo home_url("/"); ?>">
+    <a class="flex items-center navbar-brand" href="<?php echo home_url("/"); ?>">
         <span class="vertical-center <?php echo $naTheme->glitch == 1 ? 'glitch' : ''; ?>" <?php echo $naTheme->glitch == 1 ? 'style="background-image:url('.esc_url( $naTheme->logo ).'"': ''; ?> >
             <img class="logo" src="<?php echo esc_url( $naTheme->logo ); ?>" alt="" />
             <?php if($naTheme->logo_dark): ?>
@@ -8,7 +8,7 @@
         </span>
     </a>
 <?php else: ?>
-    <a class="navbar-brand" href="<?php echo home_url("/"); ?>">
+    <a class="flex items-center navbar-brand" href="<?php echo home_url("/"); ?>">
         <span class="vertical-center"><?php echo bloginfo('title'); ?></span>
     </a>
 <?php endif; ?>
