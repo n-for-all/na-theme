@@ -6,7 +6,7 @@
 ?>
 <?php if (has_nav_menu('primary')) : ?>
     <!-- Start nav-collapse -->
-    <div class="ml-auto navbar-collapse">
+    <div class="flex items-center ml-auto navbar-collapse">
         <div class="flex items-center collapse-inner">
             <?php
             // Primary navigation menu.
@@ -18,7 +18,7 @@
             if (has_nav_menu('primary-right')) :
                 // Primary navigation menu.
                 wp_nav_menu(array(
-                    'menu_class'     => 'nav nav-menu navbar-right nav-primary-right ml-2',
+                    'menu_class'     => 'nav nav-menu navbar-right nav-primary-right flex space-x-3 ml-2',
                     'theme_location' => 'primary-right',
                     'container'            => ''
                 ));
@@ -29,12 +29,12 @@
     </div>
 <?php elseif (has_nav_menu('primary-right')) : ?>
     <!-- Start nav-collapse -->
-    <div class="ml-auto navbar-collapse">
+    <div class="flex items-center ml-auto navbar-collapse">
         <div class="collapse-inner">
             <?php
             // Primary navigation menu.
             wp_nav_menu(array(
-                'menu_class'     => 'nav nav-menu navbar-right nav-primary-right flex ml-auto',
+                'menu_class'     => 'nav nav-menu navbar-right nav-primary-right flex space-x-3 ml-auto',
                 'theme_location' => 'primary-right',
                 'container'            => ''
             ));

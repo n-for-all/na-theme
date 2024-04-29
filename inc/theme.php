@@ -202,6 +202,10 @@ class Theme
         add_filter('dynamic_sidebar_params', array($this, 'dynamic_sidebar_params'));
         add_filter('widget_update_callback', array($this, 'widget_update'), 10, 2);
         add_filter('widget_form_callback', array($this, 'widget_form_extend'), 10, 2);
+        add_filter('widget_nav_menu_args', function ($nav_menu_args, $nav_menu, $args, $instance) {
+            $nav_menu_args['menu_class'] = 'menu ' . ($instance['classes'] ?? '');
+            return $nav_menu_args;
+        }, 10, 4);
 
         //remove wordpress links
         add_filter(
@@ -389,8 +393,8 @@ class Theme
                 'name'          => __('Top Header Widget Area', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'header-sidebar-top',
                 'description'   => __('Add widgets here to appear in your top header sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -402,7 +406,7 @@ class Theme
                     'name'          => __('Shop Widget Area', NA_THEME_TEXT_DOMAIN),
                     'id'            => 'shop',
                     'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
-                    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+                    'before_widget' => '',
                     'after_widget'  => '</div></aside>',
                     'before_title'  => '<h2 class="widget-title">',
                     'after_title'   => '</h2><div class="widget-inner">',
@@ -415,8 +419,8 @@ class Theme
                 'name'          => __('Blog Widget Area', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'blog-sidebar',
                 'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -427,8 +431,8 @@ class Theme
                 'name'          => __('Service Widget Area', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'sidebar-service',
                 'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -440,8 +444,8 @@ class Theme
                 'name'          => __('Footer Widget Area 1', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'footer-1',
                 'description'   => __('Add widgets here to appear in your top header sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -451,8 +455,8 @@ class Theme
                 'name'          => __('Footer Widget Area 2', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'footer-2',
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -463,8 +467,8 @@ class Theme
                 'name'          => __('Footer Widget Area 3', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'footer-3',
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -474,8 +478,8 @@ class Theme
                 'name'          => __('Footer Widget Area 4', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'footer-4',
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -485,8 +489,8 @@ class Theme
                 'name'          => __('Footer Widget Area 5', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'footer-5',
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -496,8 +500,8 @@ class Theme
                 'name'          => __('Footer Widget Area 6', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'footer-6',
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -507,8 +511,8 @@ class Theme
                 'name'          => __('Footer Widget Area 7', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'footer-7',
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -518,8 +522,8 @@ class Theme
                 'name'          => __('Footer Widget Area 8', NA_THEME_TEXT_DOMAIN),
                 'id'            => 'footer-8',
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
-                'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-                'after_widget'  => '</aside>',
+                'before_widget' => '',
+                'after_widget'  => '',
                 'before_title'  => '<h2 class="widget-title">',
                 'after_title'   => '</h2>',
             )
@@ -1184,14 +1188,14 @@ class Theme
         $part = $this->get_template_layout($post_id, 'container');
         switch ($part) {
             case 'container-fluid':
-                echo '<div class="mx-auto">';
+                echo '<div class="row"><div class="col-12">';
                 break;
             case 'container':
-                echo '<div class="mx-auto max-w-7xl">';
+                echo '<div class="row"><div class="col-12">';
                 break;
             case 'container boxed-offset':
             case 'boxed-offset':
-                echo '<div class="mx-auto max-w-7xl">';
+                echo '<div class="row"><div class="col-md-10 offset-md-1">';
                 break;
             default:
                 break;
@@ -1203,8 +1207,8 @@ class Theme
         switch ($part) {
             case 'container-fluid':
             case 'container':
-            case 'boxed-offset':
-                echo '</div>';
+            case 'container boxed-offset':
+                echo '</div></div>';
                 break;
             default:
                 break;

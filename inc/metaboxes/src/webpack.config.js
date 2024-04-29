@@ -18,7 +18,7 @@ wpDependencies.forEach((wpDependency) => {
 });
 
 module.exports = (env) => {
-	var production = false;
+	var production = true;
 	var debugType = 'development';
 	if (gutil.env && gutil.env.NODE_ENV == 'production') {
 		production = true;
@@ -44,9 +44,6 @@ module.exports = (env) => {
 		externals: {
 			// react: 'react',
 			// 'react-dom': 'ReactDOM',
-			'es6-promise': 'es6-promise',
-			'react-router-dom': 'react-router-dom',
-			immutable: 'immutable',
 			...externals,
 		},
 		/*
@@ -57,7 +54,7 @@ module.exports = (env) => {
 			new webpack.DefinePlugin({
 				'process.env.NODE_ENV': JSON.stringify(gutil.env && gutil.env.NODE_ENV == 'production' ? 'production' : 'development'),
 			}),
-			new webpack.IgnorePlugin(/react$/, /react-dom$/, /es6-promise$/, /components$/),
+			// new webpack.IgnorePlugin({resourceRegExp: /react$|react-dom$|es6-promise$|components$/}),
 			new webpack.ProvidePlugin({
 				Components: 'components',
 				// ReactDOM: 'react-dom',

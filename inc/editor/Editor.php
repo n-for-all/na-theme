@@ -94,7 +94,8 @@ class Editor
 
     public function add_category($block_categories, $editor_context)
     {
-        if (!empty($editor_context->post)) {
+        
+        // if (!empty($editor_context->post)) {
             array_push(
                 $block_categories,
                 array(
@@ -103,7 +104,7 @@ class Editor
                     'icon'  => null,
                 )
             );
-        }
+        // }
         return $block_categories;
     }
 

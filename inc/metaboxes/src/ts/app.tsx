@@ -9,8 +9,8 @@ const { registerPlugin } = wp.plugins;
 const { Fragment } = wp.element;
 const { compose } = wp.compose;
 const { SelectControl, TextControl, TextareaControl } = wp.components;
-const { PluginDocumentSettingPanel } = wp.editPost;
 const { withSelect, withDispatch } = wp.data;
+const { PluginDocumentSettingPanel }  = wp.editPost;
 
 var MetaTextControl = compose(
 	withDispatch(function (dispatch, props) {
@@ -25,7 +25,7 @@ var MetaTextControl = compose(
 	withSelect(function (select, props) {
 		let mt = select("core/editor").getEditedPostAttribute("nameta");
 		return {
-			metaValue: mt ? mt[props.name] : '',
+			metaValue: mt ? mt[props.name] : "",
 		};
 	})
 )((props) => <TextControl name={props.name} label={props.label} value={props.metaValue} onChange={(content) => props.setMetaValue(content)} />);
@@ -43,7 +43,7 @@ var MetaTextAreaControl = compose(
 	withSelect(function (select, props) {
 		let mt = select("core/editor").getEditedPostAttribute("nameta");
 		return {
-			metaValue: mt ? mt[props.name] : '',
+			metaValue: mt ? mt[props.name] : "",
 		};
 	})
 )((props) => <TextareaControl name={props.name} label={props.label} value={props.metaValue} onChange={(content) => props.setMetaValue(content)} />);
@@ -59,7 +59,7 @@ var MetaSelectControl = compose(
 	withSelect(function (select, props) {
 		let mt = select("core/editor").getEditedPostAttribute("nameta");
 		return {
-			metaValue: mt ? mt[props.name] : '',
+			metaValue: mt ? mt[props.name] : "",
 		};
 	})
 )((props) => (

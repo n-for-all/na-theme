@@ -211,6 +211,29 @@ abstract class Metabox
             <input <?php echo $this->attributes($attributes, ['name', 'value']); ?> type="text" value="<?php echo $p; ?>" name="<?php echo $name; ?>" />
         <?php }
     }
+
+    function _metabox_textarea($post_id, $_name, $group = '', $attributes = [])
+    {
+        $p = $this->_metabox_text_value($post_id, $_name, $group, $this->repeater != '');
+        if ($group != "") {
+            if ($this->repeater) {
+                $name = "_meta[{$group}][{$this->repeater}][{{{data.index}}}][{$_name}]";
+            } else {
+                $name = "_meta[{$group}][{$_name}]";
+            }
+        } else {
+            if ($this->repeater) {
+                $name = "_meta_na[{$this->repeater}][{{{data.index}}}][{$_name}]";
+            } else {
+                $name = "_meta_na[{$_name}]";
+            }
+        }
+        if ($this->repeater) { ?>
+            <textarea <?php echo $this->attributes($attributes, ['name', 'value']); ?> name="<?php echo $name; ?>">{{{data.<?php echo $_name; ?>}}}</textarea>
+        <?php } else { ?>
+            <textarea <?php echo $this->attributes($attributes, ['name', 'value']); ?> name="<?php echo $name; ?>"><?php echo $p; ?></textarea>
+        <?php }
+    }
     function _metabox_custom($post_id, $type, $_name, $group = '')
     {
         $p = $this->_metabox_text_value($post_id, $_name, $group, $this->repeater != '');
@@ -228,10 +251,10 @@ abstract class Metabox
             }
         }
         if ($this->repeater) {
-            ?>
+        ?>
             <input type="<?php echo $type; ?>" value="{{{data.<?php echo $_name; ?>}}}" name="<?php echo $name; ?>" />
         <?php } else {
-            ?>
+        ?>
             <input type="<?php echo $type; ?>" value="<?php echo $p; ?>" name="<?php echo $name; ?>" />
         <?php }
     }
@@ -252,7 +275,7 @@ abstract class Metabox
             <ul class="repeater-fields"></ul>
         </div>
 
-        <?php
+    <?php
         echo sprintf('<script type="text/html" id="tmpl-repeater-%s">', $this->repeater);
         $this->repeater_script = true;
         return $this->repeater;
@@ -263,14 +286,14 @@ abstract class Metabox
         global $post;
         $repeater_values = $this->_metabox_repeater_value($post->ID, $this->repeater, $this->repeater_group);
         echo '</script>';
-        ?>
+    ?>
         <script type="text/javascript">
             repeater_values[repeater_values.length] = {
                 "id": "<?php echo $this->repeater; ?>",
                 'values': <?php echo json_encode($repeater_values); ?>
             };
         </script>
-        <?php
+    <?php
         $this->repeater = null;
         $this->repeater_group = '';
     }
@@ -282,7 +305,7 @@ abstract class Metabox
         } else {
             $name = "_meta_na[{$name}]";
         }
-        ?>
+    ?>
         <label><input type="checkbox" <?php echo !empty($p) ? 'checked="checked"' : ''; ?> value="1" name="<?php echo $name; ?>" /><?php echo $label; ?></label>
         <?php
     }
@@ -295,9 +318,9 @@ abstract class Metabox
             $name = "_meta_na[{$name}]";
         }
         foreach ($options as $key => $label) :
-            ?>
+        ?>
             <label><input type="radio" <?php echo $p == $key ? 'checked="checked"' : '' ?> value="<?php echo $key; ?>" name="<?php echo $name; ?>" /><?php echo $label; ?></label>
-            <?php
+        <?php
         endforeach;
     }
     function _metabox_select($post_id, $options, $name, $group = '', $multiple = false)
@@ -315,12 +338,12 @@ abstract class Metabox
         <select <?php echo $multiple ? 'multiple' : ''; ?> name="<?php echo $name; ?>">
             <?php
             foreach ($options as $key => $label) {
-                ?><option <?php echo (in_array($key, $p) ? 'selected="selected"' : ''); ?> value="<?php echo $key; ?>"><?php echo $label; ?></option>
-                <?php
+            ?><option <?php echo (in_array($key, $p) ? 'selected="selected"' : ''); ?> value="<?php echo $key; ?>"><?php echo $label; ?></option>
+            <?php
             }
             ?>
         </select>
-        <?php
+    <?php
     }
     function _metabox_image($post_id, $name, $group = '', $multiple = true)
     {
@@ -333,42 +356,42 @@ abstract class Metabox
         if ($multiple) {
             $name = $name . "[]";
         }
-        ?>
+    ?>
         <div class="na-meta-image" data-multiple="<?php echo (int)$multiple; ?>" data-name="<?php echo $name; ?>">
             <div class="na-meta-msg"></div>
             <div class="na-meta-inner"><?php
-            if ($p) {
-                if ($multiple) {
-                    ?>
+                                        if ($p) {
+                                            if ($multiple) {
+                                        ?>
                         <ul>
                             <?php
-                            foreach ((array)$p as $v) {
-                                ?>
+                                                foreach ((array)$p as $v) {
+                            ?>
                                 <li class="na-meta-image-item"><a class="na-meta-image-remove" href="#" onclick="jQuery(this).parent().remove();return false;">x</a>
                                     <div class="na-meta-image-thumb">
                                         <div class="na-centered"><img src="<?php echo $v[0]; ?>" /></div><input type="hidden" name="<?php echo $name; ?>" class="na-meta-input" value="<?php echo $v[4]; ?>" />
                                     </div>
                                 </li>
-                                        <?php
-                            } ?>
+                            <?php
+                                                } ?>
                         </ul>
                     <?php
-                } else {
+                                            } else {
                     ?>
                         <ul>
-                    <?php
+                            <?php
                                                 $v = $p;
-                    ?>
+                            ?>
                             <li class="na-meta-image-item"><a class="na-meta-image-remove" href="#" onclick="jQuery(this).parent().remove();return false;">x</a>
                                 <div class="na-meta-image-thumb">
                                     <div class="na-centered"><img src="<?php echo $v[0]; ?>" /></div><input type="hidden" name="<?php echo $name; ?>" class="na-meta-input" value="<?php echo $v[4]; ?>" />
                                 </div>
                             </li>
                         </ul>
-                    <?php
-                }
-            }
-            ?>
+                <?php
+                                            }
+                                        }
+                ?>
             </div>
             <button class="button button-secondary" disabled><?php $multiple ? _e('Add Images') : _e('Select Image'); ?></button>
         </div>
@@ -394,13 +417,13 @@ abstract class Metabox
             }
         }
         if ($this->repeater) {
-            ?>
+        ?>
             <input type="<?php echo $type; ?>" value="{{{data.<?php echo $_name; ?>}}}" name="<?php echo $name; ?>" />
-            <?php
+        <?php
         } else {
-            ?>
+        ?>
             <input type="<?php echo $type; ?>" value="<?php echo $p; ?>" name="<?php echo $name; ?>" />
-            <?php
+        <?php
         }
     }
     function _term_metabox_checkbox($_name, $group = '', $term_id = false)
@@ -423,12 +446,12 @@ abstract class Metabox
             }
         }
         if ($this->repeater) {
-            ?>
+        ?>
             <input type="checkbox" <# data.<?php echo $_name; ?>==1 ? 'checked="checked"' : '' ; #> value="1" name="<?php echo $name; ?>" />
-            <?php
+        <?php
         } else {
-            ?><input type="checkbox" <?php echo $p == 1 ? 'checked="checked"' : ''; ?> value="1" name="<?php echo $name; ?>" />
-            <?php
+        ?><input type="checkbox" <?php echo $p == 1 ? 'checked="checked"' : ''; ?> value="1" name="<?php echo $name; ?>" />
+        <?php
         }
     }
     function _term_metabox_image($term_id, $name, $multiple = true, $group = '')
@@ -453,23 +476,23 @@ abstract class Metabox
                 <?php
                 if ($p) {
                     if (is_array($p)) {
-                        ?>
+                ?>
                         <ul>
                             <?php
                             foreach ($p as $v) {
                                 $v = wp_get_attachment_image_src($p, 'thumbnail');
-                                ?>
+                            ?>
                                 <li class="na-meta-image-item"><a class="na-meta-image-remove" href="#" onclick="jQuery(this).parent().remove();return false;">x</a>
                                     <div class="na-meta-image-thumb">
                                         <div class="na-centered"><img src="<?php echo $v[0]; ?>" /></div><input type="hidden" name="<?php echo $name; ?>" class="na-meta-input" value="<?php echo $p; ?>" />
                                     </div>
                                 </li>
-                                <?php
+                            <?php
                             } ?>
                         </ul>
-                        <?php
+                    <?php
                     } else {
-                        ?>
+                    ?>
                         <ul>
                             <?php
                             $v = wp_get_attachment_image_src($p, 'thumbnail');
@@ -480,13 +503,13 @@ abstract class Metabox
                                 </div>
                             </li>
                         </ul><?php
-                    }
-                }
-                ?>
+                            }
+                        }
+                                ?>
             </div>
             <button class="button button-secondary" disabled><?php $multiple ? _e('Add Images') : _e('Select Image'); ?></button>
         </div>
-        <?php
+<?php
     }
     function _metabox_image_value($post_id, $name, $group = '', $size = 'thumbnail')
     {
@@ -628,7 +651,8 @@ abstract class Metabox
     {
         $in = $in ?? [];
         $in = array_filter(
-            $in, function ($item) use ($exclude) {
+            $in,
+            function ($item) use ($exclude) {
                 return !in_array($item, $exclude);
             }
         );

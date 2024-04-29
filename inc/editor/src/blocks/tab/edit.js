@@ -7,11 +7,10 @@ import { compose } from "@wordpress/compose";
 import { applyFilters } from "@wordpress/hooks";
 
 import * as BlockEditor from "@wordpress/block-editor";
-import * as Editor from "@wordpress/editor";
 
 import { verticalAlignBottom, verticalAlignCenter, verticalAlignTop } from "../../icons";
 
-const { InnerBlocks, InspectorControls, BlockControls, AlignmentToolbar } = BlockEditor || Editor;
+const { InnerBlocks, InspectorControls, BlockControls, AlignmentToolbar } = BlockEditor;
 
 const contentVerticalAlignmentControls = [
 	{

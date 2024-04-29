@@ -74,7 +74,8 @@ class Doctor
             $post_object->services = $this->metabox->get_services($post_object->ID);
             $post_object->experience = $this->metabox->get_experience($post_object->ID);
             $post_object->education = $this->metabox->get_education($post_object->ID);
-            $post_object->department = $this->metabox->get_department($post_object->ID);
+            $post_object->division = $this->metabox->get_division($post_object->ID);
+            // $post_object->type = $this->metabox->get_type($post_object->ID);
         }
     }
     public function autocomplete(&$values)
@@ -138,7 +139,7 @@ class Doctor
     {
         $atts = shortcode_atts(array(
             'limit' => -1,
-            'department' => '',
+            'division' => '',
             'orderby' => 'menu_order',
             'order' => 'ASC',
             'exclude' => null,
@@ -152,9 +153,9 @@ class Doctor
             'suppress_filters' => false
         );
 
-        if ($atts['department'] != '') {
-            $args['meta_key'] = '_meta_na_department';
-            $args['meta_value'] = explode(',', $atts['department']);
+        if ($atts['division'] != '') {
+            $args['meta_key'] = '_meta_na_division';
+            $args['meta_value'] = explode(',', $atts['division']);
         }
 
         if (!empty($atts['exclude'])) {
@@ -200,7 +201,7 @@ class Doctor
     {
         $atts = shortcode_atts(array(
             'limit' => -1,
-            'department' => '',
+            'division' => '',
             'orderby' => 'post_title',
             'order' => 'ASC',
             'exclude' => null,
@@ -220,11 +221,11 @@ class Doctor
         );
 
         $filter = $_GET['filter'] ?? [];
-        $filter_department = $filter['department'] ?? $atts['department'] ?? '';
+        $filter_division = $filter['division'] ?? $atts['division'] ?? '';
 
-        if ($filter_department != '') {
-            $args['meta_key'] = '_meta_na_department';
-            $args['meta_value'] = explode(',', $filter_department);
+        if ($filter_division != '') {
+            $args['meta_key'] = '_meta_na_division';
+            $args['meta_value'] = explode(',', $filter_division);
         }
 
         if (!empty($atts['exclude'])) {
@@ -237,7 +238,7 @@ class Doctor
 
 
         ob_start();
-        $departments = $this->getDepartments();
+        $divisions = $this->getDivisions();
         // $divisions = $this->getDivisions();
 
 
@@ -261,16 +262,16 @@ class Doctor
                                         </div>
                                     <?php endforeach; ?>
                                 </div> */ ?>
-                            <div class="form-group department-filter">
-                                <h5>Department</h5>
+                            <div class="form-group division-filter">
+                                <h5>Division</h5>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="radio" name="filter[department]" value="" <?php echo $filter_department == '' ? 'checked' : ''; ?>>
-                                    <label class="form-check-label"><?php _e('All Departments', 'na-theme'); ?></label>
+                                    <input class="form-check-input" type="radio" name="filter[division]" value="" <?php echo $filter_division == '' ? 'checked' : ''; ?>>
+                                    <label class="form-check-label"><?php _e('All Divisions', 'na-theme'); ?></label>
                                 </div>
-                                <?php foreach ($departments as $department) : ?>
+                                <?php foreach ($divisions as $division) : ?>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="radio" name="filter[department]" value="<?php echo $department->ID; ?>" <?php echo $filter_department == $department->ID ? 'checked' : ''; ?>>
-                                        <label class="form-check-label"><?php echo $department->post_title; ?></label>
+                                        <input class="form-check-input" type="radio" name="filter[division]" value="<?php echo $division->ID; ?>" <?php echo $filter_division == $division->ID ? 'checked' : ''; ?>>
+                                        <label class="form-check-label"><?php echo $division->post_title; ?></label>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
@@ -284,7 +285,7 @@ class Doctor
                 <div class="col-md-9">
                     <div class="form-inline doctors-search">
                         <div class="form-group search-group">
-                            <div data-live-search="true" endpoint="<?php echo add_query_arg('action', 'doctors_autocomplete', admin_url('admin-ajax.php')); ?>" alllabel="<?php _e('Search all for \'%s\'', 'na-theme'); ?>" searchinglabel="<?php _e('Searching...', 'na-theme'); ?>" placeholder="<?php _e('Search for doctors, department or specialty...', 'na-theme'); ?>"></div>
+                            <div data-live-search="true" endpoint="<?php echo add_query_arg('action', 'doctors_autocomplete', admin_url('admin-ajax.php')); ?>" alllabel="<?php _e('Search all for \'%s\'', 'na-theme'); ?>" searchinglabel="<?php _e('Searching...', 'na-theme'); ?>" placeholder="<?php _e('Search for doctors, division or specialty...', 'na-theme'); ?>"></div>
                         </div>
                         <div class="form-group">
                             <label><?php _e('Sort', 'na-theme'); ?></label>
@@ -412,26 +413,6 @@ class Doctor
         }
     }
 
-    public function getDepartments($division = '')
-    {
-        $args = array(
-            'post_type' => 'department',
-            'posts_per_page' => -1,
-            'suppress_filters' => false
-        );
-
-        if ($division && $division != '') {
-            $args['meta_key'] = '_meta_na_division';
-            $args['meta_value'] = $division;
-        }
-
-        $departments = get_posts(
-            $args
-        );
-
-        return $departments;
-    }
-
     public function getDivisions()
     {
         $args = array(
@@ -452,7 +433,7 @@ class DoctorMetabox extends \NaTheme\Inc\Metaboxes\Metabox
     public function show_metabox($post)
     {
         $posts = get_posts([
-            'post_type' => 'department',
+            'post_type' => 'division',
             'post_status' => 'publish',
             'posts_per_page' => -1,
         ]);
@@ -460,7 +441,7 @@ class DoctorMetabox extends \NaTheme\Inc\Metaboxes\Metabox
         $posts = array_reduce($posts, function ($result, $item) {
             $result[$item->ID] = $item->post_title;
             return $result;
-        }, array('' => 'Select a department'));
+        }, array('' => 'Select a division'));
     ?>
         <table class="form-table">
             <tbody>
@@ -477,9 +458,9 @@ class DoctorMetabox extends \NaTheme\Inc\Metaboxes\Metabox
                     </td>
                 </tr>
                 <tr class="form-field form-required term-name-wrap">
-                    <th scope="row"><label for="name">Department</label></th>
-                    <td><?php $this->_metabox_select($post->ID, $posts, 'department', ''); ?>
-                        <p class="description">Select department.</p>
+                    <th scope="row"><label for="name">Division</label></th>
+                    <td><?php $this->_metabox_select($post->ID, $posts, 'division', ''); ?>
+                        <p class="description">Select Division.</p>
                     </td>
                 </tr>
                 <tr class="form-field form-required term-name-wrap">
@@ -510,9 +491,11 @@ class DoctorMetabox extends \NaTheme\Inc\Metaboxes\Metabox
                     <th scope="row"><label for="name">Education</label></th>
                     <td>
                         <?php $this->_metabox_repeater_start('education', 'doctor') ?>
-                        <?php $this->_metabox_text($post->ID, 'title', 'doctor', ['placeholder' => 'Title']); ?>
-                        <hr />
-                        <?php $this->_metabox_text($post->ID, 'description', 'doctor', ['placeholder' => 'Description']); ?>
+                        <div style="display: flex">
+                            <?php $this->_metabox_text($post->ID, 'title', 'doctor', ['placeholder' => 'Title', 'style' => "margin-right:1em"]); ?>
+
+                            <?php $this->_metabox_textarea($post->ID, 'description', 'doctor', ['placeholder' => 'Description']); ?>
+                        </div>
                         <?php $this->_metabox_repeater_end() ?>
                     </td>
                 </tr>
@@ -533,9 +516,9 @@ class DoctorMetabox extends \NaTheme\Inc\Metaboxes\Metabox
         $p = $this->_metabox_text_value($post_id, 'position', 'doctor');
         return $p;
     }
-    public function get_department($post_id)
+    public function get_division($post_id)
     {
-        $p = $this->_metabox_text_value($post_id, 'department', '');
+        $p = $this->_metabox_text_value($post_id, 'division', '');
         return $p;
     }
     public function get_image($post_id)

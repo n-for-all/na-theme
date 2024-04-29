@@ -1,0 +1,23 @@
+{
+  "apiVersion": 2,
+  "name": "na-theme-blocks/accordion",
+  "title": "Accordion",
+  "category": "na-theme",
+  "description": "accordion",
+  "keywords": [
+    "toggle",
+    "accordion"
+  ],
+  "textdomain": "default",
+  "attributes": {
+    "openByDefault": {
+      "type": "boolean"
+    }
+  },
+  "supports": {
+    "anchor": false,
+    "html": false
+  },
+  "editorStyle": "wp-block-accordion-text-editor",
+  "style": "wp-block-accordion-text"
+}

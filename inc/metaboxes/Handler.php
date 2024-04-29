@@ -14,14 +14,15 @@ class Handler
 
     public function admin_enqueue_scripts()
     {
-        if (!empty(GutenbergMetabox::$instances)) {
+        global $pagenow;
+        if (!empty(GutenbergMetabox::$instances) && \in_array($pagenow, ['post-new.php', 'post.php'])) {
             foreach (GutenbergMetabox::$instances as $instance) {
                 $this->sections = array_merge($this->sections, $instance->get_sections());
                 $this->metaboxes = array_merge($this->metaboxes, $instance->get_metaboxes());
             }
             wp_enqueue_media();
 
-            wp_enqueue_script('na-metabox-js-scripts', get_template_directory_uri() . '/inc/metaboxes/js/app.js', array('editor', 'wp-plugins', 'wp-components', 'wp-edit-post'), '1.0.0', true);
+            wp_enqueue_script('na-metabox-js-scripts', get_template_directory_uri() . '/inc/metaboxes/js/app.js', array('wp-plugins', 'wp-components', 'wp-edit-post'), '1.0.0', true);
             wp_localize_script(
                 'na-metabox-js-scripts',
                 'naThemeMetaboxes',

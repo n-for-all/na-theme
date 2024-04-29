@@ -13,7 +13,6 @@ import { withSelect, withDispatch } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { applyFilters } from '@wordpress/hooks';
 import * as BlockEditor from '@wordpress/block-editor';
-import * as Editor from '@wordpress/editor';
 
 import {
 	alignCenter,
@@ -26,7 +25,7 @@ import {
 } from '../../icons';
 
 const { InnerBlocks, InspectorControls, BlockControls, AlignmentToolbar } =
-	BlockEditor || Editor;
+	BlockEditor;
 
 export const CUSTOM_TEMPLATE_NAME = 'custom';
 

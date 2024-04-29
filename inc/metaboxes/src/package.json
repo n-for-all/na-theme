@@ -4,17 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "wp-scripts build",
+    "start": "wp-scripts start"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@wordpress/components": "^13.0.0",
     "gulp-sass": "^5.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "sass": "^1.53.0"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^14.0.1",
+    "@wordpress/components": "^27.4.0",
+    "@wordpress/editor": "^13.33.0",
+    "@wordpress/scripts": "^27.7.0",
     "copy-webpack-plugin": "^8.1.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-util": "^3.0.8",

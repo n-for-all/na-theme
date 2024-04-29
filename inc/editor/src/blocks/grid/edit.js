@@ -6,11 +6,10 @@ import { withSelect, withDispatch } from "@wordpress/data";
 import { compose } from "@wordpress/compose";
 import { applyFilters } from "@wordpress/hooks";
 import * as BlockEditor from "@wordpress/block-editor";
-import * as Editor from "@wordpress/editor";
 import times from "lodash.times";
 import { createBlock } from "@wordpress/blocks";
 
-const { InnerBlocks, InspectorControls } = BlockEditor || Editor;
+const { InnerBlocks, InspectorControls } = BlockEditor;
 const ALLOWED_BLOCKS = [ 'na-theme-blocks/grid-column' ];
 
 const SizeRangeControl = ({ label, attributeName, value, setAttributes, onChange, ...props }) => {

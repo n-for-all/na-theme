@@ -2,13 +2,12 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import * as BlockEditor from '@wordpress/block-editor';
-import * as Editor from '@wordpress/editor';
 
 import edit from './edit';
 import transforms from './transforms';
 import { tabs } from '../../icons';
 
-const { InnerBlocks } = BlockEditor || Editor;
+const { InnerBlocks } = BlockEditor;
 
 registerBlockType( 'na-theme-blocks/tabs', {
 	title: __( 'Tabs', 'na-theme' ),

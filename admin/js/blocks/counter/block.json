@@ -1,0 +1,45 @@
+{
+  "apiVersion": 2,
+  "name": "na-theme-blocks/counter",
+  "title": "Counter",
+  "category": "na-theme",
+  "description": "Html counter",
+  "keywords": [
+    "counter"
+  ],
+  "textdomain": "default",
+  "attributes": {
+    "duration": {
+      "type": "string",
+      "default": "1000"
+    },
+    "start": {
+      "type": "string",
+      "default": "0"
+    },
+    "step": {
+      "type": "string",
+      "default": "0.1"
+    },
+    "end": {
+      "type": "string",
+      "default": "1"
+    },
+    "prefix": {
+      "type": "string"
+    },
+    "suffix": {
+      "type": "string"
+    },
+    "seperator": {
+      "type": "string",
+      "default": ","
+    }
+  },
+  "supports": {
+    "anchor": false,
+    "html": false
+  },
+  "editorStyle": "wp-block-counter-text-editor",
+  "style": "wp-block-counter-text"
+}
