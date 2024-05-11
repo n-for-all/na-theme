@@ -9,11 +9,9 @@ class PostColumn {
 	 */
 	
 	private $column = "";
-	private $post_type = "post";
 	private $order = -1;
 	public function __construct($column_name, $column_label, $column_type, $post_type = "post", $order = -1) {
 		$this->column = array("name" => $column_name, "label" => $column_label, "type" => $column_type);
-		$this->post_type = $post_type;
 		$this->order = $order;
 		switch($post_type){
 			case "post":
@@ -29,7 +27,7 @@ class PostColumn {
 				$action = "manage_{$post_type}_posts_custom_column";
 		}
 		add_filter($filter, array(&$this, 'head'));
-		add_action($action, array(&$this, 'content'), 10, 2);
+		add_filter($action, array(&$this, 'content'), 10, 2);
 	}
 	
 	function head($defaults) {

@@ -44,7 +44,12 @@ export class LiveSearch extends React.Component<ILiveSearchProps, any> {
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
-		return this.state.searching != nextState.searching || this.state.value != nextState.value || this.state.values != nextState.values || this.state.show != nextState.show;
+		return (
+			this.state.searching != nextState.searching ||
+			this.state.value != nextState.value ||
+			this.state.values != nextState.values ||
+			this.state.show != nextState.show
+		);
 	}
 
 	componentDidMount() {
@@ -58,12 +63,12 @@ export class LiveSearch extends React.Component<ILiveSearchProps, any> {
 	}
 
 	render() {
-        let all = this.props.alllabel ? this.props.alllabel.replace("%s", this.state.value) : null;
+		let all = this.props.alllabel ? this.props.alllabel.replace("%s", this.state.value) : null;
 		let values = [];
 		if (this.state.searching) {
 			values.push(
 				<li key={"item-none"}>
-					<span className="label">{this.props.searchinglabel ? this.props.searchinglabel : 'Searching...'}</span>
+					<span className="label">{this.props.searchinglabel ? this.props.searchinglabel : "Searching..."}</span>
 				</li>
 			);
 		} else if (this.state.values && this.state.values.length) {
@@ -82,38 +87,40 @@ export class LiveSearch extends React.Component<ILiveSearchProps, any> {
 					<li key={"item-" + index} onClick={(e) => this.onItemClick(value)}>
 						{value.image ? <img src={value.image} /> : null}
 						<div>
-							<span className="label">{value.label}</span>
-							<span className="description">{value.description}</span>
+							<span className="label" dangerouslySetInnerHTML={{ __html: value.label }}></span>
+							<span className="description" dangerouslySetInnerHTML={{ __html: value.description }}></span>
 						</div>
 					</li>
 				);
 			});
 
-			all && values.push(
-				<li
-					key={"item-end"}
-					className="item-end"
-					onClick={() => {
-						if (this.form) {
-							this.form.submit();
-						}
-					}}>
-					<span className="label">{all}</span>
-				</li>
-			);
+			all &&
+				values.push(
+					<li
+						key={"item-end"}
+						className="item-end"
+						onClick={() => {
+							if (this.form) {
+								this.form.submit();
+							}
+						}}>
+						<span className="label">{all}</span>
+					</li>
+				);
 		} else {
-			all && values.push(
-				<li
-					key={"item-end"}
-					className="item-end"
-					onClick={() => {
-						if (this.form) {
-							this.form.submit();
-						}
-					}}>
-					<span className="label">{all}</span>
-				</li>
-			);
+			all &&
+				values.push(
+					<li
+						key={"item-end"}
+						className="item-end"
+						onClick={() => {
+							if (this.form) {
+								this.form.submit();
+							}
+						}}>
+						<span className="label">{all}</span>
+					</li>
+				);
 		}
 		return (
 			<div className="live-search">
@@ -121,7 +128,14 @@ export class LiveSearch extends React.Component<ILiveSearchProps, any> {
 					<form ref={(elm) => (this.form = elm)}>
 						<input type="hidden" value={this.state.value} />
 						<div className={"search-box" + (this.state.searching ? " searching" : "") + (this.state.show ? " visible" : "")}>
-							<input name="q" value={this.state.value} placeholder={this.props.placeholder ? this.props.placeholder : "Search..."} type="search" onClick={(e) => e.stopPropagation()} onChange={this.onSearch} />
+							<input
+								name="q"
+								value={this.state.value}
+								placeholder={this.props.placeholder ? this.props.placeholder : "Search..."}
+								type="search"
+								onClick={(e) => e.stopPropagation()}
+								onChange={this.onSearch}
+							/>
 							<ul className="live-search-values">{values}</ul>
 						</div>
 					</form>

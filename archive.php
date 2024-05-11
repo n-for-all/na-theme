@@ -4,8 +4,16 @@
  * The main template file
  *
  */
-get_header();
+
 $tax = $wp_query->get_queried_object();
+
+if(is_string($tax->has_archive) && locate_template('inc/healthcare/templates/archive-' . $tax->has_archive . '.php') != ''){
+    include(locate_template('inc/healthcare/templates/archive-' . $tax->has_archive . '.php'));
+    return;
+}
+
+get_header();
+
 $terms = get_terms(array(
     'taxonomy' => $tax->taxonomy,
     'hide_empty' => false,

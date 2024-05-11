@@ -1418,13 +1418,13 @@ $naTheme->registerClass('menu', '\NaTheme\Inc\Menu\Shortcode');
 $naTheme->registerClass('healthcare', '\NaTheme\Inc\Healthcare\Healthcare');
 $naTheme->registerClass('testimonials', '\NaTheme\Inc\Testimonials\Shortcode');
 $naTheme->registerClass('map', '\NaTheme\Inc\Map\Map');
+$naTheme->registerClass('posts', '\NaTheme\Inc\Posts\Shortcode');
 
 
 $naTheme->register('slider', get_template_directory() . '/inc/slider/loader.php');
 
 $naTheme->register('case-studies', get_template_directory() . '/inc/case-studies/shortcode.php');
 $naTheme->register('carousel', get_template_directory() . '/inc/carousel/shortcode.php');
-$naTheme->register('posts', get_template_directory() . '/inc/posts/shortcodes.php');
 $naTheme->register('attachment', get_template_directory() . '/inc/attachment/loader.php');
 $naTheme->register('switcher', get_template_directory() . '/inc/switcher/loader.php');
 $naTheme->register('popup', get_template_directory() . '/inc/popup/loader.php');

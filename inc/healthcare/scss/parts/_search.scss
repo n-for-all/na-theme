@@ -1,5 +1,30 @@
 .search-box {
     position: relative;
+    width: 100%;
+    padding-right: 2rem;
+    border-bottom: 1px solid #abc1c4;
+    background-color: #f3f4f6;
+
+    &:after {
+        content: "";
+        position: absolute;
+        right: 5px;
+        width: 1.6rem;
+        margin: 0 0.2rem;
+        background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIyIiBkPSJNMjQuNjI4MTE0MywyNC41MzYzMTQzIEMyNy4yMDcsMjEuOTM0Mjg1NyAyOC44LDE4LjM1MzA1NzEgMjguOCwxNC40IEMyOC44LDYuNDQ3MTExNDMgMjIuMzUyOTE0MywwIDE0LjQsMCBDNi40NDcxMTE0MywwIDAsNi40NDcxMTE0MyAwLDE0LjQgQzAsMjIuMzUyOTE0MyA2LjQ0NzExMTQzLDI4LjggMTQuNCwyOC44IEMxOC4zOTk4NTcxLDI4LjggMjIuMDE4NjI4NiwyNy4xNjkyIDI0LjYyODExNDMsMjQuNTM2MzE0MyBaIE0yNC42MjgxMTQzLDI0LjUzNjMxNDMgTDM2LDM2IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxIDEpIi8+PC9zdmc+") right center transparent;
+        background-size: contain;
+        background-repeat: no-repeat;
+        height: 70%;
+        top: 15%;
+        opacity: 0.3;
+    }
+
+
+    >input {
+        width: 100%;
+        padding: 0.3rem 0.5rem;
+        background-color: transparent;
+    }
 
     .live-search-values {
         display: none;
@@ -39,7 +64,7 @@
                 display: block;
             }
 
-            .label {
+            &.group-title {
                 font-weight: bold;
             }
 
@@ -66,10 +91,6 @@
                 cursor: default;
             }
         }
-    }
-
-    input:focus+ul {
-        border-color: #606c76;
     }
 
     &.visible {

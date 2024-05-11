@@ -62,6 +62,7 @@ $slide_classes = [
     <?php if (isset($settings['bullets']) && $settings['bullets']  && count($slides) > 1) : ?>
         <bullets class="bottom-0"></bullets>
     <?php endif; ?>
+    <?php do_action('slider.after', $atts, $settings); ?>
 </slider>
 <script>
     <?php //wait till the thme to be ready 

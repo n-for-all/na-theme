@@ -12,6 +12,11 @@ class Doctor
     private $metabox = null;
     public function __construct()
     {
+        $this->metabox = new DoctorMetabox(array('doctor'), 'Doctors');
+
+        $image = new DoctorImage("doctor-icon", "Icon", "icon", "doctors", 2);
+        $image->set_metabox($this->metabox);
+
         add_action('init', array(&$this, 'init'));
         add_shortcode('doctors', array(&$this, 'render'));
         add_shortcode('doctors-listing', array(&$this, 'renderListing'));
@@ -23,11 +28,6 @@ class Doctor
         add_filter('autocomplete', array(&$this, 'autocomplete'), 10, 1);
 
         add_action('the_post', array(&$this, 'post_object'));
-
-        $this->metabox = new DoctorMetabox(array('doctor'), 'Doctors');
-
-        $image = new DoctorImage("doctor-icon", "Icon", "icon", "doctors", 2);
-        $image->set_metabox($this->metabox);
     }
     public function init()
     {
@@ -55,9 +55,9 @@ class Doctor
             'show_ui'            => true,
             'show_in_menu'       => true,
             'query_var'          => true,
+            'has_archive' => 'doctors',
             'rewrite'            => array('slug' => 'doctor'),
             'capability_type'    => 'post',
-            'has_archive'        => true,
             'hierarchical'       => false,
             'menu_position'      => null,
             'supports'           => array('title', 'editor', 'thumbnail', 'page-attributes')
@@ -175,6 +175,7 @@ class Doctor
                     global $post;
                     foreach ($doctors as $post) :
                         setup_postdata($post);
+
                         $image = $this->metabox->get_image($post->ID);
                         $position = $this->metabox->get_position($post->ID); ?>
                         <li>
@@ -238,107 +239,40 @@ class Doctor
 
 
         ob_start();
-        $divisions = $this->getDivisions();
         // $divisions = $this->getDivisions();
 
-
+        include_once(get_template_directory() . '/inc/healthcare/templates/parts/department-filters.php');
+        include_once(get_template_directory() . '/inc/healthcare/templates/parts/doctors-filters.php');
         ?>
-        <form id="doctors-filter-form" method="GET">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="filters-sidebar">
-                        <div class="widget user_widget_search">
-                            <input type="hidden" value="<?php echo esc_attr($GET['q'] ?? ''); ?>" name="q" />
-                            <?php  /*<div class="form-group division-filter">
-                                    <h5>Division</h5>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="radio" name="filter[division]" value="">
-                                        <label class="form-check-label"><?php _e('All Divisions', 'na-theme'); ?></label>
-                                    </div>
-                                    <?php foreach ($divisions as $division) : ?>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="radio" name="filter[division]" value="<?php echo $division->ID; ?>">
-                                            <label class="form-check-label"><?php echo $division->post_title; ?></label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div> */ ?>
-                            <div class="form-group division-filter">
-                                <h5>Division</h5>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="radio" name="filter[division]" value="" <?php echo $filter_division == '' ? 'checked' : ''; ?>>
-                                    <label class="form-check-label"><?php _e('All Divisions', 'na-theme'); ?></label>
-                                </div>
-                                <?php foreach ($divisions as $division) : ?>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="radio" name="filter[division]" value="<?php echo $division->ID; ?>" <?php echo $filter_division == $division->ID ? 'checked' : ''; ?>>
-                                        <label class="form-check-label"><?php echo $division->post_title; ?></label>
-                                    </div>
-                                <?php endforeach; ?>
+
+        <div class="doctors-list doctors-listing">
+            <?php if (count($doctors) > 0) { ?>
+                <ul>
+                    <?php
+                    global $post;
+                    foreach ($doctors as $post) :
+                        setup_postdata($post);
+                        $image = $this->metabox->get_image($post->ID);
+                        $position = $this->metabox->get_position($post->ID); ?>
+                        <li>
+                            <a href="<?php the_permalink(); ?>" style="<?php echo $image ? "background-image:url({$image[0]})" : '' ?>" class="image"></a>
+                            <div class="content">
+                                <a href="<?php the_permalink(); ?>" class="title"><?php the_title(); ?></a>
+                                <div class="position"><?php echo $position; ?></div>
+                                <div class="text"><?php the_excerpt(); ?></div>
                             </div>
-                            <?php  /*<div class="form-actions">
-                                    <button type="submit" class="btn btn-default">Filter</button>
-                                </div>
-                                */ ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="form-inline doctors-search">
-                        <div class="form-group search-group">
-                            <div data-live-search="true" endpoint="<?php echo add_query_arg('action', 'doctors_autocomplete', admin_url('admin-ajax.php')); ?>" alllabel="<?php _e('Search all for \'%s\'', 'na-theme'); ?>" searchinglabel="<?php _e('Searching...', 'na-theme'); ?>" placeholder="<?php _e('Search for doctors, division or specialty...', 'na-theme'); ?>"></div>
-                        </div>
-                        <div class="form-group">
-                            <label><?php _e('Sort', 'na-theme'); ?></label>
-                            <select name="sort" class="form-control form-select">
-                                <option value="a-z" <?php echo $order == 'ASC' ? 'selected' : ''; ?>><?php _e('Name: A-Z', 'na-theme'); ?></option>
-                                <option value="z-a" <?php echo $order == 'DESC' ? 'selected' : ''; ?>><?php _e('Name: Z-A', 'na-theme'); ?></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="doctors-list doctors-listing">
-                        <?php if (count($doctors) > 0) { ?>
-                            <ul>
-                                <?php
-                                global $post;
-                                foreach ($doctors as $post) :
-                                    setup_postdata($post);
-                                    $image = $this->metabox->get_image($post->ID);
-                                    $position = $this->metabox->get_position($post->ID); ?>
-                                    <li>
-                                        <a href="<?php the_permalink(); ?>" style="<?php echo $image ? "background-image:url({$image[0]})" : '' ?>" class="image"></a>
-                                        <div class="content">
-                                            <a href="<?php the_permalink(); ?>" class="title"><?php the_title(); ?></a>
-                                            <div class="position"><?php echo $position; ?></div>
-                                            <div class="text"><?php the_excerpt(); ?></div>
-                                        </div>
-                                    </li>
-                                <?php
-                                endforeach;
-                                wp_reset_postdata();
-                                ?>
-                            </ul>
-                        <?php } else {
-                        ?>
-                            <div class="alert alert-info"><?php _e('There are no doctors found', 'na-theme'); ?></div>
-                        <?php
-                        } ?>
-                    </div>
-                </div>
-            </div>
-            <script>
-                app.ready(function() {
-                    var form = document.querySelector('#doctors-filter-form');
-                    if (form) {
-                        let inputs = form.querySelectorAll('select,input[type=radio]');
-                        [].forEach.call(inputs, function(input) {
-                            input.addEventListener('change', function(e) {
-                                form.submit();
-                            });
-                        })
-                    }
-                });
-            </script>
-        </form>
+                        </li>
+                    <?php
+                    endforeach;
+                    wp_reset_postdata();
+                    ?>
+                </ul>
+            <?php } else {
+            ?>
+                <div class="alert alert-info"><?php _e('There are no doctors found', 'na-theme'); ?></div>
+            <?php
+            } ?>
+        </div>
     <?php
         return ob_get_clean();
     }
@@ -364,8 +298,8 @@ class Doctor
             array(
                 'post_type' => 'doctor',
                 'posts_per_page' => $atts['limit'],
-                'orderby' => $atts['orderby'],
-                'order' => $atts['order'],
+                'orderby' => $atts['orderby'] ?? 'date',
+                'order' => $atts['order'] ?? 'DESC',
                 'suppress_filters' => false
             )
         );
@@ -373,7 +307,7 @@ class Doctor
         $_doctors = array();
         if (count($doctors) > 0) {
             $settings = array(
-                'class' => 'na-doctors-carousel ' . $atts['class'],
+                'class' => 'na-doctors-carousel ' . ($atts['class'] ?? ''),
                 'autoplay' => $atts['autoplay'],
                 'container' => $atts['container'],
                 'bullets' => $atts['bullets'],
@@ -390,8 +324,9 @@ class Doctor
                 $image = '';
                 $image = $this->metabox->get_image($post->ID);
 
-                $content = sprintf('<div class="title doctor-title">%s</div>', get_the_title());
-                $_doctors[] = array('content' => sprintf('<a href="%s" style="%s" class="image-aspect doctor-image"></a>%s', get_permalink(), $image ? "background-image:url('{$image[0]}')" : '', $content), 'post' => $post);
+                $content = sprintf('<h3 class="mt-3 text-xl font-medium text-center title doctor-title">%s</h3>
+                <div class="pb-3 text-center doctor-position">%s</div>', get_the_title(), $this->metabox->get_position($post->ID));
+                $_doctors[] = array('content' => sprintf('<a href="%s" style="%s" class="bg-center bg-no-repeat bg-contain image-aspect-full doctor-image"></a>%s', get_permalink(), $image ? "background-image:url('{$image[0]}')" : '', $content), 'post' => $post);
             endforeach;
             wp_reset_postdata();
         }
@@ -413,10 +348,25 @@ class Doctor
         }
     }
 
-    public function getDivisions()
+    public static function getDivisions()
     {
         $args = array(
             'post_type' => 'division',
+            'posts_per_page' => -1,
+            'suppress_filters' => false
+        );
+
+        $divisions = get_posts(
+            $args
+        );
+
+        return $divisions;
+    }
+
+    public static function getDepartments()
+    {
+        $args = array(
+            'post_type' => 'department',
             'posts_per_page' => -1,
             'suppress_filters' => false
         );
@@ -524,6 +474,9 @@ class DoctorMetabox extends \NaTheme\Inc\Metaboxes\Metabox
     public function get_image($post_id)
     {
         $p = $this->_metabox_image_value($post_id, 'image', 'doctor', 'full');
+        if (!$p && has_post_thumbnail($post_id)) {
+            $p = wp_get_attachment_image_src(get_post_thumbnail_id($post_id), 'full');
+        }
         return $p;
     }
     public function get_services($post_id)

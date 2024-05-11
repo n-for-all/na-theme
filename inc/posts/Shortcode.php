@@ -1,6 +1,8 @@
 <?php
 
-class Posts_Shortcode
+namespace NaTheme\Inc\Posts;
+
+class Shortcode
 {
     public function __construct()
     {
@@ -26,7 +28,7 @@ class Posts_Shortcode
             'category' => '',
             'columns' => 4,
             'limit' => 4
-        ), $atts, 'services-shortcode');
+        ), $atts, 'posts-shortcode');
         $categories = (array) explode(',', $atts['category']);
         $args = array(
             'post_type' => 'post',
@@ -86,7 +88,7 @@ class Posts_Shortcode
             'bullets' => 1,
             'pagination' => 1,
             'type' => 'carousel',
-        ), $atts, 'services-shortcode');
+        ), $atts, 'posts-shortcode');
         $categories = (array) explode(',', $atts['category']);
         $args = array(
             'post_type' => 'post',
@@ -127,7 +129,6 @@ class Posts_Shortcode
                     'content' => apply_filters('posts-shortcode-item', sprintf($template, has_post_thumbnail() ? 'has-thumbnail' : '', get_the_ID(), implode(';', $style), get_the_permalink(), get_the_date('M<b>d</b>', '', ''), get_the_title(), get_the_excerpt())),
                     'post' => get_post()
                 );
-
             }
         }
 
@@ -145,4 +146,3 @@ class Posts_Shortcode
         return $slider->addSlider($slides, $settings);
     }
 }
-new Posts_Shortcode();

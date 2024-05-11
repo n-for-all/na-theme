@@ -298,8 +298,8 @@ class NaSlider {
 		this.inner = this.element.querySelector(".na-slider") || document.createElement("div");
 		this.inner.classList.add("na-slider");
 
-		if (this.settings.class != "") {
-			this.inner.classList.add(...this.settings.class.split(" "));
+		if (this.settings.class && this.settings.class.trim() != "") {
+			this.inner.classList.add(...this.settings.class.trim().split(" "));
 		}
 
 		this.innerSlider = this.inner.querySelector("ul.na-slides") || document.createElement("ul");
@@ -420,14 +420,21 @@ class NaSlider {
 		this.cloneAttributes(slide, li);
 		this.innerSlider.appendChild(li);
 
-		let i = 0;
-		while (i < slide.children.length) {
-			let child = slide.children[i];
-			li.appendChild(clone ? child.cloneNode(true) : child);
-			if (li.hasAttribute("data-youtube-video")) {
-				li["_youtube_video"] = new YouTube(li.getAttribute("data-youtube-video"), li);
+		if (clone) {
+			[].forEach.call(slide.children, (child) => {
+				li.appendChild(child.cloneNode(true));
+				if (li.hasAttribute("data-youtube-video")) {
+					li["_youtube_video"] = new YouTube(li.getAttribute("data-youtube-video"), li);
+				}
+			});
+		} else {
+			while (slide.childNodes.length) {
+				let child = slide.firstChild;
+				li.appendChild(child);
+				if (li.hasAttribute("data-youtube-video")) {
+					li["_youtube_video"] = new YouTube(li.getAttribute("data-youtube-video"), li);
+				}
 			}
-			i++;
 		}
 		return li;
 	}

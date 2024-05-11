@@ -19,7 +19,7 @@ class Department
         add_action('the_post', array(&$this, 'post_object'));
         $this->metabox = new DepartmentMetabox(array('department'), 'Departments');
 
-        $image = new DepartmentImage("department-icon", "Icon", "icon", "departments", 2);
+        $image = new DepartmentImage("department-icon", "Icon", "icon", "department", 2);
         $image->set_metabox($this->metabox);
     }
     public function init()
@@ -53,7 +53,7 @@ class Department
             'has_archive'        => true,
             'hierarchical'       => false,
             'menu_position'      => null,
-            'supports'           => array('title', 'editor', 'thumbnail', 'page-attributes')
+            'supports'           => array('title', 'excerpt', 'editor', 'thumbnail', 'page-attributes')
         );
 
         register_post_type('department', $args);
@@ -72,23 +72,6 @@ class Department
         $args['s'] = $search;
 
         $query = new \WP_Query($args);
-        if ($search != '') {
-            $meta_args = $main_args;
-            $meta_args['meta_query'] = array(
-                'relation' => 'OR',
-                array(
-                    'key' => '_meta_department',
-                    'value' => $search,
-                    'compare' => 'LIKE'
-                )
-            );
-            if (isset($args['tax_query'])) {
-                $meta_args['tax_query'] = $args['tax_query'];
-            }
-            $meta_query = new \WP_Query($meta_args);
-            $query->posts = array_unique(array_merge($query->posts, $meta_query->posts), SORT_REGULAR);
-            $query->post_count = count($query->posts);
-        }
 
         $json = [];
         global $post;
@@ -277,16 +260,6 @@ class DepartmentMetabox extends \NaTheme\Inc\Metaboxes\Metabox
 {
     public function show_metabox($post)
     {
-        $posts = \get_posts(['post_type' => 'division', 'posts_per_page' => -1]);
-        $options = [];
-        if ($posts && !\is_wp_error($posts)) {
-            $options = ['Select Division'];
-            foreach ($posts as $pst) {
-                $options[$pst->ID] = $pst->post_title;
-            }
-        } else {
-            $options[] = 'No divisions found';
-        }
         ?>
         <table class="form-table">
             <tbody>
@@ -300,12 +273,6 @@ class DepartmentMetabox extends \NaTheme\Inc\Metaboxes\Metabox
                     <th scope="row"><label for="name">Choose listing image</label></th>
                     <td><?php $this->_metabox_image($post->ID, 'image', 'department', false); ?>
                         <p class="description">Choose the department listing image.</p>
-                    </td>
-                </tr>
-                <tr class="form-field form-required term-name-wrap">
-                    <th scope="row"><label for="name">Choose division</label></th>
-                    <td><?php $this->_metabox_select($post->ID, $options, 'division'); ?>
-                        <p class="description">Choose your department division.</p>
                     </td>
                 </tr>
                 <tr class="form-field form-required term-name-wrap">

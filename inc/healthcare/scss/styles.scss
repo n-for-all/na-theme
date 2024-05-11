@@ -3,7 +3,6 @@
 @import "parts/filters";
 @import "parts/search";
 
-.divisions-list,
 .departments-list,
 .doctors-list {
     >ul {
@@ -15,7 +14,7 @@
 
 
         li {
-            width: 48%;
+            width: 31.33%;
             position: relative;
             margin: 0 1% 2%;
             padding-bottom: 0 !important;
@@ -122,8 +121,6 @@ body .departments-list>ul>li {
 }
 
 @media (max-width:768px) {
-
-    body .divisions-list,
     body .departments-list {
         >ul {
 

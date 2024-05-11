@@ -14,11 +14,15 @@ class Division
         add_filter('manage_division_posts_columns', array(&$this, 'add_img_column'));
         add_filter('manage_division_posts_custom_column', array(&$this, 'manage_img_column'), 10, 2);
 
+        add_filter('autocomplete', array(&$this, 'autocomplete'), 11, 1);
         add_action('the_post', array(&$this, 'post_object'));
 
         $this->metabox = new DivisionMetabox(array('division'), 'Divisions');
 
-        $image = new DivisionImage("division-icon", "Icon", "icon", "divisions", 2);
+        $image = new DivisionImage("division-icon", "Icon", "icon", "division", 2);
+        $image->set_metabox($this->metabox);
+
+        $image = new DivisionDepartment("division-department", "Department", "department", "division", 2);
         $image->set_metabox($this->metabox);
     }
     public function init()
@@ -52,7 +56,7 @@ class Division
             'has_archive'        => true,
             'hierarchical'       => false,
             'menu_position'      => null,
-            'supports'           => array('title', 'editor', 'thumbnail', 'page-attributes')
+            'supports'           => array('title', 'excerpt', 'editor', 'thumbnail', 'page-attributes')
         );
 
         register_post_type('division', $args);
@@ -172,33 +176,60 @@ class Division
         );
 
         ob_start();
-        if (count($divisions) > 0) {
+
+        $order = $atts['order'] ?? 'ASC';
+        $sort = $_GET['sort'] ?? 'a-z';
+        if ($sort == 'z-a') {
+            $order = 'DESC';
+        }
 ?>
-            <div class="divisions-list">
-                <ul>
+        <div class="flex division-list">
+            <div class="">
+                <div class="pr-10">
+                    <?php include_once(get_template_directory() . '/inc/healthcare/templates/parts/department-filters.php'); ?>
+                </div>
+            </div>
+            <div class="flex-1">
+                <div class="flex items-center mb-5 doctors-search">
+                    <div class="flex-1 pr-5 form-group search-group">
+                        <div data-live-search="true" endpoint="<?php echo add_query_arg('action', 'doctors_autocomplete', admin_url('admin-ajax.php')); ?>" alllabel="<?php _e('Search all for \'%s\'', 'na-theme'); ?>" searchinglabel="<?php _e('Searching...', 'na-theme'); ?>" placeholder="<?php _e('Search for doctors, division or specialty...', 'na-theme'); ?>"></div>
+                    </div>
+                    <div class="form-group">
+                        <label><?php _e('Sort', 'na-theme'); ?></label>
+                        <select name="sort" class="form-control form-select">
+                            <option value="a-z" <?php echo $order == 'ASC' ? 'selected' : ''; ?>><?php _e('Name: A-Z', 'na-theme'); ?></option>
+                            <option value="z-a" <?php echo $order == 'DESC' ? 'selected' : ''; ?>><?php _e('Name: Z-A', 'na-theme'); ?></option>
+                        </select>
+                    </div>
+                </div>
+                <ul class="grid grid-cols-3 gap-3">
                     <?php
-                    global $post;
-                    foreach ($divisions as $post) :
-                        setup_postdata($post);
-                        $image = $this->metabox->get_image($post->ID);
-                        $icon = $this->metabox->get_icon($post->ID);
+                    if (count($divisions) > 0) {
+                        global $post;
+                        foreach ($divisions as $post) :
+                            setup_postdata($post);
+                            $image = $this->metabox->get_image($post->ID);
+                            $icon = $this->metabox->get_icon($post->ID);
                     ?>
-                        <li>
-                            <a href="<?php the_permalink(); ?>" style="<?php echo $image ? "background-image:url({$image[0]})" : '' ?>" class="image"></a>
-                            <div class="content">
-                                <?php echo $icon ? "<img src=\"{$icon[0]}\" />" : ''; ?>
-                                <a href="<?php the_permalink(); ?>" class="title"><?php the_title(); ?></a>
-                                <div class="text"><?php the_excerpt(); ?></div>
-                            </div>
-                        </li>
+                            <li class="relative">
+                                <a href="<?php the_permalink(); ?>" style="<?php echo $image ? "background-image:url({$image[0]})" : '' ?>" class="left-0 right-0 block w-full h-full bg-gray-100 pt-72 image"></a>
+                                <div class="absolute bottom-0 w-full p-4 content">
+                                    <div class="flex items-center">
+                                        <?php echo $icon ? "<img class='h-10 mr-2' src=\"{$icon[0]}\" />" : ''; ?>
+                                        <a href="<?php the_permalink(); ?>" class="text-xl font-medium title"><?php the_title(); ?></a>
+                                    </div>
+                                    <?php if (\has_excerpt()) : ?><div class="mt-4 text"><?php the_excerpt(); ?></div><?php endif; ?>
+                                </div>
+                            </li>
                     <?php
-                    endforeach;
-                    wp_reset_postdata();
+                        endforeach;
+                        wp_reset_postdata();
+                    }
                     ?>
                 </ul>
             </div>
-        <?php
-        }
+        </div>
+    <?php
         return ob_get_clean();
     }
     public function addDivision($divisions, $settings)
@@ -214,14 +245,74 @@ class Division
             return ob_get_clean();
         }
     }
+
+    public function autocomplete(&$values)
+    {
+        $search = $_GET['q'];
+
+        $main_args = array(
+            'post_type' => 'division',
+            'post_status' => 'publish',
+            'posts_per_page' => 20
+        );
+        $args = $main_args;
+        $args['s'] = $search;
+
+        $query = new \WP_Query($args);
+        if ($search != '') {
+            $meta_args = $main_args;
+            $meta_args['meta_query'] = array(
+                'relation' => 'OR',
+                array(
+                    'key' => '_meta_department',
+                    'value' => $search,
+                    'compare' => 'LIKE'
+                )
+            );
+            if (isset($args['tax_query'])) {
+                $meta_args['tax_query'] = $args['tax_query'];
+            }
+            $meta_query = new \WP_Query($meta_args);
+            $query->posts = array_unique(array_merge($query->posts, $meta_query->posts), SORT_REGULAR);
+            $query->post_count = count($query->posts);
+        }
+
+        $json = [];
+        global $post;
+        if ($query->have_posts()) :
+            $json[] = ['label' => 'Division', 'type' => 'title'];
+            while ($query->have_posts()) : $query->the_post();
+                $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'thumbnail');
+                $json[] = ['label' => get_the_title(), 'image' => $image[0], 'description' => $post->position, 'url' => get_permalink()];
+            endwhile;
+        endif;
+
+        return array_merge($values, $json);
+    }
 }
 class DivisionMetabox extends \NaTheme\Inc\Metaboxes\Metabox
 {
     public function show_metabox($post)
     {
-        ?>
+        $posts = \get_posts(['post_type' => 'department', 'posts_per_page' => -1]);
+        $options = [];
+        if ($posts && !\is_wp_error($posts)) {
+            $options = ['Select Department'];
+            foreach ($posts as $pst) {
+                $options[$pst->ID] = $pst->post_title;
+            }
+        } else {
+            $options[] = 'No departments found';
+        }
+    ?>
         <table class="form-table">
             <tbody>
+                <tr class="form-field form-required term-name-wrap">
+                    <th scope="row"><label for="name">Choose department</label></th>
+                    <td><?php $this->_metabox_select($post->ID, $options, 'department'); ?>
+                        <p class="description">Choose your department.</p>
+                    </td>
+                </tr>
                 <tr class="form-field form-required term-name-wrap">
                     <th scope="row"><label for="name">Choose icon</label></th>
                     <td><?php $this->_metabox_image($post->ID, 'icon', 'division', false); ?>
@@ -267,8 +358,32 @@ class DivisionImage extends \NaTheme\Inc\Metaboxes\Admin\PostColumn
         if ($image) {
         ?>
             <img src="<?php echo $image[0]; ?>" style="height:50px" />
-<?php
+        <?php
 
+        }
+    }
+}
+
+
+
+class DivisionDepartment extends \NaTheme\Inc\Metaboxes\Admin\PostColumn
+{
+    private $metabox = null;
+    public function set_metabox($metabox)
+    {
+        $this->metabox = $metabox;
+        return $this;
+    }
+    public function show_content($column, $post_id)
+    {
+        $image = $this->metabox->_metabox_select_value($post_id, 'department');
+
+        if (!empty($image)) {
+            $id = $image[0];
+            $post = get_post($id);
+        ?>
+            <a href="<?php echo get_edit_post_link($id); ?>"><?php echo $post->post_title; ?></a>
+<?php
         }
     }
 }

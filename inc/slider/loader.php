@@ -193,21 +193,21 @@ class Slider
                             $container  = sprintf('<div class="container"><div class="row"><div class="col-md-12">%s</div></div></div>', $content);
                         }
                     } else {
-                        $container = $content . ($video_id ? '<a href="#" class="play-btn-big"></a>': '');
+                        $container = $content . ($video_id ? '<a href="#" class="play-btn-big"></a>' : '');
                     }
 
-                    $_slides[] = array('content' => sprintf('<div style="background-image:url(%s)" class="w-full na-slide-inner">
+                    $_slides[] = array('content' => sprintf('<div style="%s" class="w-full na-slide-inner">
                         %s
-    				</div>', $image, $container), 'post' => $slide, 'video' => $video_id);
+    				</div>', !empty($image) ? sprintf("background-image:url(%s)", $image) : "", $container), 'post' => $slide, 'video' => $video_id);
                     if ($atts['max'] && $atts['max'] < count($_slides)) {
                         break;
                     }
                 endforeach;
             }
         }
-        return $this->addSlider($_slides, $settings);
+        return $this->addSlider($_slides, $settings, $atts);
     }
-    public function addSlider($slides, $settings)
+    public function addSlider($slides, $settings, $atts = [])
     {
         if (count($slides) > 0) {
             $id = uniqid('slider_');
@@ -224,8 +224,8 @@ class Slider
 class Metabox extends \NaTheme\Inc\Metaboxes\Metabox
 {
     public function show_metabox($post)
-    {   
-        ?>
+    {
+?>
         <table class="form-table">
             <tbody>
                 <tr class="form-field form-required term-name-wrap">
@@ -256,9 +256,9 @@ class PostImage extends \NaTheme\Inc\Metaboxes\Admin\PostColumn
     {
         $images = $this->meta_box->_metabox_image_value($post_id, 'image', 'slide');
         foreach ($images as $image) {
-            ?>
+        ?>
             <img src="<?php echo $image[0]; ?>" style="height:50px" />
-            <?php
+<?php
         }
     }
 }

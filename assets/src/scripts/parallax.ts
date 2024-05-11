@@ -65,7 +65,7 @@ export default class Parallax {
 		this.isScroll = false;
 
 		this.latestScroll = 0;
-		var requestAnimationFrame = window.requestAnimationFrame || window["mozRequestAnimationFrame"] || window.webkitRequestAnimationFrame || window["msRequestAnimationFrame"];
+		var requestAnimationFrame = window.requestAnimationFrame || window["mozRequestAnimationFrame"] || window['webkitRequestAnimationFrame'] || window["msRequestAnimationFrame"];
 
 		window.requestAnimationFrame = requestAnimationFrame;
 		[].forEach.call(this.elements, (elm) => {
