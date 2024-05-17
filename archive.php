@@ -15,7 +15,7 @@ if(is_string($tax->has_archive) && locate_template('inc/healthcare/templates/arc
 get_header();
 
 $terms = get_terms(array(
-    'taxonomy' => $tax->taxonomy,
+    'taxonomy' => $tax->taxonomy, 
     'hide_empty' => false,
 ));
 ?>

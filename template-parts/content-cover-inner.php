@@ -29,7 +29,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 
 	<div class="<?php $naTheme->classes('content', 'entry-content'); ?> container">
 		<div class="entry-inner-content">
-			<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+			<?php the_title( '<h1 class="text-3xl entry-title">', '</h1>' ); ?>
 			<?php
 			the_content();
 

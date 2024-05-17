@@ -40,7 +40,7 @@ get_header(); ?>
 					</div>
 				</div>
 			</header><!-- .entry-header -->
-			<div class="blog-list-container">
+			<div class="container blog-list-container">
 				<?php if ( have_posts() ) :
 					$sidebar = is_active_sidebar('blog-sidebar');
 					?>

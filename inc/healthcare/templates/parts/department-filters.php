@@ -18,3 +18,14 @@ $departments = \NaTheme\Inc\Healthcare\Doctor::getDepartments();
         </label>
     <?php endforeach; ?>
 </div>
+<script>
+    app.ready(function(){
+        var departments = document.querySelectorAll('.department-filter input[type="radio"]');
+        departments.forEach(function(department){
+            department.addEventListener('change', function(){
+                app.trigger('department.filter', this.value)
+            });
+        });
+    })
+
+</script>

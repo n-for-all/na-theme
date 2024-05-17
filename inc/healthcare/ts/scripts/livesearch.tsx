@@ -129,7 +129,7 @@ export class LiveSearch extends React.Component<ILiveSearchProps, any> {
 						<input type="hidden" value={this.state.value} />
 						<div className={"search-box" + (this.state.searching ? " searching" : "") + (this.state.show ? " visible" : "")}>
 							<input
-								name="q"
+								name="s"
 								value={this.state.value}
 								placeholder={this.props.placeholder ? this.props.placeholder : "Search..."}
 								type="search"

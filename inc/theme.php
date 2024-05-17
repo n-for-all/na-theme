@@ -185,11 +185,11 @@ class Theme
     {
         add_filter('get_search_form', array(&$this, 'search_form_modify'));
         if (!is_admin()) {
-            add_filter('excerpt_more', array(&$this, 'excerpt_more'));
+            // add_filter('excerpt_more', array(&$this, 'excerpt_more'));
         }
         add_filter('wpcf7_autop_or_not', '__return_false');
         add_filter('body_class', array(&$this, 'body_class'));
-        add_filter('get_the_excerpt', array(&$this, 'get_excerpt'));
+        // add_filter('get_the_excerpt', array(&$this, 'get_excerpt'));
         add_filter('pre_get_posts', array(&$this, 'search_filter'));
         add_filter('get_the_archive_title', array(&$this, 'get_the_archive_title'));
         add_filter('author_link', array(&$this, 'redirect_author_link'));
@@ -597,6 +597,20 @@ class Theme
                 },
                 on: function(event, fn) {
                     document.body.addEventListener(event, fn);
+                },
+                trigger: function(eventName, values) {
+                    var event;
+                    if (window.CustomEvent) {
+                        event = new CustomEvent(eventName, {
+                            "detail": values
+                        });
+                    } else {
+                        event = document.createEvent('CustomEvent');
+                        event.initCustomEvent(eventName, true, true, {
+                            "detail": values
+                        });
+                    }
+                    document.body.dispatchEvent(event);
                 }
             };
         </script>

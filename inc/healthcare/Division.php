@@ -79,15 +79,7 @@ class Division
         if ($post_object->post_type == 'division') {
             $post_object->image = $this->metabox->get_image($post_object->ID);
             $post_object->icon = $this->metabox->get_icon($post_object->ID);
-            $post_object->departments = function () use ($post_object) {
-                $posts = get_posts([
-                    'post_type' => 'department',
-                    'post_status' => 'publish',
-                    'meta_key' => '_meta_na_division',
-                    'meta_value' => $post_object->ID,
-                ]);
-                return $posts;
-            };
+            $post_object->department = $this->metabox->get_department($post_object->ID);
         }
     }
 
@@ -165,23 +157,25 @@ class Division
             'order' => 'ASC',
         ), $atts);
 
+        $order = $atts['order'] ?? 'ASC';
+        $sort = $_GET['sort'] ?? 'a-z';
+        if ($sort == 'z-a') {
+            $order = 'DESC';
+        }
+
         $divisions = get_posts(
             array(
                 'post_type' => 'division',
                 'posts_per_page' => $atts['limit'],
-                'orderby' => $atts['orderby'],
-                'order' => $atts['order'],
+                'orderby' => 'title',
+                'order' => $order,
                 'suppress_filters' => false
             )
         );
 
         ob_start();
 
-        $order = $atts['order'] ?? 'ASC';
-        $sort = $_GET['sort'] ?? 'a-z';
-        if ($sort == 'z-a') {
-            $order = 'DESC';
-        }
+
 ?>
         <div class="flex division-list">
             <div class="">
@@ -191,44 +185,151 @@ class Division
             </div>
             <div class="flex-1">
                 <div class="flex items-center mb-5 doctors-search">
-                    <div class="flex-1 pr-5 form-group search-group">
+                    <div class="flex-1 mr-4 border border-gray-300 rounded-sm bg-gray-50 form-group search-group">
                         <div data-live-search="true" endpoint="<?php echo add_query_arg('action', 'doctors_autocomplete', admin_url('admin-ajax.php')); ?>" alllabel="<?php _e('Search all for \'%s\'', 'na-theme'); ?>" searchinglabel="<?php _e('Searching...', 'na-theme'); ?>" placeholder="<?php _e('Search for doctors, division or specialty...', 'na-theme'); ?>"></div>
                     </div>
-                    <div class="form-group">
-                        <label><?php _e('Sort', 'na-theme'); ?></label>
-                        <select name="sort" class="form-control form-select">
+                    <div class="flex items-center form-group">
+                        <label class="mr-2 text-sm"><?php _e('Sort', 'na-theme'); ?></label>
+                        <select name="sort" class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-sm bg-gray-50 form-control form-select sort-divisions">
                             <option value="a-z" <?php echo $order == 'ASC' ? 'selected' : ''; ?>><?php _e('Name: A-Z', 'na-theme'); ?></option>
                             <option value="z-a" <?php echo $order == 'DESC' ? 'selected' : ''; ?>><?php _e('Name: Z-A', 'na-theme'); ?></option>
                         </select>
                     </div>
                 </div>
-                <ul class="grid grid-cols-3 gap-3">
+                <ul class="relative grid gap-3 md:grid-cols-2 lg:grid-cols-3 filter-divisions">
                     <?php
                     if (count($divisions) > 0) {
                         global $post;
+                        $limit = 9;
+                        $count = 0;
                         foreach ($divisions as $post) :
                             setup_postdata($post);
-                            $image = $this->metabox->get_image($post->ID);
-                            $icon = $this->metabox->get_icon($post->ID);
+                            $image = \has_post_thumbnail() ? \wp_get_attachment_image_src(\get_post_thumbnail_id(), 'full') : [];
+                            $icon = $post->icon;
+                            $department = get_post($post->department);
+                            $depTitle = $department ? $department->post_title : '';
+
                     ?>
-                            <li class="relative">
-                                <a href="<?php the_permalink(); ?>" style="<?php echo $image ? "background-image:url({$image[0]})" : '' ?>" class="left-0 right-0 block w-full h-full bg-gray-100 pt-72 image"></a>
-                                <div class="absolute bottom-0 w-full p-4 content">
+                            <li class="relative division-item <?php echo $count >= $limit ? "hidden" : ""; ?>" data-id="<?php echo $post->ID; ?>" data-department="<?php echo $post->department; ?>">
+                                <a href="<?php the_permalink(); ?>" style="<?php echo $image ? "background-image:url({$image[0]})" : '' ?>" class="left-0 right-0 block w-full h-full bg-gray-100 bg-center bg-cover pt-72 image"></a>
+                                <div class="absolute bottom-0 w-full p-4 content bg-white/80">
                                     <div class="flex items-center">
                                         <?php echo $icon ? "<img class='h-10 mr-2' src=\"{$icon[0]}\" />" : ''; ?>
-                                        <a href="<?php the_permalink(); ?>" class="text-xl font-medium title"><?php the_title(); ?></a>
+                                        <div class="flex flex-col">
+                                            <a href="<?php the_permalink(); ?>" class="text-xl font-medium transition-all division-title opacity-80 hover:opacity-100"><?php the_title(); ?></a>
+                                            <?php if ($department) : ?><a href="<?php echo get_permalink($department); ?>" class="text-base transition-all opacity-50 hover:opacity-100"><?php echo $depTitle; ?></a><?php endif; ?>
+                                        </div>
                                     </div>
-                                    <?php if (\has_excerpt()) : ?><div class="mt-4 text"><?php the_excerpt(); ?></div><?php endif; ?>
+                                    <?php if (\has_excerpt()) : ?><div class="hidden mt-4 text"><?php the_excerpt(); ?></div><?php endif; ?>
                                 </div>
                             </li>
                     <?php
+                            $count++;
                         endforeach;
                         wp_reset_postdata();
                     }
                     ?>
                 </ul>
+                <?php if (count($divisions) > $limit) : ?>
+                    <div class="relative z-10 flex items-end justify-center w-full pt-10 -mt-16 bg-white-gradient show-more-divisions">
+                        <a href="#" class="inline-flex items-center justify-center px-4 py-2 m-2 mx-auto text-blue-800 transition-all bg-blue-300 border border-blue-300 rounded-sm hover:bg-transparent hover:text-blue-300 more-items">
+                            <svg fill="currentColor" class="w-5 h-5 mr-2" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 0c-8.836 0-16 7.163-16 16s7.163 16 16 16c8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 30.032c-7.72 0-14-6.312-14-14.032s6.28-14 14-14 14 6.28 14 14-6.28 14.032-14 14.032zM23 15h-6v-6c0-0.552-0.448-1-1-1s-1 0.448-1 1v6h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h6v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-6h6c0.552 0 1-0.448 1-1s-0.448-1-1-1z"></path>
+                            </svg> <?php _e('Show More', 'na-theme'); ?>
+                        </a>
+                        <a href="#" class="inline-flex items-center justify-center hidden px-4 py-2 m-2 mx-auto text-blue-800 transition-all bg-blue-300 border border-blue-300 rounded-sm hover:bg-transparent hover:text-blue-300 less-items">
+                            <svg fill="currentColor" class="w-5 h-5 mr-2" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 0c-8.836 0-16 7.163-16 16s7.163 16 16 16c8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 30.032c-7.72 0-14-6.312-14-14.032s6.28-14 14-14 14 6.28 14 14-6.28 14.032-14 14.032zM23 15h-6v-6c0-0.552-0.448-1-1-1s-1 0.448-1 1v6h-6c-0.552 0-1 0.448-1 1s0.448 1 1 1h6v6c0 0.552 0.448 1 1 1s1-0.448 1-1v-6h6c0.552 0 1-0.448 1-1s-0.448-1-1-1z"></path>
+                            </svg> <?php _e('Show Less', 'na-theme'); ?>
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
+        <script>
+            app.ready(function() {
+                var baseLimit = <?php echo $limit; ?>;
+                var divisions = document.querySelectorAll('.filter-divisions > li.division-item');
+                var selected = "";
+
+                if (divisions.length) {
+                    var showMore = document.querySelector('div.show-more-divisions');
+                    var toggleDivisions = function(departmentId, limit) {
+                        var count = 0;
+                        divisions.forEach(function(division, index) {
+                            if (!departmentId || departmentId == "") {
+                                division.classList.remove('hidden');
+                                if (count >= limit) {
+                                    division.classList.add('hidden');
+                                }
+                                count++;
+                                return;
+                            }
+                            var department = division.getAttribute('data-department');
+                            if (department == selected && count < limit) {
+                                division.classList.remove('hidden');
+                                count++;
+                            } else {
+                                division.classList.add('hidden');
+                            }
+                        });
+                        if (showMore) {
+                            showMore.classList.remove('hidden');
+                            if (count >= limit && limit == baseLimit) {
+                                showMore.querySelector("a.more-items").classList.remove('hidden');
+                                showMore.querySelector("a.less-items").classList.add('hidden');
+                            } else if (count < limit && limit == baseLimit) {
+                                showMore.querySelector("a.more-items").classList.add('hidden');
+                                showMore.querySelector("a.less-items").classList.add('hidden');
+                                showMore.classList.add('hidden');
+                            } else {
+                                showMore.querySelector("a.more-items").classList.add('hidden');
+                                showMore.querySelector("a.less-items").classList.remove('hidden');
+                            }
+                        }
+                    }
+                    app.on("department.filter", function(e) {
+                        selected = e.detail;
+                        toggleDivisions(selected, baseLimit);
+                    });
+
+                    if (showMore) {
+                        showMore.querySelector("a.more-items").addEventListener('click', function(e) {
+                            e.preventDefault();
+                            toggleDivisions(selected, divisions.length);
+                        });
+                        showMore.querySelector("a.less-items").addEventListener('click', function(e) {
+                            e.preventDefault();
+                            toggleDivisions(selected, baseLimit);
+                        });
+                    }
+
+                    var sortSelect = document.querySelector('select.sort-divisions');
+                    if (sortSelect) {
+                        var sort = function(e) {
+                            var value = e.target.value;
+                            var container = document.querySelector('.filter-divisions');
+                            var key = function(a) {
+                                return a.querySelector(".division-title").textContent.trim()
+                            };
+
+                            Array.from(container.children)
+                                .sort(function(a, b) {
+                                    return value == "a-z" ? key(a).localeCompare(key(b)) : -1 * key(a).localeCompare(key(b))
+                                })
+                                .forEach(function(child) {
+                                    container.appendChild(child)
+                                });
+                        }
+                        sortSelect.addEventListener('change', function(e) {
+                            sort(e);
+                        });
+                    }
+
+                }
+
+            });
+        </script>
     <?php
         return ob_get_clean();
     }
@@ -283,7 +384,8 @@ class Division
             $json[] = ['label' => 'Division', 'type' => 'title'];
             while ($query->have_posts()) : $query->the_post();
                 $image = wp_get_attachment_image_src(get_post_thumbnail_id(), 'thumbnail');
-                $json[] = ['label' => get_the_title(), 'image' => $image[0], 'description' => $post->position, 'url' => get_permalink()];
+                $department = get_post($post->department);
+                $json[] = ['label' => get_the_title(), 'image' => $image[0], 'description' => $department ? $department->post_title : '', 'url' => get_permalink()];
             endwhile;
         endif;
 
@@ -339,6 +441,11 @@ class DivisionMetabox extends \NaTheme\Inc\Metaboxes\Metabox
     {
         $p = $this->_metabox_image_value($post_id, 'icon', 'division', 'full');
         return $p;
+    }
+    public function get_department($post_id)
+    {
+        $p = $this->_metabox_select_value($post_id, 'department');
+        return array_pop($p);
     }
 }
 

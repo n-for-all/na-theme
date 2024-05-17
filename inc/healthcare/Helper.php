@@ -27,10 +27,22 @@ class Helper
             }, $specialities);
         };
 
-        $departments = [];
-        $divisions = get_terms($args);
+        $departments = get_posts([
+            'post_type' => 'department',
+            'posts_per_page' => -1,
+            'orderby' => 'title',
+            'order' => 'ASC',
+            'post_status' => 'publish',
+        ]);
+        $divisions = get_posts([
+            'post_type' => 'division',
+            'posts_per_page' => -1,
+            'orderby' => 'title',
+            'order' => 'ASC',
+            'post_status' => 'publish',
+        ]);
         foreach ($divisions as $division) {
-            $department_meta = get_term_meta($division->term_id, '_meta_na_department', true);
+            $department_meta = get_post_meta($division->ID, '_meta_na_department', true);
             if (!empty($department_meta)) {
                 $data = [
                     'name' => trim(html_entity_decode($division->name)),

@@ -42,10 +42,6 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
     	<script src="<?php echo esc_url(get_template_directory_uri()); ?>/js/html5.js"></script>
     	<![endif]-->
     <?php wp_head(); ?>
-    <style>
-        @import url('<?php echo esc_url(get_template_directory_uri()); ?>/assets/css/mobile-reverse.css') only screen and (min-width: <?php echo $naTheme->mobile_breakpoint ? $naTheme->mobile_breakpoint : '767px' ?>);
-        @import url('<?php echo esc_url(get_template_directory_uri()); ?>/assets/css/mobile.css') only screen and (max-width: <?php echo $naTheme->mobile_breakpoint ? $naTheme->mobile_breakpoint : '767px' ?>);
-    </style>
 </head>
 
 <body <?php body_class(implode(' ', $body_class)); ?>>
