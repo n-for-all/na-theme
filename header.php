@@ -47,7 +47,7 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
 <body <?php body_class(implode(' ', $body_class)); ?>>
     <?php if ($naTheme->loading_logo) :
     ?>
-        <span class="loading-overlay" style="background-image:url(<?php echo \add_query_arg( '_', uniqid(), $naTheme->loading_logo ); ?>)"></span>
+        <span class="loading-overlay" style="background-image:url(<?php echo \add_query_arg('_', uniqid(), $naTheme->loading_logo); ?>)"></span>
     <?php endif; ?>
     <header id="masthead" class="site-header z-50 <?php echo $naTheme->navbar; ?> bg-white <?php echo $naTheme->menu_dark == 1 ? 'dark' : ''; ?>" role="banner">
         <?php do_action('na-theme.nav.top'); ?>
@@ -89,9 +89,15 @@ $body_class[] = $naTheme->loading_logo ? 'loading' : '';
         <?php endif; ?>
         <div class="container">
             <div class="row">
-                <nav class="navbar navbar-light navbar-expand-lg navbar-default <?php echo $naTheme->menu_expanded == 1 ? 'in' : ''; ?> col-12 flex">
+                <nav class="navbar navbar-light navbar-expand-lg navbar-default relative <?php echo $naTheme->menu_expanded == 1 ? 'in' : ''; ?> col-12 flex" x-data="{open:false}">
                     <?php include(get_template_directory() . '/inc/menu/logo.php'); ?>
-                    <button type="button" class="navbar-toggler <?php echo $naTheme->menu_expanded == 1 ? 'collapsed' : ''; ?> <?php echo $naTheme->btn_menu_style; ?>"> <span class="icon-bar navbar-toggler-icon"></span> <span class="icon-bar"></span> <span class="icon-bar"></span><span class="icon-bar"></span> <span class="sr-only">Menu</span></button>
+                    <button type="button" class="navbar-toggler absolute right-3 top-5 md:hidden <?php echo $naTheme->menu_expanded == 1 ? 'collapsed' : ''; ?> <?php echo !empty($naTheme->btn_menu_style) ? $naTheme->btn_menu_style : 'toggle-style-1';  ?>" @click.prevent="open=!open">
+                        <span class="icon-bar navbar-toggler-icon"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="sr-only">Menu</span>
+                    </button>
                     <?php do_action('na-theme.navbar.header'); ?>
 
                     <?php include(get_template_directory() . '/inc/menu/header.php'); ?>
