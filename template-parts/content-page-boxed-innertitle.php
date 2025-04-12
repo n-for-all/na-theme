@@ -25,10 +25,10 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                 <img src="<?php echo $featured_image; ?>" />
             </figure>
         <?php endif; ?>
-    </header><!-- .entry-header -->
-    <div class="<?php $naTheme->classes('content', 'entry-content'); ?> <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
+    </header>
+    <div class="<?php $naTheme->classes('content', 'entry-content'); ?>">
         <div class="entry-inner-content">
-            <?php $naTheme->get_template_layout_before(get_the_ID()); ?>
+            <?php $naTheme->get_template_layout_before(get_the_ID(), 'container'); ?>
             <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
             <?php
             the_content();
@@ -42,9 +42,9 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                 'separator'   => '<span class="screen-reader-text">, </span>',
             ));
             ?>
-            <?php $naTheme->get_template_layout_after(get_the_ID()); ?>
+            <?php $naTheme->get_template_layout_after(get_the_ID(), 'container'); ?>
         </div>
-    </div><!-- .entry-content -->
+    </div>
 
     <?php
     edit_post_link(

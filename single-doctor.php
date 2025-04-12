@@ -85,7 +85,7 @@ get_header(); ?>
                             </div>
                         </div>
                     </div>
-                </header><!-- .entry-header -->
+                </header>
                 <div class="sections-list alternating doctor-sections">
                     <section class="<?php $naTheme->classes('content', 'entry-content'); ?> section-doctor-description">
                         <div class="container">

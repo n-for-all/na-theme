@@ -33,7 +33,7 @@ get_header( 'shop' ); ?>
 			<img src="<?php echo $featured_image; ?>" />
 		</figure>
 		<?php endif; ?>
-	</header><!-- .entry-header -->
+	</header>
 	<?php
 		/**
 		 * woocommerce_before_main_content hook.

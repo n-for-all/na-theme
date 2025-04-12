@@ -13,11 +13,11 @@ $background = $naTheme->get_post_thumbnail(null, 'full');
 
 $hide_title = $hide_title ? true : false;
 
-$classes = array_map('esc_attr', [$naTheme->get_template_layout($post->ID, 'container'), is_home() ? 'full-height' : '']);
+$classes = array_map('esc_attr', [is_home() ? 'full-height' : '']);
 
 ?>
 <div class="<?php echo implode(' ', $classes); ?>">
-    <?php $naTheme->get_template_layout_before($post->ID); ?>
+    <?php $naTheme->get_template_layout_before($post->ID, 'container'); ?>
     <div <?php post_class('content inner-content ' . $post->post_name); ?>>
         <div class="entry-inner inner">
             <?php if (!$hide_title) : ?>
@@ -29,10 +29,10 @@ $classes = array_map('esc_attr', [$naTheme->get_template_layout($post->ID, 'cont
             <?php endif; ?>
             <div class="entry-content">
                 <?php the_content(); ?>
-            </div><!-- .entry-content -->
+            </div>
         </div>
     </div>
-    <?php $naTheme->get_template_layout_after($post->ID); ?>
+    <?php $naTheme->get_template_layout_after($post->ID, 'container'); ?>
 </div>
 <!-- #post-## -->
 <?php 

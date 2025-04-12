@@ -39,7 +39,7 @@ if ($post->parent > 0) :
                 'separator'   => '<span class="screen-reader-text">, </span>',
             ));
             ?>
-        </div><!-- .entry-content -->
+        </div>
     </div>
 <?php
 else :
@@ -69,7 +69,7 @@ else :
                     ));
                     ?>
                 </div>
-            </div><!-- .entry-content -->
+            </div>
 
         </article><!-- #post-## -->
     </div>

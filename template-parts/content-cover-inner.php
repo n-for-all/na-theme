@@ -25,7 +25,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 		</figure>
 		<?php endif; ?>
 
-	</header><!-- .entry-header -->
+	</header>
 
 	<div class="<?php $naTheme->classes('content', 'entry-content'); ?> container">
 		<div class="entry-inner-content">
@@ -43,7 +43,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 			) );
 			?>
 		</div>
-	</div><!-- .entry-content -->
+	</div>
 
 	<?php
 		edit_post_link(

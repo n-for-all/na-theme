@@ -23,7 +23,7 @@ class Na_Walker_Nav_Menu_Edit extends Walker_Nav_Menu_Edit
 
 
         ob_start();
-        do_action('wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args);
+        // do_action('wp_nav_menu_item_custom_fields', $item_id, $item, $depth, $args);
         $html .= ob_get_clean();
         $output = $this->str_replace_first('id="menu-item-settings-' . $item_id . '">', $html, $output);
     }
@@ -76,7 +76,7 @@ function na_wp_get_nav_menu_items($items, $menu, $args)
         }
         if (is_user_logged_in()) {
             $user = wp_get_current_user();
-            $item->title = str_replace('{display_name}', $user->display_name, $item->title);
+            $item->title = str_replace(['{display_name}', '{name}'], $user->display_name, $item->title);
         }
     }
 

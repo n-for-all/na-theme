@@ -34,7 +34,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                 ));
                 ?>
             </div>
-        </div><!-- .entry-content -->
+        </div>
 
     </div><!-- #post-## -->
 </div>

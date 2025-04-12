@@ -22,6 +22,49 @@ class Healthcare
 
         add_action('wp_ajax_doctors_autocomplete', array(&$this, 'autocomplete'));
         add_action('wp_ajax_nopriv_doctors_autocomplete', array(&$this, 'autocomplete'));
+        add_action(
+            'pre_get_posts',
+            function ($q) {
+                $filter = $_GET['filter'] ?? [];
+               
+                if (empty($filter) || $q->query['suppress_filters']|| $q->query['post_type'] != 'doctor') {
+                    return;
+                }
+                
+                $filter_divisions = $filter['division'] ?? '';
+                $filter_department = $filter['department'] ?? '';
+
+                if (trim($filter_department) != '') {
+                    $divisions = \get_posts([
+                        'post_type' => 'division',
+                        'post_status' => 'publish',
+                        'posts_per_page' => -1,
+                        'suppress_filters' => true,
+                        'meta_query' => [
+                            [
+                                'key' => '_meta_na_department',
+                                'value' => $filter_department,
+                            ]
+                        ]
+                    ]);
+                    $filter_divisions = implode(',', array_map(function ($division) {
+                        return $division->ID;
+                    }, $divisions));
+                }else if(empty($filter_divisions)) {
+                    return;
+                }
+
+                $q->set('meta_query', [
+                    [
+                        'key' => '_meta_na_division',
+                        'value' => $filter_divisions,
+                        'compare' => 'IN',
+                    ]
+                ]);
+                
+            },
+            11
+        );
     }
 
     public function autocomplete(){

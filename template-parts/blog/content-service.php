@@ -26,7 +26,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 		</figure>
 		<?php endif; ?>
 		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
-	</header><!-- .entry-header -->
+	</header>
 
 	<div class="<?php $naTheme->classes('content', 'entry-content'); ?>">
 		<div class="entry-inner-content">
@@ -34,5 +34,5 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 			the_excerpt();
 			?>
 		</div>
-	</div><!-- .entry-content -->
+	</div>
 </article><!-- #post-## -->

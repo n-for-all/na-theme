@@ -13,22 +13,23 @@ global $naTheme;
 $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 get_header(); ?>
 <div id="primary" class="content-area ">
-    <main id="main" class="site-main" role="main">
-        <header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
-            <?php
-            if ($featured_image) :
-            ?>
+    <main id="main" class="py-10 site-main" role="main">
+        <?php
+        if ($featured_image) :
+        ?>
+            <header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
                 <figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
                     <img src="<?php echo $featured_image; ?>" />
                 </figure>
-            <?php endif; ?>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
+                <div class="px-4 mx-auto 2xl:container sm:px-6 lg:px-8">
+                    <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
                 </div>
+            </header>
+        <?php else: ?>
+            <div class="px-4 mx-auto 2xl:container sm:px-6 lg:px-8 lg:mt-10">
+                <?php the_title('<h1>', '</h1>'); ?>
             </div>
-
-        </header><!-- .entry-header -->
+        <?php endif; ?>
         <?php
         // Start the loop.
         while (have_posts()) : the_post();
@@ -57,7 +58,7 @@ get_header(); ?>
                     $_class .= " " . $extraClass;
                 }
 
-                $background = $naTheme->get_post_thumbnail($post, 'full'); 
+                $background = $naTheme->get_post_thumbnail($post, 'full');
                 if ($background) {
                     $_class .= " has-post-thumbnail";
                 }

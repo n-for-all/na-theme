@@ -30,14 +30,10 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                     <img src="<?php echo $featured_image; ?>" />
                 </figure>
             <?php endif; ?>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
-                </div>
-            </div>
-        </header><!-- .entry-header -->
-        <div class="<?php $naTheme->classes('content', 'entry-content'); ?>  <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
-            <?php $naTheme->get_template_layout_before(get_the_ID()); ?>
+            <?php the_title('<h1 class="text-4xl font-medium">', '</h1>'); ?>
+        </header>
+        <div class="<?php $naTheme->classes('content', 'entry-content'); ?>">
+            <?php $naTheme->get_template_layout_before(get_the_ID(), 'container'); ?>
             <div class="entry-inner-content">
                 <?php
                 // Start the loop.
@@ -70,7 +66,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                         'post_status' => 'publish'
                     );
                     $children_array = get_posts($args);
-                    $col = 12;
+                    $col = 4;
 
                     $curent_id = get_the_ID();
 
@@ -79,19 +75,11 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                         $curent_id = $children_array[0]->ID;
                     }
                 ?>
-                    <?php if (function_exists('bcn_display')) { ?>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="breadcrumbs"><?php bcn_display(); ?></div>
-                            </div>
-                        </div>
-                    <?php } ?>
-
-                    <div class="row">
+                    <div class="flex">
                         <?php if (sizeof($children_array) > 0) :
-                            $col = 8;
+                            $col = 3;
                         ?>
-                            <div class="col-md-3">
+                            <div class="w-full lg:w-1/4">
                                 <ul class="nav-side">
                                     <?php foreach ($children_array as $child) : ?>
                                         <li class="<?php echo $child->ID == $curent_id ? 'active' : ''; ?>"><a href="<?php echo get_permalink($child->ID); ?>"><?php echo $child->post_title; ?></a></li>
@@ -99,7 +87,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                                 </ul>
                             </div>
                         <?php endif; ?>
-                        <div class="col-md-<?php echo $col; ?>">
+                        <div class="w-full lg:w-<?php echo $col; ?>/4">
                             <div <?php post_class(); ?>>
                                 <?php
                                 the_content();
@@ -120,8 +108,8 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                 endwhile;
                 ?>
             </div>
-            <?php $naTheme->get_template_layout_after(get_the_ID()); ?>
-        </div><!-- .entry-content -->
+            <?php $naTheme->get_template_layout_after(get_the_ID(), 'container'); ?>
+        </div>
 
         <?php
         edit_post_link(

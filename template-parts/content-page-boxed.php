@@ -30,16 +30,16 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                 <div class="col-md-12"><?php the_title('<h1 class="entry-title">', '</h1>'); ?></div>
             </div>
         </div>
-    </header><!-- .entry-header -->
-    <div class="<?php $naTheme->classes('content', 'entry-content'); ?>  <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
-        <?php $naTheme->get_template_layout_before(get_the_ID()); ?>
+    </header>
+    <div class="<?php $naTheme->classes('content', 'entry-content'); ?>">
+        <?php $naTheme->get_template_layout_before(get_the_ID(), 'container'); ?>
         <div class="entry-inner-content">
             <?php
             the_content();
             ?>
         </div>
-        <?php $naTheme->get_template_layout_after(get_the_ID()); ?>
-    </div><!-- .entry-content -->
+        <?php $naTheme->get_template_layout_after(get_the_ID(), 'container'); ?>
+    </div>
     <?php
     edit_post_link(
         sprintf(

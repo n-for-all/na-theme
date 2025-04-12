@@ -19,7 +19,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 		</figure>
 		<?php endif; ?>
 		<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
-	</header><!-- .entry-header -->
+	</header>
 	<footer class="entry-footer">
 		<small>Posted on <?php the_time('l, F jS, Y') ?></small>
 	</footer><!-- .entry-footer -->
@@ -40,7 +40,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                 'separator'   => '<span class="screen-reader-text">, </span>',
             ));
         ?>
-	</div><!-- .entry-content -->
+	</div>
 
 
 </article><!-- #post-## -->

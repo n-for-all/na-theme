@@ -11,18 +11,12 @@
  */
 global $naTheme, $post;
 while ( have_posts() ) : the_post();
-    $parent = get_the_ID();
-    $args = array(
-        'post_parent' => $parent,
-        'post_type'   => 'page',
-        'posts_per_page' => 10,
-        'numberposts' => -1,
-        'orderby' => 'menu_order',
-        'post_status' => 'publish'
-    );
-    $children_array = get_posts( $args );
-    if(sizeof($children_array) > 0):
-        wp_redirect( get_permalink($children_array[0]->ID), 301 );
+    $parent = $post->post_parent;
+    
+    $parentPage = get_post( $parent );
+
+    if($parentPage):
+        wp_redirect( get_permalink($parentPage), 301 );
         exit;
     endif;
 endwhile;

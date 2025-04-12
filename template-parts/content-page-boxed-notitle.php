@@ -15,7 +15,7 @@ global $naTheme, $post;
  */
 $featured_image = $naTheme->get_post_thumbnail(null, 'full');
 ?>
-<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+<div <?php post_class(); ?>>
     <?php
     if ($featured_image) :
     ?>
@@ -25,10 +25,10 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                 <img src="<?php echo $featured_image; ?>" />
             </figure>
 
-        </header><!-- .entry-header -->
+        </header>
     <?php endif; ?>
-    <div class="<?php $naTheme->classes('content', 'entry-content'); ?>  <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
-        <?php $naTheme->get_template_layout_before(get_the_ID()); ?>
+    <div class="<?php $naTheme->classes('content', 'entry-content'); ?>">
+        <?php $naTheme->get_template_layout_before(get_the_ID(), 'container'); ?>
         <div class="entry-inner-content">
             <?php
             the_content();
@@ -43,8 +43,8 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
             ));
             ?>
         </div>
-        <?php $naTheme->get_template_layout_after(get_the_ID()); ?>
-    </div><!-- .entry-content -->
+        <?php $naTheme->get_template_layout_after(get_the_ID(), 'container'); ?>
+    </div>
 
     <?php
     edit_post_link(
@@ -57,4 +57,4 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
         '</span></footer><!-- .entry-footer -->'
     );
     ?>
-</article><!-- #post-## -->
+</div><!-- #post-## -->

@@ -125,12 +125,20 @@ class Doctor
     public function add_img_column($columns)
     {
         $columns['img'] = 'Image';
+        $columns['division'] = 'Division';
         return $columns;
     }
     public function manage_img_column($column_name, $post_id)
     {
         if ($column_name == 'img') {
             echo get_the_post_thumbnail($post_id, 'thumbnail');
+        }
+        if ($column_name == 'division') {
+            $division_id = get_post_meta($post_id, '_meta_na_division', true);
+            if($division_id) {
+                $division = get_post($division_id);
+                echo $division->post_title;
+            }
         }
         return $column_name;
     }
@@ -385,6 +393,8 @@ class DoctorMetabox extends \NaTheme\Inc\Metaboxes\Metabox
         $posts = get_posts([
             'post_type' => 'division',
             'post_status' => 'publish',
+            'order' => 'ASC',
+            'orderby' => 'title',
             'posts_per_page' => -1,
         ]);
 

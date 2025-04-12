@@ -27,8 +27,9 @@ if ( has_nav_menu( 'primary' ) || has_nav_menu( 'social' ) || is_active_sidebar(
 					wp_nav_menu( array(
 						'theme_location' => 'social',
 						'depth'          => 1,
-						'link_before'    => '<span class="screen-reader-text">',
-						'link_after'     => '</span>',
+						'link_before'    => '',
+						'link_after'     => '',
+                        'container_class' => 'md:flex'
 					) );
 				?>
 			</nav><!-- .social-navigation -->

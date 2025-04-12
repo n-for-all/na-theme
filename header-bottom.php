@@ -95,4 +95,4 @@
           </div>
         </nav>
         <!-- End navbar -->
-    </header><!-- .site-header -->
+    </header>

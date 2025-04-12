@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The Template for displaying product archives, including the main shop page which is a post type archive
  *
@@ -10,128 +11,96 @@
  * happen. When this occurs the version of the template file will be bumped and
  * the readme will list any important changes.
  *
- * @see 	    https://docs.woocommerce.com/document/template-structure/
- * @author 		WooThemes
- * @package 	WooCommerce/Templates
- * @version     2.0.0
+ * @see https://woo.com/document/template-structure/
+ * @package WooCommerce\Templates
+ * @version 3.4.0
  */
 
-global $naTheme;
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+defined('ABSPATH') || exit;
+
+get_header('shop');
+
+/**
+ * Hook: woocommerce_before_main_content.
+ *
+ * @hooked woocommerce_output_content_wrapper - 10 (outputs opening divs for the content)
+ * @hooked woocommerce_breadcrumb - 20
+ * @hooked WC_Structured_Data::generate_website_data() - 30
+ */
+do_action('woocommerce_before_main_content');
+
+?>
+<header class="woocommerce-products-header">
+    <?php if (apply_filters('woocommerce_show_page_title', true)) : ?>
+        <h1 class="mt-2 mb-2 text-2xl font-bold"><?php woocommerce_page_title(); ?></h1>
+    <?php endif; ?>
+
+    <?php
+    /**
+     * Hook: woocommerce_archive_description.
+     *
+     * @hooked woocommerce_taxonomy_archive_description - 10
+     * @hooked woocommerce_product_archive_description - 10
+     */
+    do_action('woocommerce_archive_description');
+    ?>
+</header>
+<?php
+if (woocommerce_product_loop()) {
+
+    /**
+     * Hook: woocommerce_before_shop_loop.
+     *
+     * @hooked woocommerce_output_all_notices - 10
+     * @hooked woocommerce_result_count - 20
+     * @hooked woocommerce_catalog_ordering - 30
+     */
+    do_action('woocommerce_before_shop_loop');
+
+    woocommerce_product_loop_start();
+
+    if (wc_get_loop_prop('total')) {
+        while (have_posts()) {
+            the_post();
+
+            /**
+             * Hook: woocommerce_shop_loop.
+             */
+            do_action('woocommerce_shop_loop');
+
+            wc_get_template_part('content', 'product');
+        }
+    }
+
+    woocommerce_product_loop_end();
+
+    /**
+     * Hook: woocommerce_after_shop_loop.
+     *
+     * @hooked woocommerce_pagination - 10
+     */
+    do_action('woocommerce_after_shop_loop');
+} else {
+    /**
+     * Hook: woocommerce_no_products_found.
+     *
+     * @hooked wc_no_products_found - 10
+     */
+    do_action('woocommerce_no_products_found');
 }
-if(is_shop()){
-	$id = wc_get_page_id('shop');
-	$featured_image = $naTheme->get_post_thumbnail($id, 'full');
-}else{
-	$id = wc_get_page_id('shop');
-	$featured_image = $naTheme->get_post_thumbnail($id, 'full');
-	$featured_image = $naTheme->get_woocommerce_archive_thumbnail(null, 'full', $featured_image);
-}
-get_header( 'shop' ); ?>
 
+/**
+ * Hook: woocommerce_after_main_content.
+ *
+ * @hooked woocommerce_output_content_wrapper_end - 10 (outputs closing divs for the content)
+ */
+do_action('woocommerce_after_main_content');
 
-	<header class="<?php $naTheme->classes('header', 'entry-header'); ?>">
-		<?php
-		if($featured_image):
-		?>
-		<figure class="entry-image" style="background-image:url(<?php echo $featured_image; ?>)">
-			<img src="<?php echo $featured_image; ?>" />
-		</figure>
-		<?php endif; ?>
-		<?php if ( apply_filters( 'woocommerce_show_page_title', true ) ) : ?>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12"><h1 class="entry-title"><?php woocommerce_page_title(); ?></h1></div>
-			</div>
-		</div>
-		<?php endif; ?>
-	</header><!-- .entry-header -->
-	<?php
-		/**
-		 * woocommerce_before_main_content hook.
-		 *
-		 * @hooked woocommerce_output_content_wrapper - 10 (outputs opening divs for the content)
-		 * @hooked woocommerce_breadcrumb - 20
-		 * @hooked WC_Structured_Data::generate_website_data() - 30
-		 */
-		do_action( 'woocommerce_before_main_content' );
-	?>
-    <header class="woocommerce-products-header">
-		<?php if ( apply_filters( 'woocommerce_show_page_title', true ) ) : ?>
-			<h1 class="woocommerce-products-header__title page-title"><?php woocommerce_page_title(); ?></h1>
-		<?php endif; ?>
-		<?php
-			/**
-			 * woocommerce_archive_description hook.
-			 *
-			 * @hooked woocommerce_taxonomy_archive_description - 10
-			 * @hooked woocommerce_product_archive_description - 10
-			 */
-			do_action( 'woocommerce_archive_description' );
-		?>
+/**
+ * Hook: woocommerce_sidebar.
+ *
+ * @hooked woocommerce_get_sidebar - 10
+ */
+do_action('woocommerce_sidebar');
 
-    </header>
-	<div class="row">
-	<?php
-	if ( woocommerce_product_loop() ) {
-		if(have_posts()){
-			do_action( 'woocommerce_sidebar' );
-		}
-		/**
-		 * Hook: woocommerce_before_shop_loop.
-		 *
-		 * @hooked woocommerce_output_all_notices - 10
-		 * @hooked woocommerce_result_count - 20
-		 * @hooked woocommerce_catalog_ordering - 30
-		 */
-		do_action( 'woocommerce_before_shop_loop' );
-
-		woocommerce_product_loop_start();
-
-		if ( wc_get_loop_prop( 'total' ) ) {
-			while ( have_posts() ) {
-				the_post();
-
-				/**
-				 * Hook: woocommerce_shop_loop.
-				 *
-				 * @hooked WC_Structured_Data::generate_product_data() - 10
-				 */
-				do_action( 'woocommerce_shop_loop' );
-
-				wc_get_template_part( 'content', 'product' );
-			}
-		}
-
-		woocommerce_product_loop_end();
-
-		/**
-		 * Hook: woocommerce_after_shop_loop.
-		 *
-		 * @hooked woocommerce_pagination - 10
-		 */
-		do_action( 'woocommerce_after_shop_loop' );
-	} else {
-		/**
-		 * Hook: woocommerce_no_products_found.
-		 *
-		 * @hooked wc_no_products_found - 10
-		 */
-		do_action( 'woocommerce_no_products_found' );
-	}
-	?>
-</div>
-
-	<?php
-		/**
-		 * woocommerce_after_main_content hook.
-		 *
-		 * @hooked woocommerce_output_content_wrapper_end - 10 (outputs closing divs for the content)
-		 */
-		do_action( 'woocommerce_after_main_content' );
-	?>
-
-
-
-<?php get_footer( 'shop' ); ?>
+get_footer('shop');

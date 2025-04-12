@@ -8,12 +8,11 @@ namespace NaTheme\Inc;
 
 class Theme
 {
-
-    private $search = [];
     private $modules = [];
     private $module_classes = [];
     public $svgTool = null;
     public $imageTool = null;
+    public $memory = null;
 
     private $cache_id = false;
 
@@ -37,6 +36,7 @@ class Theme
             }
         );
 
+        $this->initErrorHandler();
 
         $this->svgTool = new \NaTheme\Inc\Tools\Svg\Svg();
         $this->imageTool = new \NaTheme\Inc\Tools\Image\Image();
@@ -86,7 +86,34 @@ class Theme
             }
         }
     }
+    public function shutdownHandler()
+    {
+        $dbg = function ($msg = "") {
+            ob_start();
+            debug_print_backtrace(0, 1);
+            $_ = ob_get_clean();
+            list($ignore, $line_number) = explode(':', $_);
+            // $line_number += 0;
 
+            // $backtrace = debug_backtrace(0);
+            // extract($backtrace[1]);
+            error_log($_);
+        };
+        $this->memory = null;
+        if ((!is_null($err = error_get_last())) && (!in_array($err['type'], array(E_NOTICE, E_WARNING, \E_DEPRECATED, \E_USER_DEPRECATED)))) {
+            error_log($err['type'] . ":" . $err['message'] . ":" . $err['file'] . ":" . $err['line']);
+            error_log(\json_encode($_SERVER));
+            error_log(print_r(debug_backtrace(), true));
+            $dbg("Fatal Error");
+        }
+    }
+    public function initErrorHandler()
+    {
+        // This storage is freed on error (case of allowed memory exhausted)
+        $this->memory = str_repeat('*', 1024 * 1024);
+        register_shutdown_function([$this, 'shutdownHandler']);
+        return $this;
+    }
     protected function actions()
     {
         add_action('after_setup_theme', array($this, 'setup'));
@@ -95,10 +122,7 @@ class Theme
         add_action('wp_enqueue_scripts', array(&$this, 'scripts'), 11);
         add_action('admin_enqueue_scripts', array(&$this, 'admin_scripts'));
         add_action('credits', array(&$this, 'credits'));
-        add_action('woocommerce_before_shop_loop', array(&$this, 'woocommerce_before_shop_loop'), 10);
-        add_action('woocommerce_before_main_content', array(&$this, 'woocommerce_before_main_content'), 10);
-        add_action('woocommerce_after_main_content', array(&$this, 'woocommerce_after_main_content'), 10);
-        add_action('woocommerce_after_shop_loop', array(&$this, 'woocommerce_after_shop_loop'), 10);
+
         add_action('template_redirect', array(&$this, 'disable_author_page'));
         if (is_admin()) {
             add_action('dynamic_sidebar_before',  array(&$this, 'dynamic_sidebar_before'), 10, 2);
@@ -117,6 +141,14 @@ class Theme
                        height: auto !important;
                   }
                   </style>';
+        });
+
+        add_action('template_redirect', function () {
+            global $post;
+            if (is_attachment() && isset($post->post_parent) && is_numeric($post->post_parent) && ($post->post_parent != 0)) :
+                wp_redirect(get_permalink($post->post_parent), 301);
+                exit();
+            endif;
         });
     }
     public function init()
@@ -288,7 +320,11 @@ class Theme
         add_theme_support(
             'html5',
             array(
-                'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
+                'search-form',
+                'comment-form',
+                'comment-list',
+                'gallery',
+                'caption'
             )
         );
 
@@ -300,7 +336,15 @@ class Theme
         add_theme_support(
             'post-formats',
             array(
-                'aside', 'image', 'video', 'quote', 'link', 'gallery', 'status', 'audio', 'chat'
+                'aside',
+                'image',
+                'video',
+                'quote',
+                'link',
+                'gallery',
+                'status',
+                'audio',
+                'chat'
             )
         );
 
@@ -433,7 +477,7 @@ class Theme
                 'description'   => __('Add widgets here to appear in your sidebar.', NA_THEME_TEXT_DOMAIN),
                 'before_widget' => '',
                 'after_widget'  => '',
-                'before_title'  => '<h2 class="widget-title">',
+                'before_title'  => '<h2 class="mb-6 text-lg font-bold text-gray-900 widget-title">',
                 'after_title'   => '</h2>',
             )
         );
@@ -446,8 +490,8 @@ class Theme
                 'description'   => __('Add widgets here to appear in your top header sidebar.', NA_THEME_TEXT_DOMAIN),
                 'before_widget' => '',
                 'after_widget'  => '',
-                'before_title'  => '<h2 class="widget-title">',
-                'after_title'   => '</h2>',
+                'before_title'  => '<h3 class="mb-6 text-lg font-bold text-gray-900 widget-title">',
+                'after_title'   => '</h3>',
             )
         );
         register_sidebar(
@@ -457,8 +501,8 @@ class Theme
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
                 'before_widget' => '',
                 'after_widget'  => '',
-                'before_title'  => '<h2 class="widget-title">',
-                'after_title'   => '</h2>',
+                'before_title'  => '<h3 class="mb-6 text-lg font-bold text-gray-900 widget-title">',
+                'after_title'   => '</h3>',
             )
         );
 
@@ -469,8 +513,8 @@ class Theme
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
                 'before_widget' => '',
                 'after_widget'  => '',
-                'before_title'  => '<h2 class="widget-title">',
-                'after_title'   => '</h2>',
+                'before_title'  => '<h3 class="mb-6 text-lg font-bold text-gray-900 widget-title">',
+                'after_title'   => '</h3>',
             )
         );
         register_sidebar(
@@ -480,8 +524,8 @@ class Theme
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
                 'before_widget' => '',
                 'after_widget'  => '',
-                'before_title'  => '<h2 class="widget-title">',
-                'after_title'   => '</h2>',
+                'before_title'  => '<h3 class="mb-6 text-lg font-bold text-gray-900 widget-title">',
+                'after_title'   => '</h3>',
             )
         );
         register_sidebar(
@@ -491,8 +535,8 @@ class Theme
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
                 'before_widget' => '',
                 'after_widget'  => '',
-                'before_title'  => '<h2 class="widget-title">',
-                'after_title'   => '</h2>',
+                'before_title'  => '<h3 class="mb-6 text-lg font-bold text-gray-900 widget-title">',
+                'after_title'   => '</h3>',
             )
         );
         register_sidebar(
@@ -502,8 +546,8 @@ class Theme
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
                 'before_widget' => '',
                 'after_widget'  => '',
-                'before_title'  => '<h2 class="widget-title">',
-                'after_title'   => '</h2>',
+                'before_title'  => '<h3 class="mb-6 text-lg font-bold text-gray-900 widget-title">',
+                'after_title'   => '</h3>',
             )
         );
         register_sidebar(
@@ -513,8 +557,8 @@ class Theme
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
                 'before_widget' => '',
                 'after_widget'  => '',
-                'before_title'  => '<h2 class="widget-title">',
-                'after_title'   => '</h2>',
+                'before_title'  => '<h3 class="mb-6 text-lg font-bold text-gray-900 widget-title">',
+                'after_title'   => '</h3>',
             )
         );
         register_sidebar(
@@ -524,8 +568,8 @@ class Theme
                 'description'   => __('Add widgets here to appear in your footer sidebar.', NA_THEME_TEXT_DOMAIN),
                 'before_widget' => '',
                 'after_widget'  => '',
-                'before_title'  => '<h2 class="widget-title">',
-                'after_title'   => '</h2>',
+                'before_title'  => '<h3 class="mb-6 text-lg font-bold text-gray-900 widget-title">',
+                'after_title'   => '</h3>',
             )
         );
     }
@@ -648,7 +692,7 @@ class Theme
      */
     public function scripts()
     {
-        wp_deregister_script('jquery');
+        // wp_deregister_script('jquery');
         //bootstrap grid styles for this theme
         wp_enqueue_style('na_theme-bootstrap', get_template_directory_uri() . '/assets/css/bootstrap-grid.min.css', array(), '1.0');
 
@@ -893,14 +937,14 @@ class Theme
     function the_entry_meta()
     {
         if (is_sticky() && is_home() && !is_paged()) {
-            printf('<span class="sticky-post">%s</span>', __('Featured', 'twentyfifteen'));
+            printf('<span class="sticky-post">%s</span>', __('Featured', 'na-theme'));
         }
 
         $format = get_post_format();
         if (current_theme_supports('post-formats', $format)) {
             printf(
                 '<span class="entry-format">%1$s<a href="%2$s">%3$s</a></span>',
-                sprintf('<span class="screen-reader-text">%s </span>', _x('Format', 'Used before post format.', 'twentyfifteen')),
+                sprintf('<span class="screen-reader-text">%s </span>', _x('Format', 'Used before post format.', 'na-theme')),
                 esc_url(get_post_format_link($format)),
                 get_post_format_string($format)
             );
@@ -923,7 +967,7 @@ class Theme
 
             printf(
                 '<span class="posted-on"><span class="screen-reader-text">%1$s </span><a href="%2$s" rel="bookmark">%3$s</a></span>',
-                _x('Posted on', 'Used before publish date.', 'twentyfifteen'),
+                _x('Posted on', 'Used before publish date.', 'na-theme'),
                 esc_url(get_permalink()),
                 $time_string
             );
@@ -933,26 +977,26 @@ class Theme
             if (is_singular() || is_multi_author()) {
                 printf(
                     '<span class="byline"><span class="author vcard"><span class="screen-reader-text">%1$s </span><a class="url fn n" href="%2$s">%3$s</a></span></span>',
-                    _x('Author', 'Used before post author name.', 'twentyfifteen'),
+                    _x('Author', 'Used before post author name.', 'na-theme'),
                     esc_url(get_author_posts_url(get_the_author_meta('ID'))),
                     get_the_author()
                 );
             }
 
-            $categories_list = get_the_category_list(_x(', ', 'Used between list items, there is a space after the comma.', 'twentyfifteen'));
+            $categories_list = get_the_category_list(_x(', ', 'Used between list items, there is a space after the comma.', 'na-theme'));
             if ($categories_list) {
                 printf(
                     '<span class="cat-links"><span class="screen-reader-text">%1$s </span>%2$s</span>',
-                    _x('Categories', 'Used before category names.', 'twentyfifteen'),
+                    _x('Categories', 'Used before category names.', 'na-theme'),
                     $categories_list
                 );
             }
 
-            $tags_list = get_the_tag_list('', _x(', ', 'Used between list items, there is a space after the comma.', 'twentyfifteen'));
+            $tags_list = get_the_tag_list('', _x(', ', 'Used between list items, there is a space after the comma.', 'na-theme'));
             if ($tags_list) {
                 printf(
                     '<span class="tags-links"><span class="screen-reader-text">%1$s </span>%2$s</span>',
-                    _x('Tags', 'Used before tag names.', 'twentyfifteen'),
+                    _x('Tags', 'Used before tag names.', 'na-theme'),
                     $tags_list
                 );
             }
@@ -964,7 +1008,7 @@ class Theme
 
             printf(
                 '<span class="full-size-link"><span class="screen-reader-text">%1$s </span><a href="%2$s">%3$s &times; %4$s</a></span>',
-                _x('Full size', 'Used before full size attachment link.', 'twentyfifteen'),
+                _x('Full size', 'Used before full size attachment link.', 'na-theme'),
                 esc_url(wp_get_attachment_url()),
                 $metadata['width'],
                 $metadata['height']
@@ -974,7 +1018,7 @@ class Theme
         if (!is_single() && !post_password_required() && (comments_open() || get_comments_number())) {
             echo '<span class="comments-link">';
             /* translators: %s: post title */
-            comments_popup_link(sprintf(__('Leave a comment<span class="screen-reader-text"> on %s</span>', 'twentyfifteen'), get_the_title()));
+            comments_popup_link(sprintf(__('Leave a comment<span class="screen-reader-text"> on %s</span>', 'na-theme'), get_the_title()));
             echo '</span>';
         }
     }
@@ -1167,7 +1211,7 @@ class Theme
                 <small class="help">Select the template layout.</small>
             </p>
         <?php endif; ?>
-    <?php
+<?php
     }
     function save_page_template_part($post_ID, $post, $update)
     {
@@ -1197,32 +1241,32 @@ class Theme
         $part = $this->get_meta($post_id, '_wp_page_template_layout');
         return $part != '' ? $part : $default;
     }
-    function get_template_layout_before($post_id)
+    function get_template_layout_before($post_id, $default)
     {
-        $part = $this->get_template_layout($post_id, 'container');
+        $part = $this->get_template_layout($post_id, $default);
         switch ($part) {
             case 'container-fluid':
-                echo '<div class="row"><div class="col-12">';
+                echo '<div class="">';
                 break;
             case 'container':
-                echo '<div class="row"><div class="col-12">';
+                echo '<div class="px-4 mx-auto 2xl:container sm:px-6 lg:px-8">';
                 break;
             case 'container boxed-offset':
             case 'boxed-offset':
-                echo '<div class="row"><div class="col-md-10 offset-md-1">';
+                echo '<div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">';
                 break;
             default:
                 break;
         }
     }
-    function get_template_layout_after($post_id)
+    function get_template_layout_after($post_id, $default)
     {
-        $part = $this->get_template_layout($post_id, 'container');
+        $part = $this->get_template_layout($post_id, $default);
         switch ($part) {
             case 'container-fluid':
             case 'container':
             case 'container boxed-offset':
-                echo '</div></div>';
+                echo '</div>';
                 break;
             default:
                 break;
@@ -1233,35 +1277,7 @@ class Theme
         $part = get_post_meta($post_id, '_wp_section_id', true);
         return $part && trim($part) != '' ? trim($part) : $default;
     }
-    public function woocommerce_before_shop_loop()
-    {
-    ?>
-        <div class="col-md-9 col-sm-9 col-xs-12">
-        <?php
 
-    }
-
-    public function woocommerce_after_shop_loop()
-    {
-        ?>
-        </div>
-        </div>
-    <?php
-
-    }
-
-    public function woocommerce_before_main_content()
-    {
-    ?>
-        <div class="container">
-        <?php
-    }
-    public function woocommerce_after_main_content()
-    {
-        ?>
-        </div>
-<?php
-    }
     public function enable($module)
     {
         if (is_array($module)) {
@@ -1429,6 +1445,7 @@ $naTheme->registerClass('team', '\NaTheme\Inc\Team\Team');
 $naTheme->registerClass('events', '\NaTheme\Inc\Events\Shortcode');
 $naTheme->registerClass('news', '\NaTheme\Inc\News\Shortcode');
 $naTheme->registerClass('menu', '\NaTheme\Inc\Menu\Shortcode');
+$naTheme->registerClass('products', '\NaTheme\Inc\Products\Shortcodes');
 $naTheme->registerClass('healthcare', '\NaTheme\Inc\Healthcare\Healthcare');
 $naTheme->registerClass('testimonials', '\NaTheme\Inc\Testimonials\Shortcode');
 $naTheme->registerClass('map', '\NaTheme\Inc\Map\Map');

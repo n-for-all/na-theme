@@ -295,9 +295,6 @@ class Theme {
 				if (hash) {
 					let handler = hash.split("/");
 					if (handler.length > 1) {
-						if (handler[0] == "tabs") {
-							this.showTab(handler[1]);
-						}
 						return;
 					}
 					let section = document.querySelector(`#${hash}`);
@@ -614,27 +611,6 @@ class Theme {
 		y: el.pageYOffset !== undefined ? el.pageYOffset : el.scrollTop,
 	});
 
-	showTab = (id) => {
-		var tab: HTMLElement = document.querySelector("#" + id);
-		if (tab) {
-			var tabs = closest(tab, ".na-tabs");
-			let tabContents = tabs.querySelectorAll(".tab-content");
-			[].forEach.call(tabContents, (tabContent) => {
-				tabContent.classList.remove("active");
-			});
-			let tabNavs = tabs.querySelectorAll(".tab-nav");
-			[].forEach.call(tabNavs, (tabNav) => {
-				tabNav.classList.remove("active");
-			});
-			setTimeout(function () {
-				tab.classList.add("active");
-				closest(tab, "li")?.classList.add("active");
-				let nav = document.querySelector('a[href="#' + id + '"]');
-				nav?.classList.add("active");
-			}, 400);
-		}
-	};
-
 	escapeRegExp(str) {
 		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 	}
@@ -643,7 +619,7 @@ class Theme {
 		if ("IntersectionObserver" in window) {
 			const observer = new IntersectionObserver(
 				(entries) => {
-					entries.forEach((entry) => {
+					entries.forEach((entry) => { 
 						if (entry.intersectionRatio > 0) {
 							entry.target.classList.add("in-once");
 							entry.target.classList.add("in");

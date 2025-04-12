@@ -10,48 +10,58 @@ foreach ($sidebars as $sidebar) {
 
 $columns = $count > 0 ? intval(12 / $count) : 4;
 ?>
-<section class="footer-widgets widget-area">
-    <div class="container">
-        <?php if ($naTheme->logo_footer) : ?>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="sidebar sidebar-logo"><a href="<?php echo home_url("/"); ?>"><img src="<?php echo esc_url($naTheme->logo_footer); ?>" alt="" /></div></a>
+
+<section class="pt-8 bg-white site-footer">
+    <div class="px-4 py-4 mx-auto 2xl:container sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3 xl:gap-24 lg:pb-14">
+            <div class="block w-full lg:max-w-full max-lg:mx-auto">
+                <div class="flex flex-col w-full gap-8 lg:max-w-xs ">
+                    <?php if ($naTheme->logo_footer) : ?>
+                        <a href="<?php echo home_url("/"); ?>"><img src="<?php echo esc_url($naTheme->logo_footer); ?>" alt="" /></a>
+                    <?php endif; ?>
+                    <?php dynamic_sidebar('footer-1'); ?>
                 </div>
             </div>
-        <?php endif; ?>
-        <?php if ($count > 0) :
-            $create_row = true;
-            $end_row = false;
-            $col_count = 0;
-            $row_count = 0;
-
-            $template = [];
-        ?>
-            <?php foreach ($sidebars as $key => $sidebar) { ?>
-                <?php if (is_active_sidebar($sidebar)) {
-                    $id = $key + 1;
-                    $current = $naTheme->{"footer_$id"};
-                    $cols = $current ? $current : $columns;
-                    $col_count += $cols;
-
-                    if ($col_count > 12) {
-                        $col_count = $cols;
-                        $row_count++;
-                    }
-                    ob_start();
-                    dynamic_sidebar($sidebar);
-                    $content = ob_get_clean();
-                    $template[$row_count][] = sprintf('<div class="col-lg-%s col-sm-%s col-xs-12 d-flex">
-                        <div class="sidebar %s">
-                            %s
-                        </div>
-                    </div>', $cols, $cols >= 6 ? '12' : $cols, $sidebar, $content);
-                } ?>
-            <?php }
-            foreach ($template as $row => $columns) {
-                echo sprintf('<div class="row row-%s">%s</div>', $row + 1, implode("\n", $columns));
-            }
-            ?>
-        <?php endif; ?>
+            <div
+                class="flex flex-col w-full col-span-2 gap-6 mx-auto lg:flex-row lg:justify-between sm:gap-10 xl:gap-24">
+                <?php if (is_active_sidebar('footer-2')) : ?>
+                    <div class="flex-1 footer-2">
+                        <?php dynamic_sidebar('footer-2'); ?>
+                    </div>
+                <?php endif; ?>
+                <?php if (is_active_sidebar('footer-3')) : ?>
+                    <div class="flex-1 footer-3">
+                        <?php dynamic_sidebar('footer-3'); ?>
+                    </div>
+                <?php endif; ?>
+                <?php if (is_active_sidebar('footer-4')) : ?>
+                    <div class="flex-1 footer-4">
+                        <?php dynamic_sidebar('footer-4'); ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
+
+    <?php if (is_active_sidebar('footer-5') || is_active_sidebar('footer-6') || is_active_sidebar('footer-7')) : ?>
+        <div class="bg-white border-t border-gray-200">
+            <div class="px-4 py-2 mx-auto 2xl:container sm:px-6 lg:px-8">
+                <div class="flex flex-col-reverse items-center justify-between gap-5 md:flex-row first-letter:items-center">
+                    <?php if (is_active_sidebar('footer-5')) : ?>
+                        <div class="text-sm font-normal"><?php dynamic_sidebar('footer-5'); ?></div>
+                    <?php endif; ?>
+                    <?php if (is_active_sidebar('footer-6')) : ?>
+                        <div class="text-sm font-normal"><?php dynamic_sidebar('footer-6'); ?></div>
+                    <?php endif; ?>
+                    <?php if (is_active_sidebar('footer-7')) : ?>
+                        <div class="text-sm font-normal"><?php dynamic_sidebar('footer-7'); ?></div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (is_active_sidebar('footer-8')) : ?>
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8"><?php dynamic_sidebar('footer-8'); ?></div>
+    <?php endif; ?>
 </section>

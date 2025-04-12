@@ -1,5 +1,85 @@
-(function(){"use strict";function ownerDocument(e){return e&&e.ownerDocument||document}function ownerWindow(e){var t=ownerDocument(e);return t&&t.defaultView||window}function getComputedStyle$1(e,t){return ownerWindow(e).getComputedStyle(e,t)}var rUpper=/([A-Z])/g;function hyphenate(e){return e.replace(rUpper,"-$1").toLowerCase()}var msPattern=/^ms-/;function hyphenateStyleName(e){return hyphenate(e).replace(msPattern,"-ms-")}var supportedTransforms=/^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i,matchesImpl;function isTransform(e){return!(!e||!supportedTransforms.test(e))}function style(e,t){var n="",r="";if("string"==typeof t)return e.style.getPropertyValue(hyphenateStyleName(t))||getComputedStyle$1(e).getPropertyValue(hyphenateStyleName(t));Object.keys(t).forEach((function(i){var a=t[i];a||0===a?isTransform(i)?r+=i+"("+a+") ":n+=hyphenateStyleName(i)+": "+a+";":e.style.removeProperty(hyphenateStyleName(i))})),r&&(n+="transform: "+r+";"),e.style.cssText+=";"+n}function matches(e,t){if(!matchesImpl){var n=document.body,r=n.matches||n.matchesSelector||n.webkitMatchesSelector||n.mozMatchesSelector||n.msMatchesSelector;matchesImpl=function(e,t){return r.call(e,t)}}return matchesImpl(e,t)}function closest(e,t,n){e.closest&&!n&&e.closest(t);var r=e;do{if(matches(r,t))return r;r=r.parentElement}while(r&&r!==n&&r.nodeType===document.ELEMENT_NODE);return null}
-/*! *****************************************************************************
+(function () {
+  'use strict';
+
+  /**
+   * Returns the owner document of a given element.
+   * 
+   * @param node the element
+   */
+  function ownerDocument(node) {
+    return node && node.ownerDocument || document;
+  }
+
+  /**
+   * Returns the owner window of a given element.
+   * 
+   * @param node the element
+   */
+
+  function ownerWindow(node) {
+    var doc = ownerDocument(node);
+    return doc && doc.defaultView || window;
+  }
+
+  /**
+   * Returns one or all computed style properties of an element.
+   * 
+   * @param node the element
+   * @param psuedoElement the style property
+   */
+
+  function getComputedStyle$1(node, psuedoElement) {
+    return ownerWindow(node).getComputedStyle(node, psuedoElement);
+  }
+
+  var rUpper = /([A-Z])/g;
+  function hyphenate(string) {
+    return string.replace(rUpper, '-$1').toLowerCase();
+  }
+
+  /**
+   * Copyright 2013-2014, Facebook, Inc.
+   * All rights reserved.
+   * https://github.com/facebook/react/blob/2aeb8a2a6beb00617a4217f7f8284924fa2ad819/src/vendor/core/hyphenateStyleName.js
+   */
+  var msPattern = /^ms-/;
+  function hyphenateStyleName(string) {
+    return hyphenate(string).replace(msPattern, '-ms-');
+  }
+
+  var supportedTransforms = /^((translate|rotate|scale)(X|Y|Z|3d)?|matrix(3d)?|perspective|skew(X|Y)?)$/i;
+  function isTransform(value) {
+    return !!(value && supportedTransforms.test(value));
+  }
+
+  function style(node, property) {
+    var css = '';
+    var transforms = '';
+
+    if (typeof property === 'string') {
+      return node.style.getPropertyValue(hyphenateStyleName(property)) || getComputedStyle$1(node).getPropertyValue(hyphenateStyleName(property));
+    }
+
+    Object.keys(property).forEach(function (key) {
+      var value = property[key];
+
+      if (!value && value !== 0) {
+        node.style.removeProperty(hyphenateStyleName(key));
+      } else if (isTransform(key)) {
+        transforms += key + "(" + value + ") ";
+      } else {
+        css += hyphenateStyleName(key) + ": " + value + ";";
+      }
+    });
+
+    if (transforms) {
+      css += "transform: " + transforms + ";";
+    }
+
+    node.style.cssText += ";" + css;
+  }
+
+  /*! *****************************************************************************
   Copyright (c) Microsoft Corporation.
 
   Permission to use, copy, modify, and/or distribute this software for any
@@ -12,4 +92,4814 @@
   LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
   OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
   PERFORMANCE OF THIS SOFTWARE.
-  ***************************************************************************** */var __assign=function(){return __assign=Object.assign||function(e){for(var t,n=1,r=arguments.length;n<r;n++)for(var i in t=arguments[n])Object.prototype.hasOwnProperty.call(t,i)&&(e[i]=t[i]);return e},__assign.apply(this,arguments)};function __rest(e,t){var n={};for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&t.indexOf(r)<0&&(n[r]=e[r]);if(null!=e&&"function"==typeof Object.getOwnPropertySymbols){var i=0;for(r=Object.getOwnPropertySymbols(e);i<r.length;i++)t.indexOf(r[i])<0&&Object.prototype.propertyIsEnumerable.call(e,r[i])&&(n[r[i]]=e[r[i]])}return n}function __spreadArray(e,t,n){if(n||2===arguments.length)for(var r,i=0,a=t.length;i<a;i++)!r&&i in t||(r||(r=Array.prototype.slice.call(t,0,i)),r[i]=t[i]);return e.concat(r||t)}var invariant=function(){},clamp$1=function(e,t,n){return Math.min(Math.max(n,e),t)},safeMin=.001,minDuration=.01,maxDuration=10,minDamping=.05,maxDamping=1;function findSpring(e){var t,n,r=e.duration,i=void 0===r?800:r,a=e.bounce,o=void 0===a?.25:a,s=e.velocity,l=void 0===s?0:s,c=e.mass,u=void 0===c?1:c,d=1-o;d=clamp$1(minDamping,maxDamping,d),i=clamp$1(minDuration,maxDuration,i/1e3),d<1?(t=function(e){var t=e*d,n=t*i,r=t-l,a=calcAngularFreq(e,d),o=Math.exp(-n);return safeMin-r/a*o},n=function(e){var n=e*d*i,r=n*l+l,a=Math.pow(d,2)*Math.pow(e,2)*i,o=Math.exp(-n),s=calcAngularFreq(Math.pow(e,2),d);return(-t(e)+safeMin>0?-1:1)*((r-a)*o)/s}):(t=function(e){return Math.exp(-e*i)*((e-l)*i+1)-safeMin},n=function(e){return Math.exp(-e*i)*(i*i*(l-e))});var f=approximateRoot(t,n,5/i);if(i*=1e3,isNaN(f))return{stiffness:100,damping:10,duration:i};var p=Math.pow(f,2)*u;return{stiffness:p,damping:2*d*Math.sqrt(u*p),duration:i}}var rootIterations=12;function approximateRoot(e,t,n){for(var r=n,i=1;i<rootIterations;i++)r-=e(r)/t(r);return r}function calcAngularFreq(e,t){return e*Math.sqrt(1-t*t)}var durationKeys=["duration","bounce"],physicsKeys=["stiffness","damping","mass"];function isSpringType(e,t){return t.some((function(t){return void 0!==e[t]}))}function getSpringOptions(e){var t=__assign({velocity:0,stiffness:100,damping:10,mass:1,isResolvedFromDuration:!1},e);if(!isSpringType(e,physicsKeys)&&isSpringType(e,durationKeys)){var n=findSpring(e);(t=__assign(__assign(__assign({},t),n),{velocity:0,mass:1})).isResolvedFromDuration=!0}return t}function spring(e){var t=e.from,n=void 0===t?0:t,r=e.to,i=void 0===r?1:r,a=e.restSpeed,o=void 0===a?2:a,s=e.restDelta,l=__rest(e,["from","to","restSpeed","restDelta"]),c={done:!1,value:n},u=getSpringOptions(l),d=u.stiffness,f=u.damping,p=u.mass,m=u.velocity,h=u.duration,g=u.isResolvedFromDuration,v=zero,y=zero;function _(){var e=m?-m/1e3:0,t=i-n,r=f/(2*Math.sqrt(d*p)),a=Math.sqrt(d/p)/1e3;if(null!=s||(s=Math.abs(i-n)<=1?.01:.4),r<1){var o=calcAngularFreq(a,r);v=function(n){var s=Math.exp(-r*a*n);return i-s*((e+r*a*t)/o*Math.sin(o*n)+t*Math.cos(o*n))},y=function(n){var i=Math.exp(-r*a*n);return r*a*i*(Math.sin(o*n)*(e+r*a*t)/o+t*Math.cos(o*n))-i*(Math.cos(o*n)*(e+r*a*t)-o*t*Math.sin(o*n))}}else if(1===r)v=function(n){return i-Math.exp(-a*n)*(t+(e+a*t)*n)};else{var l=a*Math.sqrt(r*r-1);v=function(n){var o=Math.exp(-r*a*n),s=Math.min(l*n,300);return i-o*((e+r*a*t)*Math.sinh(s)+l*t*Math.cosh(s))/l}}}return _(),{next:function(e){var t=v(e);if(g)c.done=e>=h;else{var n=1e3*y(e),r=Math.abs(n)<=o,a=Math.abs(i-t)<=s;c.done=r&&a}return c.value=c.done?i:t,c},flipTarget:function(){var e;m=-m,n=(e=[i,n])[0],i=e[1],_()}}}spring.needsInterpolation=function(e,t){return"string"==typeof e||"string"==typeof t};var zero=function(e){return 0},progress=function(e,t,n){var r=t-e;return 0===r?1:(n-e)/r},mix=function(e,t,n){return-n*e+n*t+e},clamp=function(e,t){return function(n){return Math.max(Math.min(n,t),e)}},sanitize=function(e){return e%1?Number(e.toFixed(5)):e},floatRegex=/(-)?([\d]*\.?[\d])+/g,colorRegex=/(#[0-9a-f]{6}|#[0-9a-f]{3}|#(?:[0-9a-f]{2}){2,4}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2,3}\s*\/*\s*[\d\.]+%?\))/gi,singleColorRegex=/^(#[0-9a-f]{3}|#(?:[0-9a-f]{2}){2,4}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2,3}\s*\/*\s*[\d\.]+%?\))$/i;function isString$1(e){return"string"==typeof e}var number={test:function(e){return"number"==typeof e},parse:parseFloat,transform:function(e){return e}},alpha=__assign(__assign({},number),{transform:clamp(0,1)});__assign(__assign({},number),{default:1});var createUnitType=function(e){return{test:function(t){return isString$1(t)&&t.endsWith(e)&&1===t.split(" ").length},parse:parseFloat,transform:function(t){return""+t+e}}},percent=createUnitType("%");__assign(__assign({},percent),{parse:function(e){return percent.parse(e)/100},transform:function(e){return percent.transform(100*e)}});var isColorString=function(e,t){return function(n){return Boolean(isString$1(n)&&singleColorRegex.test(n)&&n.startsWith(e)||t&&Object.prototype.hasOwnProperty.call(n,t))}},splitColor=function(e,t,n){return function(r){var i;if(!isString$1(r))return r;var a=r.match(floatRegex),o=a[0],s=a[1],l=a[2],c=a[3];return(i={})[e]=parseFloat(o),i[t]=parseFloat(s),i[n]=parseFloat(l),i.alpha=void 0!==c?parseFloat(c):1,i}},hsla={test:isColorString("hsl","hue"),parse:splitColor("hue","saturation","lightness"),transform:function(e){var t=e.hue,n=e.saturation,r=e.lightness,i=e.alpha,a=void 0===i?1:i;return"hsla("+Math.round(t)+", "+percent.transform(sanitize(n))+", "+percent.transform(sanitize(r))+", "+sanitize(alpha.transform(a))+")"}},clampRgbUnit=clamp(0,255),rgbUnit=__assign(__assign({},number),{transform:function(e){return Math.round(clampRgbUnit(e))}}),rgba={test:isColorString("rgb","red"),parse:splitColor("red","green","blue"),transform:function(e){var t=e.red,n=e.green,r=e.blue,i=e.alpha,a=void 0===i?1:i;return"rgba("+rgbUnit.transform(t)+", "+rgbUnit.transform(n)+", "+rgbUnit.transform(r)+", "+sanitize(alpha.transform(a))+")"}};function parseHex(e){var t="",n="",r="",i="";return e.length>5?(t=e.substr(1,2),n=e.substr(3,2),r=e.substr(5,2),i=e.substr(7,2)):(t=e.substr(1,1),n=e.substr(2,1),r=e.substr(3,1),i=e.substr(4,1),t+=t,n+=n,r+=r,i+=i),{red:parseInt(t,16),green:parseInt(n,16),blue:parseInt(r,16),alpha:i?parseInt(i,16)/255:1}}var hex={test:isColorString("#"),parse:parseHex,transform:rgba.transform},color={test:function(e){return rgba.test(e)||hex.test(e)||hsla.test(e)},parse:function(e){return rgba.test(e)?rgba.parse(e):hsla.test(e)?hsla.parse(e):hex.parse(e)},transform:function(e){return isString$1(e)?e:e.hasOwnProperty("red")?rgba.transform(e):hsla.transform(e)}},colorToken="${c}",numberToken="${n}";function test(e){var t,n,r,i;return isNaN(e)&&isString$1(e)&&(null!==(n=null===(t=e.match(floatRegex))||void 0===t?void 0:t.length)&&void 0!==n?n:0)+(null!==(i=null===(r=e.match(colorRegex))||void 0===r?void 0:r.length)&&void 0!==i?i:0)>0}function analyse$1(e){var t=[],n=0,r=e.match(colorRegex);r&&(n=r.length,e=e.replace(colorRegex,colorToken),t.push.apply(t,r.map(color.parse)));var i=e.match(floatRegex);return i&&(e=e.replace(floatRegex,numberToken),t.push.apply(t,i.map(number.parse))),{values:t,numColors:n,tokenised:e}}function parse(e){return analyse$1(e).values}function createTransformer(e){var t=analyse$1(e),n=t.values,r=t.numColors,i=t.tokenised,a=n.length;return function(e){for(var t=i,n=0;n<a;n++)t=t.replace(n<r?colorToken:numberToken,n<r?color.transform(e[n]):sanitize(e[n]));return t}}var convertNumbersToZero=function(e){return"number"==typeof e?0:e};function getAnimatableNone(e){var t=parse(e);return createTransformer(e)(t.map(convertNumbersToZero))}var complex={test:test,parse:parse,createTransformer:createTransformer,getAnimatableNone:getAnimatableNone},mixLinearColor=function(e,t,n){var r=e*e,i=t*t;return Math.sqrt(Math.max(0,n*(i-r)+r))},colorTypes=[hex,rgba,hsla],getColorType=function(e){return colorTypes.find((function(t){return t.test(e)}))},mixColor=function(e,t){var n=getColorType(e),r=getColorType(t);invariant(n.transform===r.transform);var i=n.parse(e),a=r.parse(t),o=__assign({},i),s=n===hsla?mix:mixLinearColor;return function(e){for(var t in o)"alpha"!==t&&(o[t]=s(i[t],a[t],e));return o.alpha=mix(i.alpha,a.alpha,e),n.transform(o)}},isNum=function(e){return"number"==typeof e},combineFunctions=function(e,t){return function(n){return t(e(n))}},pipe=function(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];return e.reduce(combineFunctions)};function getMixer(e,t){return isNum(e)?function(n){return mix(e,t,n)}:color.test(e)?mixColor(e,t):mixComplex(e,t)}var mixArray=function(e,t){var n=__spreadArray([],e),r=n.length,i=e.map((function(e,n){return getMixer(e,t[n])}));return function(e){for(var t=0;t<r;t++)n[t]=i[t](e);return n}},mixObject=function(e,t){var n=__assign(__assign({},e),t),r={};for(var i in n)void 0!==e[i]&&void 0!==t[i]&&(r[i]=getMixer(e[i],t[i]));return function(e){for(var t in r)n[t]=r[t](e);return n}};function analyse(e){for(var t=complex.parse(e),n=t.length,r=0,i=0,a=0,o=0;o<n;o++)r||"number"==typeof t[o]?r++:void 0!==t[o].hue?a++:i++;return{parsed:t,numNumbers:r,numRGB:i,numHSL:a}}var mixComplex=function(e,t){var n=complex.createTransformer(t),r=analyse(e),i=analyse(t);return pipe(mixArray(r.parsed,i.parsed),n)},mixNumber=function(e,t){return function(n){return mix(e,t,n)}};function detectMixerFactory(e){return"number"==typeof e?mixNumber:"string"==typeof e?color.test(e)?mixColor:mixComplex:Array.isArray(e)?mixArray:"object"==typeof e?mixObject:void 0}function createMixers(e,t,n){for(var r=[],i=n||detectMixerFactory(e[0]),a=e.length-1,o=0;o<a;o++){var s=i(e[o],e[o+1]);if(t){var l=Array.isArray(t)?t[o]:t;s=pipe(l,s)}r.push(s)}return r}function fastInterpolate(e,t){var n=e[0],r=e[1],i=t[0];return function(e){return i(progress(n,r,e))}}function slowInterpolate(e,t){var n=e.length,r=n-1;return function(i){var a=0,o=!1;if(i<=e[0]?o=!0:i>=e[r]&&(a=r-1,o=!0),!o){for(var s=1;s<n&&!(e[s]>i||s===r);s++);a=s-1}var l=progress(e[a],e[a+1],i);return t[a](l)}}function interpolate(e,t,n){var r=void 0===n?{}:n,i=r.clamp,a=void 0===i||i,o=r.ease,s=r.mixer,l=e.length;invariant(l===t.length),invariant(!o||!Array.isArray(o)||o.length===l-1),e[0]>e[l-1]&&(e=[].concat(e),t=[].concat(t),e.reverse(),t.reverse());var c=createMixers(t,o,s),u=2===l?fastInterpolate(e,c):slowInterpolate(e,c);return a?function(t){return u(clamp$1(e[0],e[l-1],t))}:u}var reverseEasing=function(e){return function(t){return 1-e(1-t)}},mirrorEasing=function(e){return function(t){return t<=.5?e(2*t)/2:(2-e(2*(1-t)))/2}},createExpoIn=function(e){return function(t){return Math.pow(t,e)}},createBackIn=function(e){return function(t){return t*t*((e+1)*t-e)}},createAnticipate=function(e){var t=createBackIn(e);return function(e){return(e*=2)<1?.5*t(e):.5*(2-Math.pow(2,-10*(e-1)))}},DEFAULT_OVERSHOOT_STRENGTH=1.525,easeIn=createExpoIn(2),easeInOut=mirrorEasing(easeIn),backIn=createBackIn(DEFAULT_OVERSHOOT_STRENGTH),backOut=reverseEasing(backIn);function defaultEasing(e,t){return e.map((function(){return t||easeInOut})).splice(0,e.length-1)}function defaultOffset(e){var t=e.length;return e.map((function(e,n){return 0!==n?n/(t-1):0}))}function convertOffsetToTimes(e,t){return e.map((function(e){return e*t}))}function keyframes(e){var t=e.from,n=void 0===t?0:t,r=e.to,i=void 0===r?1:r,a=e.ease,o=e.offset,s=e.duration,l=void 0===s?300:s,c={done:!1,value:n},u=Array.isArray(i)?i:[n,i],d=convertOffsetToTimes(o&&o.length===u.length?o:defaultOffset(u),l);function f(){return interpolate(d,u,{ease:Array.isArray(a)?a:defaultEasing(u,a)})}var p=f();return{next:function(e){return c.value=p(e),c.done=e>=l,c},flipTarget:function(){u.reverse(),p=f()}}}function decay(e){var t=e.velocity,n=void 0===t?0:t,r=e.from,i=void 0===r?0:r,a=e.power,o=void 0===a?.8:a,s=e.timeConstant,l=void 0===s?350:s,c=e.restDelta,u=void 0===c?.5:c,d=e.modifyTarget,f={done:!1,value:i},p=o*n,m=i+p,h=void 0===d?m:d(m);return h!==m&&(p=h-i),{next:function(e){var t=-p*Math.exp(-e/l);return f.done=!(t>u||t<-u),f.value=f.done?h:h+t,f},flipTarget:function(){}}}createAnticipate(DEFAULT_OVERSHOOT_STRENGTH);var types={keyframes:keyframes,spring:spring,decay:decay};function detectAnimationFromOptions(e){if(Array.isArray(e.to))return keyframes;if(types[e.type])return types[e.type];var t=new Set(Object.keys(e));return t.has("ease")||t.has("duration")&&!t.has("dampingRatio")?keyframes:t.has("dampingRatio")||t.has("stiffness")||t.has("mass")||t.has("damping")||t.has("restSpeed")||t.has("restDelta")?spring:keyframes}var defaultTimestep=1/60*1e3,getCurrentTime="undefined"!=typeof performance?function(){return performance.now()}:function(){return Date.now()},onNextFrame="undefined"!=typeof window?function(e){return window.requestAnimationFrame(e)}:function(e){return setTimeout((function(){return e(getCurrentTime())}),defaultTimestep)};function createRenderStep(e){var t=[],n=[],r=0,i=!1,a=new WeakSet,o={schedule:function(e,o,s){void 0===o&&(o=!1),void 0===s&&(s=!1);var l=s&&i,c=l?t:n;return o&&a.add(e),-1===c.indexOf(e)&&(c.push(e),l&&i&&(r=t.length)),e},cancel:function(e){var t=n.indexOf(e);-1!==t&&n.splice(t,1),a.delete(e)},process:function(s){var l;if(i=!0,t=(l=[n,t])[0],(n=l[1]).length=0,r=t.length)for(var c=0;c<r;c++){var u=t[c];u(s),a.has(u)&&(o.schedule(u),e())}i=!1}};return o}var maxElapsed=40,useDefaultElapsed=!0,runNextFrame=!1,isProcessing=!1,frame={delta:0,timestamp:0},stepsOrder=["read","update","preRender","render","postRender"],steps=stepsOrder.reduce((function(e,t){return e[t]=createRenderStep((function(){return runNextFrame=!0})),e}),{}),sync=stepsOrder.reduce((function(e,t){var n=steps[t];return e[t]=function(e,t,r){return void 0===t&&(t=!1),void 0===r&&(r=!1),runNextFrame||startLoop(),n.schedule(e,t,r)},e}),{}),cancelSync=stepsOrder.reduce((function(e,t){return e[t]=steps[t].cancel,e}),{}),processStep=function(e){return steps[e].process(frame)},processFrame=function(e){runNextFrame=!1,frame.delta=useDefaultElapsed?defaultTimestep:Math.max(Math.min(e-frame.timestamp,maxElapsed),1),frame.timestamp=e,isProcessing=!0,stepsOrder.forEach(processStep),isProcessing=!1,runNextFrame&&(useDefaultElapsed=!1,onNextFrame(processFrame))},startLoop=function(){runNextFrame=!0,useDefaultElapsed=!0,isProcessing||onNextFrame(processFrame)};function loopElapsed(e,t,n){return void 0===n&&(n=0),e-t-n}function reverseElapsed(e,t,n,r){return void 0===n&&(n=0),void 0===r&&(r=!0),r?loopElapsed(t+-e,t,n):t-(e-t)+n}function hasRepeatDelayElapsed(e,t,n,r){return r?e>=t+n:e<=-n}var framesync=function(e){var t=function(t){var n=t.delta;return e(n)};return{start:function(){return sync.update(t,!0)},stop:function(){return cancelSync.update(t)}}};function animate(e){var t,n,r,i,a,o=e.from,s=e.autoplay,l=void 0===s||s,c=e.driver,u=void 0===c?framesync:c,d=e.elapsed,f=void 0===d?0:d,p=e.repeat,m=void 0===p?0:p,h=e.repeatType,g=void 0===h?"loop":h,v=e.repeatDelay,y=void 0===v?0:v,_=e.onPlay,b=e.onStop,x=e.onComplete,w=e.onRepeat,S=e.onUpdate,E=__rest(e,["from","autoplay","driver","elapsed","repeat","repeatType","repeatDelay","onPlay","onStop","onComplete","onRepeat","onUpdate"]),A=E.to,T=0,k=E.duration,M=!1,O=!0,R=detectAnimationFromOptions(E);(null===(n=(t=R).needsInterpolation)||void 0===n?void 0:n.call(t,o,A))&&(a=interpolate([0,100],[o,A],{clamp:!1}),o=0,A=100);var C=R(__assign(__assign({},E),{from:o,to:A}));function L(e){if(O||(e=-e),f+=e,!M){var t=C.next(Math.max(0,f));i=t.value,a&&(i=a(i)),M=O?t.done:f<=0}null==S||S(i),M&&(0===T&&(null!=k||(k=f)),T<m?hasRepeatDelayElapsed(f,k,y,O)&&(T++,"reverse"===g?f=reverseElapsed(f,k,y,O=T%2==0):(f=loopElapsed(f,k,y),"mirror"===g&&C.flipTarget()),M=!1,w&&w()):(r.stop(),x&&x()))}return l&&(null==_||_(),(r=u(L)).start()),{stop:function(){null==b||b(),r.stop()}}}class ParallaxElement{constructor(e){ParallaxElement.prototype.__init.call(this),e&&(this.element=e,this.isScroll=!1,this.latestScroll=0,this.init())}init(){window.addEventListener("scroll",(()=>{this.latestScroll=window.scrollY,this.checkScroll()}),!1)}checkScroll(){this.isScroll||window.requestAnimationFrame(this.update),this.isScroll=!0}__init(){this.update=()=>{this.currentScroll=this.latestScroll,this.isScroll=!1;var e=this.currentScroll/4;this.element.style.transform="translate3d(0, "+e+"px, 0)"}}getOffsetTop(e){var t=0;do{t+=e.offsetTop-e.scrollTop}while(e=e.offsetParent);return t}}class Parallax{__init2(){this.parallaxElements=[]}constructor(){if(Parallax.prototype.__init2.call(this),this.elements=document.querySelectorAll(".entry-header figure.entry-image"),this.elements&&0!=this.elements.length){this.isScroll=!1,this.latestScroll=0;var e=window.requestAnimationFrame||window.mozRequestAnimationFrame||window.webkitRequestAnimationFrame||window.msRequestAnimationFrame;window.requestAnimationFrame=e,[].forEach.call(this.elements,(e=>{this.parallaxElements.push(new ParallaxElement(e))}))}}}const counter=(e,t)=>{let n=null,r=Date.now();const i=()=>{n||(n=r);const a=Math.min((r-n)/e,1);t(a),a<1?window.requestAnimationFrame(i):window.cancelAnimationFrame(window.requestAnimationFrame(i))};window.requestAnimationFrame(i)};class Team{__init(){this.last=null}constructor(){Team.prototype.__init.call(this),document.addEventListener("keydown",(e=>{"27"==e.key&&(e.preventDefault(),window.location.hash="#!")})),window.addEventListener("hashchange",(e=>{var t=window.location.hash.replace(/^#!/,"");if(t){var n=t.split("/");"team-member"==n[0]?this.show(n[1]):"team"==n[0]&&this.filter(n[1])}}))}filter(e){let t=document.querySelector('a[href="'+window.location.hash+'"]');if(t){t.classList.add("active");let n=this.closest(t,".na-team-wrapper");if(n){let t=n.querySelectorAll("ul.na-team>li");t&&t.length&&[].forEach.call(t,(t=>{let n=t.querySelector("a[data-terms]");n&&(n.getAttribute("data-terms").split(",").indexOf(e)>=0?(t.classList.remove("hidden"),animate({from:0,to:1,duration:1e3,ease:backOut,onUpdate:e=>{t.style.opacity=e},onComplete:()=>{}})):animate({from:1,to:0,duration:100,ease:backOut,onUpdate:e=>{t.style.opacity=e},onComplete:()=>{t.classList.add("hidden")}}))}))}let r=document.querySelectorAll('a[href^="#!team/"]');r&&r.length&&[].forEach.call(r,(e=>{t!=e&&e.classList.remove("active")}))}}show(e){let t=new FormData;return t.append("action","team_member"),t.append("id",e),document.body.classList.add("na-team-active"),fetch(TeamSettings.url,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:t}).then((e=>e.json())).then((e=>{if(e&&"success"==e.status){var t=wp.template("team-member");let n=document.createElement("div");n.setAttribute("id","na-team-member-template");let r=document.createElement("a");r.setAttribute("class","close-team"),r.addEventListener("click",(e=>{e.preventDefault(),document.querySelector("#na-team-member-template").remove(),document.body.classList.remove("na-team-active"),window.location.hash="#!"})),r.href="#",n.innerHTML=t(e.post),n.appendChild(r),n.style.display="block"}else document.body.classList.remove("na-team-active")})).catch((e=>{console.error("Error:",e),window.location.hash="#!",document.body.classList.remove("na-team-active")})),!1}closest(e,t){var n,r;for(["matches","webkitMatchesSelector","mozMatchesSelector","msMatchesSelector","oMatchesSelector"].some((function(e){return"function"==typeof document.body[e]&&(n=e,!0)}));e;){if((r=e.parentElement)&&r[n](t))return r;e=r}return null}}var flushPending=!1,flushing=!1,queue=[],reactive,effect,release,raw;function scheduler(e){queueJob(e)}function queueJob(e){queue.includes(e)||queue.push(e),queueFlush()}function dequeueJob(e){let t=queue.indexOf(e);-1!==t&&queue.splice(t,1)}function queueFlush(){flushing||flushPending||(flushPending=!0,queueMicrotask(flushJobs))}function flushJobs(){flushPending=!1,flushing=!0;for(let e=0;e<queue.length;e++)queue[e]();queue.length=0,flushing=!1}var shouldSchedule=!0;function disableEffectScheduling(e){shouldSchedule=!1,e(),shouldSchedule=!0}function setReactivityEngine(e){reactive=e.reactive,release=e.release,effect=t=>e.effect(t,{scheduler:e=>{shouldSchedule?scheduler(e):e()}}),raw=e.raw}function overrideEffect(e){effect=e}function elementBoundEffect(e){let t=()=>{};return[n=>{let r=effect(n);return e._x_effects||(e._x_effects=new Set,e._x_runEffects=()=>{e._x_effects.forEach((e=>e()))}),e._x_effects.add(r),t=()=>{void 0!==r&&(e._x_effects.delete(r),release(r))},r},()=>{t()}]}var onAttributeAddeds=[],onElRemoveds=[],onElAddeds=[];function onElAdded(e){onElAddeds.push(e)}function onElRemoved(e,t){"function"==typeof t?(e._x_cleanups||(e._x_cleanups=[]),e._x_cleanups.push(t)):(t=e,onElRemoveds.push(t))}function onAttributesAdded(e){onAttributeAddeds.push(e)}function onAttributeRemoved(e,t,n){e._x_attributeCleanups||(e._x_attributeCleanups={}),e._x_attributeCleanups[t]||(e._x_attributeCleanups[t]=[]),e._x_attributeCleanups[t].push(n)}function cleanupAttributes(e,t){e._x_attributeCleanups&&Object.entries(e._x_attributeCleanups).forEach((([n,r])=>{(void 0===t||t.includes(n))&&(r.forEach((e=>e())),delete e._x_attributeCleanups[n])}))}var observer=new MutationObserver(onMutate),currentlyObserving=!1;function startObservingMutations(){observer.observe(document,{subtree:!0,childList:!0,attributes:!0,attributeOldValue:!0}),currentlyObserving=!0}function stopObservingMutations(){flushObserver(),observer.disconnect(),currentlyObserving=!1}var recordQueue=[],willProcessRecordQueue=!1;function flushObserver(){(recordQueue=recordQueue.concat(observer.takeRecords())).length&&!willProcessRecordQueue&&(willProcessRecordQueue=!0,queueMicrotask((()=>{processRecordQueue(),willProcessRecordQueue=!1})))}function processRecordQueue(){onMutate(recordQueue),recordQueue.length=0}function mutateDom(e){if(!currentlyObserving)return e();stopObservingMutations();let t=e();return startObservingMutations(),t}var isCollecting=!1,deferredMutations=[];function deferMutations(){isCollecting=!0}function flushAndStopDeferringMutations(){isCollecting=!1,onMutate(deferredMutations),deferredMutations=[]}function onMutate(e){if(isCollecting)return void(deferredMutations=deferredMutations.concat(e));let t=[],n=[],r=new Map,i=new Map;for(let a=0;a<e.length;a++)if(!e[a].target._x_ignoreMutationObserver&&("childList"===e[a].type&&(e[a].addedNodes.forEach((e=>1===e.nodeType&&t.push(e))),e[a].removedNodes.forEach((e=>1===e.nodeType&&n.push(e)))),"attributes"===e[a].type)){let t=e[a].target,n=e[a].attributeName,o=e[a].oldValue,s=()=>{r.has(t)||r.set(t,[]),r.get(t).push({name:n,value:t.getAttribute(n)})},l=()=>{i.has(t)||i.set(t,[]),i.get(t).push(n)};t.hasAttribute(n)&&null===o?s():t.hasAttribute(n)?(l(),s()):l()}i.forEach(((e,t)=>{cleanupAttributes(t,e)})),r.forEach(((e,t)=>{onAttributeAddeds.forEach((n=>n(t,e)))}));for(let e of n)if(!t.includes(e)&&(onElRemoveds.forEach((t=>t(e))),e._x_cleanups))for(;e._x_cleanups.length;)e._x_cleanups.pop()();t.forEach((e=>{e._x_ignoreSelf=!0,e._x_ignore=!0}));for(let e of t)n.includes(e)||e.isConnected&&(delete e._x_ignoreSelf,delete e._x_ignore,onElAddeds.forEach((t=>t(e))),e._x_ignore=!0,e._x_ignoreSelf=!0);t.forEach((e=>{delete e._x_ignoreSelf,delete e._x_ignore})),t=null,n=null,r=null,i=null}function scope(e){return mergeProxies(closestDataStack(e))}function addScopeToNode(e,t,n){return e._x_dataStack=[t,...closestDataStack(n||e)],()=>{e._x_dataStack=e._x_dataStack.filter((e=>e!==t))}}function refreshScope(e,t){let n=e._x_dataStack[0];Object.entries(t).forEach((([e,t])=>{n[e]=t}))}function closestDataStack(e){return e._x_dataStack?e._x_dataStack:"function"==typeof ShadowRoot&&e instanceof ShadowRoot?closestDataStack(e.host):e.parentNode?closestDataStack(e.parentNode):[]}function mergeProxies(e){let t=new Proxy({},{ownKeys:()=>Array.from(new Set(e.flatMap((e=>Object.keys(e))))),has:(t,n)=>e.some((e=>e.hasOwnProperty(n))),get:(n,r)=>(e.find((e=>{if(e.hasOwnProperty(r)){let n=Object.getOwnPropertyDescriptor(e,r);if(n.get&&n.get._x_alreadyBound||n.set&&n.set._x_alreadyBound)return!0;if((n.get||n.set)&&n.enumerable){let i=n.get,a=n.set,o=n;i=i&&i.bind(t),a=a&&a.bind(t),i&&(i._x_alreadyBound=!0),a&&(a._x_alreadyBound=!0),Object.defineProperty(e,r,{...o,get:i,set:a})}return!0}return!1}))||{})[r],set:(t,n,r)=>{let i=e.find((e=>e.hasOwnProperty(n)));return i?i[n]=r:e[e.length-1][n]=r,!0}});return t}function initInterceptors(e){let t=(n,r="")=>{Object.entries(Object.getOwnPropertyDescriptors(n)).forEach((([i,{value:a,enumerable:o}])=>{if(!1===o||void 0===a)return;let s=""===r?i:`${r}.${i}`;var l;"object"==typeof a&&null!==a&&a._x_interceptor?n[i]=a.initialize(e,s,i):"object"!=typeof(l=a)||Array.isArray(l)||null===l||a===n||a instanceof Element||t(a,s)}))};return t(e)}function interceptor(e,t=(()=>{})){let n={initialValue:void 0,_x_interceptor:!0,initialize(t,n,r){return e(this.initialValue,(()=>get(t,n)),(e=>set(t,n,e)),n,r)}};return t(n),e=>{if("object"==typeof e&&null!==e&&e._x_interceptor){let t=n.initialize.bind(n);n.initialize=(r,i,a)=>{let o=e.initialize(r,i,a);return n.initialValue=o,t(r,i,a)}}else n.initialValue=e;return n}}function get(e,t){return t.split(".").reduce(((e,t)=>e[t]),e)}function set(e,t,n){if("string"==typeof t&&(t=t.split(".")),1!==t.length){if(0===t.length)throw error;return e[t[0]]||(e[t[0]]={}),set(e[t[0]],t.slice(1),n)}e[t[0]]=n}var magics={};function magic(e,t){magics[e]=t}function injectMagics(e,t){return Object.entries(magics).forEach((([n,r])=>{Object.defineProperty(e,`$${n}`,{get(){let[e,n]=getElementBoundUtilities(t);return e={interceptor:interceptor,...e},onElRemoved(t,n),r(t,e)},enumerable:!1})})),e}function tryCatch(e,t,n,...r){try{return n(...r)}catch(n){handleError(n,e,t)}}function handleError(e,t,n=void 0){Object.assign(e,{el:t,expression:n}),console.warn(`Alpine Expression Error: ${e.message}\n\n${n?'Expression: "'+n+'"\n\n':""}`,t),setTimeout((()=>{throw e}),0)}var shouldAutoEvaluateFunctions=!0;function dontAutoEvaluateFunctions(e){let t=shouldAutoEvaluateFunctions;shouldAutoEvaluateFunctions=!1,e(),shouldAutoEvaluateFunctions=t}function evaluate(e,t,n={}){let r;return evaluateLater(e,t)((e=>r=e),n),r}function evaluateLater(...e){return theEvaluatorFunction(...e)}var theEvaluatorFunction=normalEvaluator;function setEvaluator(e){theEvaluatorFunction=e}function normalEvaluator(e,t){let n={};injectMagics(n,e);let r=[n,...closestDataStack(e)];if("function"==typeof t)return generateEvaluatorFromFunction(r,t);let i=generateEvaluatorFromString(r,t,e);return tryCatch.bind(null,e,t,i)}function generateEvaluatorFromFunction(e,t){return(n=(()=>{}),{scope:r={},params:i=[]}={})=>{runIfTypeOfFunction(n,t.apply(mergeProxies([r,...e]),i))}}var evaluatorMemo={};function generateFunctionFromString(e,t){if(evaluatorMemo[e])return evaluatorMemo[e];let n=Object.getPrototypeOf((async function(){})).constructor,r=/^[\n\s]*if.*\(.*\)/.test(e)||/^(let|const)\s/.test(e)?`(() => { ${e} })()`:e;let i=(()=>{try{return new n(["__self","scope"],`with (scope) { __self.result = ${r} }; __self.finished = true; return __self.result;`)}catch(n){return handleError(n,t,e),Promise.resolve()}})();return evaluatorMemo[e]=i,i}function generateEvaluatorFromString(e,t,n){let r=generateFunctionFromString(t,n);return(i=(()=>{}),{scope:a={},params:o=[]}={})=>{r.result=void 0,r.finished=!1;let s=mergeProxies([a,...e]);if("function"==typeof r){let e=r(r,s).catch((e=>handleError(e,n,t)));r.finished?(runIfTypeOfFunction(i,r.result,s,o,n),r.result=void 0):e.then((e=>{runIfTypeOfFunction(i,e,s,o,n)})).catch((e=>handleError(e,n,t))).finally((()=>r.result=void 0))}}}function runIfTypeOfFunction(e,t,n,r,i){if(shouldAutoEvaluateFunctions&&"function"==typeof t){let a=t.apply(n,r);a instanceof Promise?a.then((t=>runIfTypeOfFunction(e,t,n,r))).catch((e=>handleError(e,i,t))):e(a)}else e(t)}var prefixAsString="x-";function prefix(e=""){return prefixAsString+e}function setPrefix(e){prefixAsString=e}var directiveHandlers={};function directive(e,t){directiveHandlers[e]=t}function directives(e,t,n){if(t=Array.from(t),e._x_virtualDirectives){let n=Object.entries(e._x_virtualDirectives).map((([e,t])=>({name:e,value:t}))),r=attributesOnly(n);n=n.map((e=>r.find((t=>t.name===e.name))?{name:`x-bind:${e.name}`,value:`"${e.value}"`}:e)),t=t.concat(n)}let r={};return t.map(toTransformedAttributes(((e,t)=>r[e]=t))).filter(outNonAlpineAttributes).map(toParsedDirectives(r,n)).sort(byPriority).map((t=>getDirectiveHandler(e,t)))}function attributesOnly(e){return Array.from(e).map(toTransformedAttributes()).filter((e=>!outNonAlpineAttributes(e)))}var isDeferringHandlers=!1,directiveHandlerStacks=new Map,currentHandlerStackKey=Symbol();function deferHandlingDirectives(e){isDeferringHandlers=!0;let t=Symbol();currentHandlerStackKey=t,directiveHandlerStacks.set(t,[]);let n=()=>{for(;directiveHandlerStacks.get(t).length;)directiveHandlerStacks.get(t).shift()();directiveHandlerStacks.delete(t)};e(n),isDeferringHandlers=!1,n()}function getElementBoundUtilities(e){let t=[],[n,r]=elementBoundEffect(e);t.push(r);return[{Alpine:alpine_default,effect:n,cleanup:e=>t.push(e),evaluateLater:evaluateLater.bind(evaluateLater,e),evaluate:evaluate.bind(evaluate,e)},()=>t.forEach((e=>e()))]}function getDirectiveHandler(e,t){let n=directiveHandlers[t.type]||(()=>{}),[r,i]=getElementBoundUtilities(e);onAttributeRemoved(e,t.original,i);let a=()=>{e._x_ignore||e._x_ignoreSelf||(n.inline&&n.inline(e,t,r),n=n.bind(n,e,t,r),isDeferringHandlers?directiveHandlerStacks.get(currentHandlerStackKey).push(n):n())};return a.runCleanups=i,a}var startingWith=(e,t)=>({name:n,value:r})=>(n.startsWith(e)&&(n=n.replace(e,t)),{name:n,value:r}),into=e=>e;function toTransformedAttributes(e=(()=>{})){return({name:t,value:n})=>{let{name:r,value:i}=attributeTransformers.reduce(((e,t)=>t(e)),{name:t,value:n});return r!==t&&e(r,t),{name:r,value:i}}}var attributeTransformers=[];function mapAttributes(e){attributeTransformers.push(e)}function outNonAlpineAttributes({name:e}){return alpineAttributeRegex().test(e)}var alpineAttributeRegex=()=>new RegExp(`^${prefixAsString}([^:^.]+)\\b`);function toParsedDirectives(e,t){return({name:n,value:r})=>{let i=n.match(alpineAttributeRegex()),a=n.match(/:([a-zA-Z0-9\-:]+)/),o=n.match(/\.[^.\]]+(?=[^\]]*$)/g)||[],s=t||e[n]||n;return{type:i?i[1]:null,value:a?a[1]:null,modifiers:o.map((e=>e.replace(".",""))),expression:r,original:s}}}var DEFAULT="DEFAULT",directiveOrder=["ignore","ref","data","id","bind","init","for","mask","model","modelable","transition","show","if",DEFAULT,"teleport"];function byPriority(e,t){let n=-1===directiveOrder.indexOf(e.type)?DEFAULT:e.type,r=-1===directiveOrder.indexOf(t.type)?DEFAULT:t.type;return directiveOrder.indexOf(n)-directiveOrder.indexOf(r)}function dispatch(e,t,n={}){e.dispatchEvent(new CustomEvent(t,{detail:n,bubbles:!0,composed:!0,cancelable:!0}))}var tickStack=[],isHolding=!1;function nextTick(e=(()=>{})){return queueMicrotask((()=>{isHolding||setTimeout((()=>{releaseNextTicks()}))})),new Promise((t=>{tickStack.push((()=>{e(),t()}))}))}function releaseNextTicks(){for(isHolding=!1;tickStack.length;)tickStack.shift()()}function holdNextTicks(){isHolding=!0}function walk(e,t){if("function"==typeof ShadowRoot&&e instanceof ShadowRoot)return void Array.from(e.children).forEach((e=>walk(e,t)));let n=!1;if(t(e,(()=>n=!0)),n)return;let r=e.firstElementChild;for(;r;)walk(r,t),r=r.nextElementSibling}function warn(e,...t){console.warn(`Alpine Warning: ${e}`,...t)}function start(){document.body||warn("Unable to initialize. Trying to load Alpine before `<body>` is available. Did you forget to add `defer` in Alpine's `<script>` tag?"),dispatch(document,"alpine:init"),dispatch(document,"alpine:initializing"),startObservingMutations(),onElAdded((e=>initTree(e,walk))),onElRemoved((e=>destroyTree(e))),onAttributesAdded(((e,t)=>{directives(e,t).forEach((e=>e()))}));Array.from(document.querySelectorAll(allSelectors())).filter((e=>!closestRoot(e.parentElement,!0))).forEach((e=>{initTree(e)})),dispatch(document,"alpine:initialized")}var rootSelectorCallbacks=[],initSelectorCallbacks=[];function rootSelectors(){return rootSelectorCallbacks.map((e=>e()))}function allSelectors(){return rootSelectorCallbacks.concat(initSelectorCallbacks).map((e=>e()))}function addRootSelector(e){rootSelectorCallbacks.push(e)}function addInitSelector(e){initSelectorCallbacks.push(e)}function closestRoot(e,t=!1){return findClosest(e,(e=>{if((t?allSelectors():rootSelectors()).some((t=>e.matches(t))))return!0}))}function findClosest(e,t){if(e){if(t(e))return e;if(e._x_teleportBack&&(e=e._x_teleportBack),e.parentElement)return findClosest(e.parentElement,t)}}function isRoot(e){return rootSelectors().some((t=>e.matches(t)))}function initTree(e,t=walk){deferHandlingDirectives((()=>{t(e,((e,t)=>{directives(e,e.attributes).forEach((e=>e())),e._x_ignore&&t()}))}))}function destroyTree(e){walk(e,(e=>cleanupAttributes(e)))}function setClasses(e,t){return Array.isArray(t)?setClassesFromString(e,t.join(" ")):"object"==typeof t&&null!==t?setClassesFromObject(e,t):"function"==typeof t?setClasses(e,t()):setClassesFromString(e,t)}function setClassesFromString(e,t){return t=!0===t?t="":t||"",n=t.split(" ").filter((t=>!e.classList.contains(t))).filter(Boolean),e.classList.add(...n),()=>{e.classList.remove(...n)};var n}function setClassesFromObject(e,t){let n=e=>e.split(" ").filter(Boolean),r=Object.entries(t).flatMap((([e,t])=>!!t&&n(e))).filter(Boolean),i=Object.entries(t).flatMap((([e,t])=>!t&&n(e))).filter(Boolean),a=[],o=[];return i.forEach((t=>{e.classList.contains(t)&&(e.classList.remove(t),o.push(t))})),r.forEach((t=>{e.classList.contains(t)||(e.classList.add(t),a.push(t))})),()=>{o.forEach((t=>e.classList.add(t))),a.forEach((t=>e.classList.remove(t)))}}function setStyles(e,t){return"object"==typeof t&&null!==t?setStylesFromObject(e,t):setStylesFromString(e,t)}function setStylesFromObject(e,t){let n={};return Object.entries(t).forEach((([t,r])=>{n[t]=e.style[t],t.startsWith("--")||(t=kebabCase(t)),e.style.setProperty(t,r)})),setTimeout((()=>{0===e.style.length&&e.removeAttribute("style")})),()=>{setStyles(e,n)}}function setStylesFromString(e,t){let n=e.getAttribute("style",t);return e.setAttribute("style",t),()=>{e.setAttribute("style",n||"")}}function kebabCase(e){return e.replace(/([a-z])([A-Z])/g,"$1-$2").toLowerCase()}function once(e,t=(()=>{})){let n=!1;return function(){n?t.apply(this,arguments):(n=!0,e.apply(this,arguments))}}function registerTransitionsFromClassString(e,t,n){registerTransitionObject(e,setClasses,""),{enter:t=>{e._x_transition.enter.during=t},"enter-start":t=>{e._x_transition.enter.start=t},"enter-end":t=>{e._x_transition.enter.end=t},leave:t=>{e._x_transition.leave.during=t},"leave-start":t=>{e._x_transition.leave.start=t},"leave-end":t=>{e._x_transition.leave.end=t}}[n](t)}function registerTransitionsFromHelper(e,t,n){registerTransitionObject(e,setStyles);let r=!t.includes("in")&&!t.includes("out")&&!n,i=r||t.includes("in")||["enter"].includes(n),a=r||t.includes("out")||["leave"].includes(n);t.includes("in")&&!r&&(t=t.filter(((e,n)=>n<t.indexOf("out")))),t.includes("out")&&!r&&(t=t.filter(((e,n)=>n>t.indexOf("out"))));let o=!t.includes("opacity")&&!t.includes("scale"),s=o||t.includes("opacity")?0:1,l=o||t.includes("scale")?modifierValue(t,"scale",95)/100:1,c=modifierValue(t,"delay",0),u=modifierValue(t,"origin","center"),d="opacity, transform",f=modifierValue(t,"duration",150)/1e3,p=modifierValue(t,"duration",75)/1e3,m="cubic-bezier(0.4, 0.0, 0.2, 1)";i&&(e._x_transition.enter.during={transformOrigin:u,transitionDelay:c,transitionProperty:d,transitionDuration:`${f}s`,transitionTimingFunction:m},e._x_transition.enter.start={opacity:s,transform:`scale(${l})`},e._x_transition.enter.end={opacity:1,transform:"scale(1)"}),a&&(e._x_transition.leave.during={transformOrigin:u,transitionDelay:c,transitionProperty:d,transitionDuration:`${p}s`,transitionTimingFunction:m},e._x_transition.leave.start={opacity:1,transform:"scale(1)"},e._x_transition.leave.end={opacity:s,transform:`scale(${l})`})}function registerTransitionObject(e,t,n={}){e._x_transition||(e._x_transition={enter:{during:n,start:n,end:n},leave:{during:n,start:n,end:n},in(n=(()=>{}),r=(()=>{})){transition(e,t,{during:this.enter.during,start:this.enter.start,end:this.enter.end},n,r)},out(n=(()=>{}),r=(()=>{})){transition(e,t,{during:this.leave.during,start:this.leave.start,end:this.leave.end},n,r)}})}function closestHide(e){let t=e.parentNode;if(t)return t._x_hidePromise?t:closestHide(t)}function transition(e,t,{during:n,start:r,end:i}={},a=(()=>{}),o=(()=>{})){if(e._x_transitioning&&e._x_transitioning.cancel(),0===Object.keys(n).length&&0===Object.keys(r).length&&0===Object.keys(i).length)return a(),void o();let s,l,c;performTransition(e,{start(){s=t(e,r)},during(){l=t(e,n)},before:a,end(){s(),c=t(e,i)},after:o,cleanup(){l(),c()}})}function performTransition(e,t){let n,r,i,a=once((()=>{mutateDom((()=>{n=!0,r||t.before(),i||(t.end(),releaseNextTicks()),t.after(),e.isConnected&&t.cleanup(),delete e._x_transitioning}))}));e._x_transitioning={beforeCancels:[],beforeCancel(e){this.beforeCancels.push(e)},cancel:once((function(){for(;this.beforeCancels.length;)this.beforeCancels.shift()();a()})),finish:a},mutateDom((()=>{t.start(),t.during()})),holdNextTicks(),requestAnimationFrame((()=>{if(n)return;let a=1e3*Number(getComputedStyle(e).transitionDuration.replace(/,.*/,"").replace("s","")),o=1e3*Number(getComputedStyle(e).transitionDelay.replace(/,.*/,"").replace("s",""));0===a&&(a=1e3*Number(getComputedStyle(e).animationDuration.replace("s",""))),mutateDom((()=>{t.before()})),r=!0,requestAnimationFrame((()=>{n||(mutateDom((()=>{t.end()})),releaseNextTicks(),setTimeout(e._x_transitioning.finish,a+o),i=!0)}))}))}function modifierValue(e,t,n){if(-1===e.indexOf(t))return n;const r=e[e.indexOf(t)+1];if(!r)return n;if("scale"===t&&isNaN(r))return n;if("duration"===t){let e=r.match(/([0-9]+)ms/);if(e)return e[1]}return"origin"===t&&["top","right","left","center","bottom"].includes(e[e.indexOf(t)+2])?[r,e[e.indexOf(t)+2]].join(" "):r}directive("transition",((e,{value:t,modifiers:n,expression:r},{evaluate:i})=>{"function"==typeof r&&(r=i(r)),r?registerTransitionsFromClassString(e,r,t):registerTransitionsFromHelper(e,n,t)})),window.Element.prototype._x_toggleAndCascadeWithTransitions=function(e,t,n,r){const i="visible"===document.visibilityState?requestAnimationFrame:setTimeout;let a=()=>i(n);t?e._x_transition&&(e._x_transition.enter||e._x_transition.leave)?e._x_transition.enter&&(Object.entries(e._x_transition.enter.during).length||Object.entries(e._x_transition.enter.start).length||Object.entries(e._x_transition.enter.end).length)?e._x_transition.in(n):a():e._x_transition?e._x_transition.in(n):a():(e._x_hidePromise=e._x_transition?new Promise(((t,n)=>{e._x_transition.out((()=>{}),(()=>t(r))),e._x_transitioning.beforeCancel((()=>n({isFromCancelledTransition:!0})))})):Promise.resolve(r),queueMicrotask((()=>{let t=closestHide(e);t?(t._x_hideChildren||(t._x_hideChildren=[]),t._x_hideChildren.push(e)):i((()=>{let t=e=>{let n=Promise.all([e._x_hidePromise,...(e._x_hideChildren||[]).map(t)]).then((([e])=>e()));return delete e._x_hidePromise,delete e._x_hideChildren,n};t(e).catch((e=>{if(!e.isFromCancelledTransition)throw e}))}))})))};var isCloning=!1;function skipDuringClone(e,t=(()=>{})){return(...n)=>isCloning?t(...n):e(...n)}function clone(e,t){t._x_dataStack||(t._x_dataStack=e._x_dataStack),isCloning=!0,dontRegisterReactiveSideEffects((()=>{cloneTree(t)})),isCloning=!1}function cloneTree(e){let t=!1;initTree(e,((e,n)=>{walk(e,((e,r)=>{if(t&&isRoot(e))return r();t=!0,n(e,r)}))}))}function dontRegisterReactiveSideEffects(e){let t=effect;overrideEffect(((e,n)=>{let r=t(e);return release(r),()=>{}})),e(),overrideEffect(t)}function bind(e,t,n,r=[]){switch(e._x_bindings||(e._x_bindings=reactive({})),e._x_bindings[t]=n,t=r.includes("camel")?camelCase(t):t){case"value":bindInputValue(e,n);break;case"style":bindStyles(e,n);break;case"class":bindClasses(e,n);break;default:bindAttribute(e,t,n)}}function bindInputValue(e,t){if("radio"===e.type)void 0===e.attributes.value&&(e.value=t),window.fromModel&&(e.checked=checkedAttrLooseCompare(e.value,t));else if("checkbox"===e.type)Number.isInteger(t)?e.value=t:Number.isInteger(t)||Array.isArray(t)||"boolean"==typeof t||[null,void 0].includes(t)?Array.isArray(t)?e.checked=t.some((t=>checkedAttrLooseCompare(t,e.value))):e.checked=!!t:e.value=String(t);else if("SELECT"===e.tagName)updateSelect(e,t);else{if(e.value===t)return;e.value=t}}function bindClasses(e,t){e._x_undoAddedClasses&&e._x_undoAddedClasses(),e._x_undoAddedClasses=setClasses(e,t)}function bindStyles(e,t){e._x_undoAddedStyles&&e._x_undoAddedStyles(),e._x_undoAddedStyles=setStyles(e,t)}function bindAttribute(e,t,n){[null,void 0,!1].includes(n)&&attributeShouldntBePreservedIfFalsy(t)?e.removeAttribute(t):(isBooleanAttr(t)&&(n=t),setIfChanged(e,t,n))}function setIfChanged(e,t,n){e.getAttribute(t)!=n&&e.setAttribute(t,n)}function updateSelect(e,t){const n=[].concat(t).map((e=>e+""));Array.from(e.options).forEach((e=>{e.selected=n.includes(e.value)}))}function camelCase(e){return e.toLowerCase().replace(/-(\w)/g,((e,t)=>t.toUpperCase()))}function checkedAttrLooseCompare(e,t){return e==t}function isBooleanAttr(e){return["disabled","checked","required","readonly","hidden","open","selected","autofocus","itemscope","multiple","novalidate","allowfullscreen","allowpaymentrequest","formnovalidate","autoplay","controls","loop","muted","playsinline","default","ismap","reversed","async","defer","nomodule"].includes(e)}function attributeShouldntBePreservedIfFalsy(e){return!["aria-pressed","aria-checked","aria-expanded","aria-selected"].includes(e)}function getBinding(e,t,n){if(e._x_bindings&&void 0!==e._x_bindings[t])return e._x_bindings[t];let r=e.getAttribute(t);return null===r?"function"==typeof n?n():n:isBooleanAttr(t)?!![t,"true"].includes(r):""===r||r}function debounce(e,t){var n;return function(){var r=this,i=arguments;clearTimeout(n),n=setTimeout((function(){n=null,e.apply(r,i)}),t)}}function throttle(e,t){let n;return function(){let r=this,i=arguments;n||(e.apply(r,i),n=!0,setTimeout((()=>n=!1),t))}}function plugin(e){e(alpine_default)}var stores={},isReactive=!1;function store(e,t){if(isReactive||(stores=reactive(stores),isReactive=!0),void 0===t)return stores[e];stores[e]=t,"object"==typeof t&&null!==t&&t.hasOwnProperty("init")&&"function"==typeof t.init&&stores[e].init(),initInterceptors(stores[e])}function getStores(){return stores}var binds={};function bind2(e,t){let n="function"!=typeof t?()=>t:t;e instanceof Element?applyBindingsObject(e,n()):binds[e]=n}function injectBindingProviders(e){return Object.entries(binds).forEach((([t,n])=>{Object.defineProperty(e,t,{get:()=>(...e)=>n(...e)})})),e}function applyBindingsObject(e,t,n){let r=[];for(;r.length;)r.pop()();let i=Object.entries(t).map((([e,t])=>({name:e,value:t}))),a=attributesOnly(i);i=i.map((e=>a.find((t=>t.name===e.name))?{name:`x-bind:${e.name}`,value:`"${e.value}"`}:e)),directives(e,i,n).map((e=>{r.push(e.runCleanups),e()}))}var datas={};function data(e,t){datas[e]=t}function injectDataProviders(e,t){return Object.entries(datas).forEach((([n,r])=>{Object.defineProperty(e,n,{get:()=>(...e)=>r.bind(t)(...e),enumerable:!1})})),e}var Alpine={get reactive(){return reactive},get release(){return release},get effect(){return effect},get raw(){return raw},version:"3.10.3",flushAndStopDeferringMutations:flushAndStopDeferringMutations,dontAutoEvaluateFunctions:dontAutoEvaluateFunctions,disableEffectScheduling:disableEffectScheduling,setReactivityEngine:setReactivityEngine,closestDataStack:closestDataStack,skipDuringClone:skipDuringClone,addRootSelector:addRootSelector,addInitSelector:addInitSelector,addScopeToNode:addScopeToNode,deferMutations:deferMutations,mapAttributes:mapAttributes,evaluateLater:evaluateLater,setEvaluator:setEvaluator,mergeProxies:mergeProxies,findClosest:findClosest,closestRoot:closestRoot,interceptor:interceptor,transition:transition,setStyles:setStyles,mutateDom:mutateDom,directive:directive,throttle:throttle,debounce:debounce,evaluate:evaluate,initTree:initTree,nextTick:nextTick,prefixed:prefix,prefix:setPrefix,plugin:plugin,magic:magic,store:store,start:start,clone:clone,bound:getBinding,$data:scope,data:data,bind:bind2},alpine_default=Alpine;function makeMap(e,t){const n=Object.create(null),r=e.split(",");for(let e=0;e<r.length;e++)n[r[e]]=!0;return t?e=>!!n[e.toLowerCase()]:e=>!!n[e]}var EMPTY_OBJ=Object.freeze({}),extend=Object.assign,hasOwnProperty=Object.prototype.hasOwnProperty,hasOwn=(e,t)=>hasOwnProperty.call(e,t),isArray=Array.isArray,isMap=e=>"[object Map]"===toTypeString(e),isString=e=>"string"==typeof e,isSymbol=e=>"symbol"==typeof e,isObject=e=>null!==e&&"object"==typeof e,objectToString=Object.prototype.toString,toTypeString=e=>objectToString.call(e),toRawType=e=>toTypeString(e).slice(8,-1),isIntegerKey=e=>isString(e)&&"NaN"!==e&&"-"!==e[0]&&""+parseInt(e,10)===e,cacheStringFunction=e=>{const t=Object.create(null);return n=>t[n]||(t[n]=e(n))},capitalize=cacheStringFunction((e=>e.charAt(0).toUpperCase()+e.slice(1))),hasChanged=(e,t)=>e!==t&&(e==e||t==t),targetMap=new WeakMap,effectStack=[],activeEffect,ITERATE_KEY=Symbol("iterate"),MAP_KEY_ITERATE_KEY=Symbol("Map key iterate");function isEffect(e){return e&&!0===e._isEffect}function effect2(e,t=EMPTY_OBJ){isEffect(e)&&(e=e.raw);const n=createReactiveEffect(e,t);return t.lazy||n(),n}function stop(e){e.active&&(cleanup(e),e.options.onStop&&e.options.onStop(),e.active=!1)}var uid=0;function createReactiveEffect(e,t){const n=function(){if(!n.active)return e();if(!effectStack.includes(n)){cleanup(n);try{return enableTracking(),effectStack.push(n),activeEffect=n,e()}finally{effectStack.pop(),resetTracking(),activeEffect=effectStack[effectStack.length-1]}}};return n.id=uid++,n.allowRecurse=!!t.allowRecurse,n._isEffect=!0,n.active=!0,n.raw=e,n.deps=[],n.options=t,n}function cleanup(e){const{deps:t}=e;if(t.length){for(let n=0;n<t.length;n++)t[n].delete(e);t.length=0}}var shouldTrack=!0,trackStack=[];function pauseTracking(){trackStack.push(shouldTrack),shouldTrack=!1}function enableTracking(){trackStack.push(shouldTrack),shouldTrack=!0}function resetTracking(){const e=trackStack.pop();shouldTrack=void 0===e||e}function track(e,t,n){if(!shouldTrack||void 0===activeEffect)return;let r=targetMap.get(e);r||targetMap.set(e,r=new Map);let i=r.get(n);i||r.set(n,i=new Set),i.has(activeEffect)||(i.add(activeEffect),activeEffect.deps.push(i),activeEffect.options.onTrack&&activeEffect.options.onTrack({effect:activeEffect,target:e,type:t,key:n}))}function trigger(e,t,n,r,i,a){const o=targetMap.get(e);if(!o)return;const s=new Set,l=e=>{e&&e.forEach((e=>{(e!==activeEffect||e.allowRecurse)&&s.add(e)}))};if("clear"===t)o.forEach(l);else if("length"===n&&isArray(e))o.forEach(((e,t)=>{("length"===t||t>=r)&&l(e)}));else switch(void 0!==n&&l(o.get(n)),t){case"add":isArray(e)?isIntegerKey(n)&&l(o.get("length")):(l(o.get(ITERATE_KEY)),isMap(e)&&l(o.get(MAP_KEY_ITERATE_KEY)));break;case"delete":isArray(e)||(l(o.get(ITERATE_KEY)),isMap(e)&&l(o.get(MAP_KEY_ITERATE_KEY)));break;case"set":isMap(e)&&l(o.get(ITERATE_KEY))}s.forEach((o=>{o.options.onTrigger&&o.options.onTrigger({effect:o,target:e,key:n,type:t,newValue:r,oldValue:i,oldTarget:a}),o.options.scheduler?o.options.scheduler(o):o()}))}var isNonTrackableKeys=makeMap("__proto__,__v_isRef,__isVue"),builtInSymbols=new Set(Object.getOwnPropertyNames(Symbol).map((e=>Symbol[e])).filter(isSymbol)),get2=createGetter(),shallowGet=createGetter(!1,!0),readonlyGet=createGetter(!0),shallowReadonlyGet=createGetter(!0,!0),arrayInstrumentations={};function createGetter(e=!1,t=!1){return function(n,r,i){if("__v_isReactive"===r)return!e;if("__v_isReadonly"===r)return e;if("__v_raw"===r&&i===(e?t?shallowReadonlyMap:readonlyMap:t?shallowReactiveMap:reactiveMap).get(n))return n;const a=isArray(n);if(!e&&a&&hasOwn(arrayInstrumentations,r))return Reflect.get(arrayInstrumentations,r,i);const o=Reflect.get(n,r,i);if(isSymbol(r)?builtInSymbols.has(r):isNonTrackableKeys(r))return o;if(e||track(n,"get",r),t)return o;if(isRef(o)){return!a||!isIntegerKey(r)?o.value:o}return isObject(o)?e?readonly(o):reactive2(o):o}}["includes","indexOf","lastIndexOf"].forEach((e=>{const t=Array.prototype[e];arrayInstrumentations[e]=function(...e){const n=toRaw(this);for(let e=0,t=this.length;e<t;e++)track(n,"get",e+"");const r=t.apply(n,e);return-1===r||!1===r?t.apply(n,e.map(toRaw)):r}})),["push","pop","shift","unshift","splice"].forEach((e=>{const t=Array.prototype[e];arrayInstrumentations[e]=function(...e){pauseTracking();const n=t.apply(this,e);return resetTracking(),n}}));var set2=createSetter(),shallowSet=createSetter(!0);function createSetter(e=!1){return function(t,n,r,i){let a=t[n];if(!e&&(r=toRaw(r),a=toRaw(a),!isArray(t)&&isRef(a)&&!isRef(r)))return a.value=r,!0;const o=isArray(t)&&isIntegerKey(n)?Number(n)<t.length:hasOwn(t,n),s=Reflect.set(t,n,r,i);return t===toRaw(i)&&(o?hasChanged(r,a)&&trigger(t,"set",n,r,a):trigger(t,"add",n,r)),s}}function deleteProperty(e,t){const n=hasOwn(e,t),r=e[t],i=Reflect.deleteProperty(e,t);return i&&n&&trigger(e,"delete",t,void 0,r),i}function has(e,t){const n=Reflect.has(e,t);return isSymbol(t)&&builtInSymbols.has(t)||track(e,"has",t),n}function ownKeys(e){return track(e,"iterate",isArray(e)?"length":ITERATE_KEY),Reflect.ownKeys(e)}var mutableHandlers={get:get2,set:set2,deleteProperty:deleteProperty,has:has,ownKeys:ownKeys},readonlyHandlers={get:readonlyGet,set:(e,t)=>(console.warn(`Set operation on key "${String(t)}" failed: target is readonly.`,e),!0),deleteProperty:(e,t)=>(console.warn(`Delete operation on key "${String(t)}" failed: target is readonly.`,e),!0)};extend({},mutableHandlers,{get:shallowGet,set:shallowSet}),extend({},readonlyHandlers,{get:shallowReadonlyGet});var toReactive=e=>isObject(e)?reactive2(e):e,toReadonly=e=>isObject(e)?readonly(e):e,toShallow=e=>e,getProto=e=>Reflect.getPrototypeOf(e);function get$1(e,t,n=!1,r=!1){const i=toRaw(e=e.__v_raw),a=toRaw(t);t!==a&&!n&&track(i,"get",t),!n&&track(i,"get",a);const{has:o}=getProto(i),s=r?toShallow:n?toReadonly:toReactive;return o.call(i,t)?s(e.get(t)):o.call(i,a)?s(e.get(a)):void(e!==i&&e.get(t))}function has$1(e,t=!1){const n=this.__v_raw,r=toRaw(n),i=toRaw(e);return e!==i&&!t&&track(r,"has",e),!t&&track(r,"has",i),e===i?n.has(e):n.has(e)||n.has(i)}function size(e,t=!1){return e=e.__v_raw,!t&&track(toRaw(e),"iterate",ITERATE_KEY),Reflect.get(e,"size",e)}function add(e){e=toRaw(e);const t=toRaw(this);return getProto(t).has.call(t,e)||(t.add(e),trigger(t,"add",e,e)),this}function set$1(e,t){t=toRaw(t);const n=toRaw(this),{has:r,get:i}=getProto(n);let a=r.call(n,e);a?checkIdentityKeys(n,r,e):(e=toRaw(e),a=r.call(n,e));const o=i.call(n,e);return n.set(e,t),a?hasChanged(t,o)&&trigger(n,"set",e,t,o):trigger(n,"add",e,t),this}function deleteEntry(e){const t=toRaw(this),{has:n,get:r}=getProto(t);let i=n.call(t,e);i?checkIdentityKeys(t,n,e):(e=toRaw(e),i=n.call(t,e));const a=r?r.call(t,e):void 0,o=t.delete(e);return i&&trigger(t,"delete",e,void 0,a),o}function clear(){const e=toRaw(this),t=0!==e.size,n=isMap(e)?new Map(e):new Set(e),r=e.clear();return t&&trigger(e,"clear",void 0,void 0,n),r}function createForEach(e,t){return function(n,r){const i=this,a=i.__v_raw,o=toRaw(a),s=t?toShallow:e?toReadonly:toReactive;return!e&&track(o,"iterate",ITERATE_KEY),a.forEach(((e,t)=>n.call(r,s(e),s(t),i)))}}function createIterableMethod(e,t,n){return function(...r){const i=this.__v_raw,a=toRaw(i),o=isMap(a),s="entries"===e||e===Symbol.iterator&&o,l="keys"===e&&o,c=i[e](...r),u=n?toShallow:t?toReadonly:toReactive;return!t&&track(a,"iterate",l?MAP_KEY_ITERATE_KEY:ITERATE_KEY),{next(){const{value:e,done:t}=c.next();return t?{value:e,done:t}:{value:s?[u(e[0]),u(e[1])]:u(e),done:t}},[Symbol.iterator](){return this}}}}function createReadonlyMethod(e){return function(...t){{const n=t[0]?`on key "${t[0]}" `:"";console.warn(`${capitalize(e)} operation ${n}failed: target is readonly.`,toRaw(this))}return"delete"!==e&&this}}var mutableInstrumentations={get(e){return get$1(this,e)},get size(){return size(this)},has:has$1,add:add,set:set$1,delete:deleteEntry,clear:clear,forEach:createForEach(!1,!1)},shallowInstrumentations={get(e){return get$1(this,e,!1,!0)},get size(){return size(this)},has:has$1,add:add,set:set$1,delete:deleteEntry,clear:clear,forEach:createForEach(!1,!0)},readonlyInstrumentations={get(e){return get$1(this,e,!0)},get size(){return size(this,!0)},has(e){return has$1.call(this,e,!0)},add:createReadonlyMethod("add"),set:createReadonlyMethod("set"),delete:createReadonlyMethod("delete"),clear:createReadonlyMethod("clear"),forEach:createForEach(!0,!1)},shallowReadonlyInstrumentations={get(e){return get$1(this,e,!0,!0)},get size(){return size(this,!0)},has(e){return has$1.call(this,e,!0)},add:createReadonlyMethod("add"),set:createReadonlyMethod("set"),delete:createReadonlyMethod("delete"),clear:createReadonlyMethod("clear"),forEach:createForEach(!0,!0)},iteratorMethods=["keys","values","entries",Symbol.iterator];function createInstrumentationGetter(e,t){const n=t?e?shallowReadonlyInstrumentations:shallowInstrumentations:e?readonlyInstrumentations:mutableInstrumentations;return(t,r,i)=>"__v_isReactive"===r?!e:"__v_isReadonly"===r?e:"__v_raw"===r?t:Reflect.get(hasOwn(n,r)&&r in t?n:t,r,i)}iteratorMethods.forEach((e=>{mutableInstrumentations[e]=createIterableMethod(e,!1,!1),readonlyInstrumentations[e]=createIterableMethod(e,!0,!1),shallowInstrumentations[e]=createIterableMethod(e,!1,!0),shallowReadonlyInstrumentations[e]=createIterableMethod(e,!0,!0)}));var mutableCollectionHandlers={get:createInstrumentationGetter(!1,!1)},readonlyCollectionHandlers={get:createInstrumentationGetter(!0,!1)};function checkIdentityKeys(e,t,n){const r=toRaw(n);if(r!==n&&t.call(e,r)){const t=toRawType(e);console.warn(`Reactive ${t} contains both the raw and reactive versions of the same object${"Map"===t?" as keys":""}, which can lead to inconsistencies. Avoid differentiating between the raw and reactive versions of an object and only use the reactive version if possible.`)}}var reactiveMap=new WeakMap,shallowReactiveMap=new WeakMap,readonlyMap=new WeakMap,shallowReadonlyMap=new WeakMap;function targetTypeMap(e){switch(e){case"Object":case"Array":return 1;case"Map":case"Set":case"WeakMap":case"WeakSet":return 2;default:return 0}}function getTargetType(e){return e.__v_skip||!Object.isExtensible(e)?0:targetTypeMap(toRawType(e))}function reactive2(e){return e&&e.__v_isReadonly?e:createReactiveObject(e,!1,mutableHandlers,mutableCollectionHandlers,reactiveMap)}function readonly(e){return createReactiveObject(e,!0,readonlyHandlers,readonlyCollectionHandlers,readonlyMap)}function createReactiveObject(e,t,n,r,i){if(!isObject(e))return console.warn(`value cannot be made reactive: ${String(e)}`),e;if(e.__v_raw&&(!t||!e.__v_isReactive))return e;const a=i.get(e);if(a)return a;const o=getTargetType(e);if(0===o)return e;const s=new Proxy(e,2===o?r:n);return i.set(e,s),s}function toRaw(e){return e&&toRaw(e.__v_raw)||e}function isRef(e){return Boolean(e&&!0===e.__v_isRef)}function getArrayOfRefObject(e){let t=[],n=e;for(;n;)n._x_refs&&t.push(n._x_refs),n=n.parentNode;return t}magic("nextTick",(()=>nextTick)),magic("dispatch",(e=>dispatch.bind(dispatch,e))),magic("watch",((e,{evaluateLater:t,effect:n})=>(r,i)=>{let a,o=t(r),s=!0,l=n((()=>o((e=>{JSON.stringify(e),s?a=e:queueMicrotask((()=>{i(e,a),a=e})),s=!1}))));e._x_effects.delete(l)})),magic("store",getStores),magic("data",(e=>scope(e))),magic("root",(e=>closestRoot(e))),magic("refs",(e=>(e._x_refs_proxy||(e._x_refs_proxy=mergeProxies(getArrayOfRefObject(e))),e._x_refs_proxy)));var globalIdMemo={};function findAndIncrementId(e){return globalIdMemo[e]||(globalIdMemo[e]=0),++globalIdMemo[e]}function closestIdRoot(e,t){return findClosest(e,(e=>{if(e._x_ids&&e._x_ids[t])return!0}))}function setIdRoot(e,t){e._x_ids||(e._x_ids={}),e._x_ids[t]||(e._x_ids[t]=findAndIncrementId(t))}function warnMissingPluginMagic(e,t,n){magic(t,(t=>warn(`You can't use [$${directiveName}] without first installing the "${e}" plugin here: https://alpinejs.dev/plugins/${n}`,t)))}magic("id",(e=>(t,n=null)=>{let r=closestIdRoot(e,t),i=r?r._x_ids[t]:findAndIncrementId(t);return n?`${t}-${i}-${n}`:`${t}-${i}`})),magic("el",(e=>e)),warnMissingPluginMagic("Focus","focus","focus"),warnMissingPluginMagic("Persist","persist","persist"),directive("modelable",((e,{expression:t},{effect:n,evaluateLater:r})=>{let i=r(t),a=()=>{let e;return i((t=>e=t)),e},o=r(`${t} = __placeholder`),s=e=>o((()=>{}),{scope:{__placeholder:e}}),l=a();s(l),queueMicrotask((()=>{if(!e._x_model)return;e._x_removeModelListeners.default();let t=e._x_model.get,r=e._x_model.set;n((()=>s(t()))),n((()=>r(a())))}))})),directive("teleport",((e,{expression:t},{cleanup:n})=>{"template"!==e.tagName.toLowerCase()&&warn("x-teleport can only be used on a <template> tag",e);let r=document.querySelector(t);r||warn(`Cannot find x-teleport element for selector: "${t}"`);let i=e.content.cloneNode(!0).firstElementChild;e._x_teleport=i,i._x_teleportBack=e,e._x_forwardEvents&&e._x_forwardEvents.forEach((t=>{i.addEventListener(t,(t=>{t.stopPropagation(),e.dispatchEvent(new t.constructor(t.type,t))}))})),addScopeToNode(i,{},e),mutateDom((()=>{r.appendChild(i),initTree(i),i._x_ignore=!0})),n((()=>i.remove()))}));var handler=()=>{};function on(e,t,n,r){let i=e,a=e=>r(e),o={},s=(e,t)=>n=>t(e,n);if(n.includes("dot")&&(t=dotSyntax(t)),n.includes("camel")&&(t=camelCase2(t)),n.includes("passive")&&(o.passive=!0),n.includes("capture")&&(o.capture=!0),n.includes("window")&&(i=window),n.includes("document")&&(i=document),n.includes("prevent")&&(a=s(a,((e,t)=>{t.preventDefault(),e(t)}))),n.includes("stop")&&(a=s(a,((e,t)=>{t.stopPropagation(),e(t)}))),n.includes("self")&&(a=s(a,((t,n)=>{n.target===e&&t(n)}))),(n.includes("away")||n.includes("outside"))&&(i=document,a=s(a,((t,n)=>{e.contains(n.target)||!1!==n.target.isConnected&&(e.offsetWidth<1&&e.offsetHeight<1||!1!==e._x_isShown&&t(n))}))),n.includes("once")&&(a=s(a,((e,n)=>{e(n),i.removeEventListener(t,a,o)}))),a=s(a,((e,r)=>{isKeyEvent(t)&&isListeningForASpecificKeyThatHasntBeenPressed(r,n)||e(r)})),n.includes("debounce")){let e=n[n.indexOf("debounce")+1]||"invalid-wait",t=isNumeric(e.split("ms")[0])?Number(e.split("ms")[0]):250;a=debounce(a,t)}if(n.includes("throttle")){let e=n[n.indexOf("throttle")+1]||"invalid-wait",t=isNumeric(e.split("ms")[0])?Number(e.split("ms")[0]):250;a=throttle(a,t)}return i.addEventListener(t,a,o),()=>{i.removeEventListener(t,a,o)}}function dotSyntax(e){return e.replace(/-/g,".")}function camelCase2(e){return e.toLowerCase().replace(/-(\w)/g,((e,t)=>t.toUpperCase()))}function isNumeric(e){return!Array.isArray(e)&&!isNaN(e)}function kebabCase2(e){return e.replace(/([a-z])([A-Z])/g,"$1-$2").replace(/[_\s]/,"-").toLowerCase()}function isKeyEvent(e){return["keydown","keyup"].includes(e)}function isListeningForASpecificKeyThatHasntBeenPressed(e,t){let n=t.filter((e=>!["window","document","prevent","stop","once"].includes(e)));if(n.includes("debounce")){let e=n.indexOf("debounce");n.splice(e,isNumeric((n[e+1]||"invalid-wait").split("ms")[0])?2:1)}if(0===n.length)return!1;if(1===n.length&&keyToModifiers(e.key).includes(n[0]))return!1;const r=["ctrl","shift","alt","meta","cmd","super"].filter((e=>n.includes(e)));if(n=n.filter((e=>!r.includes(e))),r.length>0){if(r.filter((t=>("cmd"!==t&&"super"!==t||(t="meta"),e[`${t}Key`]))).length===r.length&&keyToModifiers(e.key).includes(n[0]))return!1}return!0}function keyToModifiers(e){if(!e)return[];e=kebabCase2(e);let t={ctrl:"control",slash:"/",space:"-",spacebar:"-",cmd:"meta",esc:"escape",up:"arrow-up",down:"arrow-down",left:"arrow-left",right:"arrow-right",period:".",equal:"="};return t[e]=e,Object.keys(t).map((n=>{if(t[n]===e)return n})).filter((e=>e))}function generateAssignmentFunction(e,t,n){return"radio"===e.type&&mutateDom((()=>{e.hasAttribute("name")||e.setAttribute("name",n)})),(n,r)=>mutateDom((()=>{if(n instanceof CustomEvent&&void 0!==n.detail)return n.detail||n.target.value;if("checkbox"===e.type){if(Array.isArray(r)){let e=t.includes("number")?safeParseNumber(n.target.value):n.target.value;return n.target.checked?r.concat([e]):r.filter((t=>!checkedAttrLooseCompare2(t,e)))}return n.target.checked}if("select"===e.tagName.toLowerCase()&&e.multiple)return t.includes("number")?Array.from(n.target.selectedOptions).map((e=>safeParseNumber(e.value||e.text))):Array.from(n.target.selectedOptions).map((e=>e.value||e.text));{let e=n.target.value;return t.includes("number")?safeParseNumber(e):t.includes("trim")?e.trim():e}}))}function safeParseNumber(e){let t=e?parseFloat(e):null;return isNumeric2(t)?t:e}function checkedAttrLooseCompare2(e,t){return e==t}function isNumeric2(e){return!Array.isArray(e)&&!isNaN(e)}function storeKeyForXFor(e,t){e._x_keyExpression=t}function loop(e,t,n,r){let i=e;n((n=>{isNumeric3(n)&&n>=0&&(n=Array.from(Array(n).keys(),(e=>e+1))),void 0===n&&(n=[]);let a=e._x_lookup,o=e._x_prevKeys,s=[],l=[];if("object"!=typeof(c=n)||Array.isArray(c))for(let e=0;e<n.length;e++){let i=getIterationScopeVariables(t,n[e],e,n);r((e=>l.push(e)),{scope:{index:e,...i}}),s.push(i)}else n=Object.entries(n).map((([e,i])=>{let a=getIterationScopeVariables(t,i,e,n);r((e=>l.push(e)),{scope:{index:e,...a}}),s.push(a)}));var c;let u=[],d=[],f=[],p=[];for(let e=0;e<o.length;e++){let t=o[e];-1===l.indexOf(t)&&f.push(t)}o=o.filter((e=>!f.includes(e)));let m="template";for(let e=0;e<l.length;e++){let t=l[e],n=o.indexOf(t);if(-1===n)o.splice(e,0,t),u.push([m,e]);else if(n!==e){let t=o.splice(e,1)[0],r=o.splice(n-1,1)[0];o.splice(e,0,r),o.splice(n,0,t),d.push([t,r])}else p.push(t);m=t}for(let e=0;e<f.length;e++){let t=f[e];a[t]._x_effects&&a[t]._x_effects.forEach(dequeueJob),a[t].remove(),a[t]=null,delete a[t]}for(let e=0;e<d.length;e++){let[t,n]=d[e],r=a[t],i=a[n],o=document.createElement("div");mutateDom((()=>{i.after(o),r.after(i),i._x_currentIfEl&&i.after(i._x_currentIfEl),o.before(r),r._x_currentIfEl&&r.after(r._x_currentIfEl),o.remove()})),refreshScope(i,s[l.indexOf(n)])}for(let e=0;e<u.length;e++){let[t,n]=u[e],r="template"===t?i:a[t];r._x_currentIfEl&&(r=r._x_currentIfEl);let o=s[n],c=l[n],d=document.importNode(i.content,!0).firstElementChild;addScopeToNode(d,reactive(o),i),mutateDom((()=>{r.after(d),initTree(d)})),"object"==typeof c&&warn("x-for key cannot be an object, it must be a string or an integer",i),a[c]=d}for(let e=0;e<p.length;e++)refreshScope(a[p[e]],s[l.indexOf(p[e])]);i._x_prevKeys=l}))}function parseForExpression(e){let t=/,([^,\}\]]*)(?:,([^,\}\]]*))?$/,n=e.match(/([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/);if(!n)return;let r={};r.items=n[2].trim();let i=n[1].replace(/^\s*\(|\)\s*$/g,"").trim(),a=i.match(t);return a?(r.item=i.replace(t,"").trim(),r.index=a[1].trim(),a[2]&&(r.collection=a[2].trim())):r.item=i,r}function getIterationScopeVariables(e,t,n,r){let i={};if(/^\[.*\]$/.test(e.item)&&Array.isArray(t)){e.item.replace("[","").replace("]","").split(",").map((e=>e.trim())).forEach(((e,n)=>{i[e]=t[n]}))}else if(/^\{.*\}$/.test(e.item)&&!Array.isArray(t)&&"object"==typeof t){e.item.replace("{","").replace("}","").split(",").map((e=>e.trim())).forEach((e=>{i[e]=t[e]}))}else i[e.item]=t;return e.index&&(i[e.index]=n),e.collection&&(i[e.collection]=r),i}function isNumeric3(e){return!Array.isArray(e)&&!isNaN(e)}function handler2(){}function warnMissingPluginDirective(e,t,n){directive(t,(r=>warn(`You can't use [x-${t}] without first installing the "${e}" plugin here: https://alpinejs.dev/plugins/${n}`,r)))}handler.inline=(e,{modifiers:t},{cleanup:n})=>{t.includes("self")?e._x_ignoreSelf=!0:e._x_ignore=!0,n((()=>{t.includes("self")?delete e._x_ignoreSelf:delete e._x_ignore}))},directive("ignore",handler),directive("effect",((e,{expression:t},{effect:n})=>n(evaluateLater(e,t)))),directive("model",((e,{modifiers:t,expression:n},{effect:r,cleanup:i})=>{let a=evaluateLater(e,n),o=evaluateLater(e,`${n} = rightSideOfExpression($event, ${n})`);var s="select"===e.tagName.toLowerCase()||["checkbox","radio"].includes(e.type)||t.includes("lazy")?"change":"input";let l=generateAssignmentFunction(e,t,n),c=on(e,s,t,(e=>{o((()=>{}),{scope:{$event:e,rightSideOfExpression:l}})}));e._x_removeModelListeners||(e._x_removeModelListeners={}),e._x_removeModelListeners.default=c,i((()=>e._x_removeModelListeners.default()));let u=evaluateLater(e,`${n} = __placeholder`);e._x_model={get(){let e;return a((t=>e=t)),e},set(e){u((()=>{}),{scope:{__placeholder:e}})}},e._x_forceModelUpdate=()=>{a((t=>{void 0===t&&n.match(/\./)&&(t=""),window.fromModel=!0,mutateDom((()=>bind(e,"value",t))),delete window.fromModel}))},r((()=>{t.includes("unintrusive")&&document.activeElement.isSameNode(e)||e._x_forceModelUpdate()}))})),directive("cloak",(e=>queueMicrotask((()=>mutateDom((()=>e.removeAttribute(prefix("cloak")))))))),addInitSelector((()=>`[${prefix("init")}]`)),directive("init",skipDuringClone(((e,{expression:t},{evaluate:n})=>"string"==typeof t?!!t.trim()&&n(t,{},!1):n(t,{},!1)))),directive("text",((e,{expression:t},{effect:n,evaluateLater:r})=>{let i=r(t);n((()=>{i((t=>{mutateDom((()=>{e.textContent=t}))}))}))})),directive("html",((e,{expression:t},{effect:n,evaluateLater:r})=>{let i=r(t);n((()=>{i((t=>{mutateDom((()=>{e.innerHTML=t,e._x_ignoreSelf=!0,initTree(e),delete e._x_ignoreSelf}))}))}))})),mapAttributes(startingWith(":",into(prefix("bind:")))),directive("bind",((e,{value:t,modifiers:n,expression:r,original:i},{effect:a})=>{if(!t){let t={};return injectBindingProviders(t),void evaluateLater(e,r)((t=>{applyBindingsObject(e,t,i)}),{scope:t})}if("key"===t)return storeKeyForXFor(e,r);let o=evaluateLater(e,r);a((()=>o((i=>{void 0===i&&r.match(/\./)&&(i=""),mutateDom((()=>bind(e,t,i,n)))}))))})),addRootSelector((()=>`[${prefix("data")}]`)),directive("data",skipDuringClone(((e,{expression:t},{cleanup:n})=>{t=""===t?"{}":t;let r={};injectMagics(r,e);let i={};injectDataProviders(i,r);let a=evaluate(e,t,{scope:i});void 0===a&&(a={}),injectMagics(a,e);let o=reactive(a);initInterceptors(o);let s=addScopeToNode(e,o);o.init&&evaluate(e,o.init),n((()=>{o.destroy&&evaluate(e,o.destroy),s()}))}))),directive("show",((e,{modifiers:t,expression:n},{effect:r})=>{let i=evaluateLater(e,n);e._x_doHide||(e._x_doHide=()=>{mutateDom((()=>{e.style.setProperty("display","none",t.includes("important")?"important":void 0)}))}),e._x_doShow||(e._x_doShow=()=>{mutateDom((()=>{1===e.style.length&&"none"===e.style.display?e.removeAttribute("style"):e.style.removeProperty("display")}))});let a,o=()=>{e._x_doHide(),e._x_isShown=!1},s=()=>{e._x_doShow(),e._x_isShown=!0},l=()=>setTimeout(s),c=once((e=>e?s():o()),(t=>{"function"==typeof e._x_toggleAndCascadeWithTransitions?e._x_toggleAndCascadeWithTransitions(e,t,s,o):t?l():o()})),u=!0;r((()=>i((e=>{(u||e!==a)&&(t.includes("immediate")&&(e?l():o()),c(e),a=e,u=!1)}))))})),directive("for",((e,{expression:t},{effect:n,cleanup:r})=>{let i=parseForExpression(t),a=evaluateLater(e,i.items),o=evaluateLater(e,e._x_keyExpression||"index");e._x_prevKeys=[],e._x_lookup={},n((()=>loop(e,i,a,o))),r((()=>{Object.values(e._x_lookup).forEach((e=>e.remove())),delete e._x_prevKeys,delete e._x_lookup}))})),handler2.inline=(e,{expression:t},{cleanup:n})=>{let r=closestRoot(e);r._x_refs||(r._x_refs={}),r._x_refs[t]=e,n((()=>delete r._x_refs[t]))},directive("ref",handler2),directive("if",((e,{expression:t},{effect:n,cleanup:r})=>{let i=evaluateLater(e,t);n((()=>i((t=>{t?(()=>{if(e._x_currentIfEl)return e._x_currentIfEl;let t=e.content.cloneNode(!0).firstElementChild;addScopeToNode(t,{},e),mutateDom((()=>{e.after(t),initTree(t)})),e._x_currentIfEl=t,e._x_undoIf=()=>{walk(t,(e=>{e._x_effects&&e._x_effects.forEach(dequeueJob)})),t.remove(),delete e._x_currentIfEl}})():e._x_undoIf&&(e._x_undoIf(),delete e._x_undoIf)})))),r((()=>e._x_undoIf&&e._x_undoIf()))})),directive("id",((e,{expression:t},{evaluate:n})=>{n(t).forEach((t=>setIdRoot(e,t)))})),mapAttributes(startingWith("@",into(prefix("on:")))),directive("on",skipDuringClone(((e,{value:t,modifiers:n,expression:r},{cleanup:i})=>{let a=r?evaluateLater(e,r):()=>{};"template"===e.tagName.toLowerCase()&&(e._x_forwardEvents||(e._x_forwardEvents=[]),e._x_forwardEvents.includes(t)||e._x_forwardEvents.push(t));let o=on(e,t,n,(e=>{a((()=>{}),{scope:{$event:e},params:[e]})}));i((()=>o()))}))),warnMissingPluginDirective("Collapse","collapse","collapse"),warnMissingPluginDirective("Intersect","intersect","intersect"),warnMissingPluginDirective("Focus","trap","focus"),warnMissingPluginDirective("Mask","mask","mask"),alpine_default.setEvaluator(normalEvaluator),alpine_default.setReactivityEngine({reactive:reactive2,effect:effect2,release:stop,raw:toRaw});var src_default=alpine_default,module_default=src_default;function _optionalChain(e){let t,n=e[0],r=1;for(;r<e.length;){const i=e[r],a=e[r+1];if(r+=2,("optionalAccess"===i||"optionalCall"===i)&&null==n)return;"access"===i||"optionalAccess"===i?(t=n,n=a(n)):"call"!==i&&"optionalCall"!==i||(n=a(((...e)=>n.call(t,...e))),t=void 0)}return n}!function(){if(window.CustomEvent)return!1;function e(e,t){t=t||{bubbles:!1,cancelable:!1,detail:void 0};var n=document.createEvent("CustomEvent");return n.initCustomEvent(e,t.bubbles,t.cancelable,t.detail),n}e.prototype=window.Event.prototype,window.CustomEvent=e}();class Theme{constructor(e={}){Theme.prototype.__init.call(this),Theme.prototype.__init2.call(this),Theme.prototype.__init3.call(this),Theme.prototype.__init4.call(this),Theme.prototype.__init5.call(this),Theme.prototype.__init6.call(this),Theme.prototype.__init7.call(this),Theme.prototype.__init8.call(this),Theme.prototype.__init9.call(this),this.options=e,this.controller=null,this.scene=null,this.sections=null,this.Parallax=new Parallax,this.team=new Team;let t=document.querySelector("#masthead");this.headerOffset=0,t&&t.classList.contains("fixed")&&t.classList.contains("top-0")&&(this.headerOffset=t.clientHeight);let n=document.querySelectorAll("[data-toggle]");n&&[].forEach.call(n,(e=>{let t=document.querySelector(e.getAttribute("data-target"));if(t){let n=e.getAttribute("data-toggle")?e.getAttribute("data-toggle"):"active";e.getAttribute("data-toggle-close")&&e.setAttribute("data-toggle-initial",e.innerHTML),e.addEventListener("click",(r=>{r.preventDefault(),t.classList.contains(n)?(t.classList.remove(n),e.setAttribute("aria-expanded","true"),e.getAttribute("data-toggle-close")&&(e.innerHTML=e.getAttribute("data-toggle-initial"))):(t.classList.add(n),e.setAttribute("aria-expanded","false"),e.getAttribute("data-toggle-close")&&(e.innerHTML=e.getAttribute("data-toggle-close")))}))}})),window.Alpine=module_default,module_default.start(),this.load()}load(){this.innerScroll=document.querySelector("#inner-scroll");let e=_optionalChain([this,"access",e=>e.innerScroll,"optionalAccess",e=>e.children,"access",e=>e.length]);if(this.options.scrolling&&window.innerWidth>this.options.mobile){var t=100/e;switch(parseInt(this.options.scrolling,10)){case 2:if(e>0){[].forEach.call(this.innerScroll.children,(e=>{e.style.width=t+"%",e.style.height=window.innerHeight+"px"})),this.innerScroll.style.width=100*e+"%",this.controller=new ScrollMagic.Controller({});var n=new TimelineMax;for(let r=0;r<e;r++)n.to("#inner-scroll",.5,{z:-300,delay:1}).to("#inner-scroll",2,{x:"-"+t*(r+1)+"%"}).to("#inner-scroll",.5,{z:0});this.scene=new ScrollMagic.Scene({triggerElement:".scrolling-container--2",triggerHook:"onLeave",duration:"500%"}).setPin(".scrolling-container--2").setTween(n).addTo(this.controller);var r=0;this.scene.on("progress",(t=>{var n=t.progress*e+.3+1;n>e&&(n=e),(n=parseInt(n.toString(),10))!=r&&([].forEach.call(this.innerScroll.children,(function(e){e.classList.remove("in")})),_optionalChain([this,"access",e=>e.innerScroll,"access",e=>e.children,"access",e=>e[n],"optionalAccess",e=>e.classList,"access",e=>e.add,"call",e=>e("in")]),r=n)}))}break;case 3:e>0&&([].forEach.call(this.innerScroll.children,(e=>{e.style.height=window.innerHeight+"px"})),this.controller=new ScrollMagic.Controller({globalSceneOptions:{triggerHook:"onLeave"}}),[].forEach.call(this.innerScroll.children,(e=>{new ScrollMagic.Scene({triggerElement:e}).setPin(e,{pushFollowers:!1}).addTo(this.controller)})));break;case 4:if(e>0){this.controller=new ScrollMagic.Controller;let t=new TimelineMax,n=!0,r=!0;[].forEach.call(this.innerScroll.children,((e,i)=>{if(0!=i){var a={};n?(a.x=r?"-100%":"100%",r=!r):(a.y=r?"-100%":"100%",r=!r),n=!n,i%2==0&&0!=i&&(n=!n),this.innerScroll.children[i]&&t.fromTo(this.innerScroll.children[i],1,a,{x:"0%",y:"0%",ease:Linear.easeNone})}else t.fromTo(e,1,{x:"0%",y:0},{x:"0%",y:"0%",ease:Linear.easeNone})})),this.scene=new ScrollMagic.Scene({loglevel:2,triggerElement:"#inner-scroll",triggerHook:"onLeave",duration:100*e+"%"}).setPin("#inner-scroll").setTween(t).addTo(this.controller)}break;case 5:var i=document.querySelectorAll(".main-inner > section.section");e=i.length,e>0&&[].forEach.call(i,(function(e){e.style.minHeight=window.innerHeight+"px"})),window.addEventListener("resize",(function(){[].forEach.call(i,(function(e){e.style.minHeight=window.innerHeight+"px"}))}));break;default:let a=document.querySelector(".page-template-page-home-section #wrapper");if(this.sections=a?a.querySelectorAll(".section, .site-footer"):null,this.sections&&this.sections.length){let e=document.createElement("div");e.classList.add("section-nav");let t=document.createElement("ul");t.classList.add("inner"),e.appendChild(t),document.body.appendChild(e),[].forEach.call(this.sections,(e=>{style(e,{height:window.innerHeight+"px"})})),[].forEach.call(this.sections,(function(e,n){let r=document.createElement("li");r.setAttribute("data-index",e),r.innerHTML=e,t.appendChild(r)}));break}}}if(this.handler=window.innerWidth>this.options.mobile?this.desktopHandler:this.mobileHandler,window.innerWidth<=this.options.mobile&&document.body.classList.add("no-scrolling-style"),"onhashchange"in window){window.addEventListener("hashchange",(e=>{if(this.scrollHandler())return e.stopPropagation(),void e.preventDefault();if("#!search"==window.location.hash)return void document.body.classList.add("search-active");document.body.classList.contains("search-active")&&document.body.classList.remove("search-active");let t=_optionalChain([window,"access",e=>e.location,"access",e=>e.hash,"optionalAccess",e=>e.replace,"call",e=>e("#!",""),"access",e=>e.replace,"call",e=>e("#","")]);if(t){let n=t.split("/");if(n.length>1)return void("tabs"==n[0]&&this.showTab(n[1]));let r=document.querySelector(`#${t}`);if(r)return this.scrollIfNeeded(r),void e.stopPropagation()}}));try{window.dispatchEvent(new Event("hashchange"))}catch(e){}}else{(a=document.querySelector("#menu-main-menu li a[href^=\\/\\#]"))&&a.addEventListener("click",(function(e){this.scrollHandler()&&(e.stopPropagation(),e.preventDefault())}))}var a;(a=document.querySelector(".btn.btn-back"))&&a.addEventListener("click",(function(){document.querySelector(".content").classList.remove("active"),location.hash="#home"})),(a=document.querySelector("#searchform a.search-close"))&&a.addEventListener("click",(function(){return document.body.classList.add("search-closed"),document.body.classList.remove("search-active"),setTimeout((function(){document.body.classList.remove("search-closed")}),1e3),!1}));var o,s=document.querySelectorAll("#navbar ul li a"),l=document.querySelectorAll("#wrapper > section");window.addEventListener("resize",(()=>{window.innerWidth<=this.options.mobile?(this.controller&&(this.scene&&this.scene.destroy(!0),this.controller.destroy(!0),document.body.classList.add("no-scrolling-style")),this.handler=this.mobileHandler):this.handler=this.desktopHandler})),window.addEventListener("scroll",(()=>{var e=this.getScrollPosition(window),t=document.querySelector("#masthead"),n=0;t&&(n=t.clientHeight);var r=e.y+n+100,i=[].map.call(l,(function(e){if(e.getBoundingClientRect().top<r)return e})),a=(i=i[i.length-1])?i.getAttribute("id"):"";[].forEach.call(s,(function(e){e.classList.remove("active")}));var o=document.querySelector('#navbar ul li a[section="'+a+'"]');o&&o.classList.add("active"),e.y>100?document.body.classList.add("scrolling"):document.body.classList.remove("scrolling")})),(o=document.querySelectorAll(".na-posts-dropdown > a")).length&&[].forEach.call(o,(function(e){e.addEventListener("click",(function(t){return t.preventDefault(),e.parentNode.classList.remove("active"),!1}))})),(o=document.querySelectorAll(".wp-block-na-theme-blocks-accordion")).length&&[].forEach.call(o,(function(e){e.addEventListener("click",(function(t){if(t.target.classList.contains("block-title"))return t.preventDefault(),e.classList.toggle("open"),!1}))}));let c=!!localStorage&&localStorage.getItem("shown"),u=0;try{u=localStorage?parseFloat(localStorage.getItem("expiry")):(new Date).getTime()}catch(e){u=0}if(!c||u<=(new Date).getTime()){let e=window.delayLoading?window.delayLoading:1e3,t=()=>{setTimeout((function(){document.body.classList.remove("loading"),setTimeout((()=>{document.body.classList.add("loaded");var e=document.querySelector(".loading-overlay");e&&e.parentNode&&e.parentNode.removeChild(e)}),2e3)}),e),window.scrollY>100&&document.body.classList.add("scrolling")};app&&app.ready((()=>{t(),t=()=>{}})),window.addEventListener("load",t),localStorage&&(localStorage.setItem("shown","1"),localStorage.setItem("expiry",((new Date).getTime()+864e5).toString()))}else{document.body.classList.remove("loading"),document.body.classList.add("loaded"),window.scrollY>100&&document.body.classList.add("scrolling")}this.sectionObserver(),this.initCounters(),window.naTheme=this,document.body.dispatchEvent(new CustomEvent("theme-ready",{bubbles:!0,detail:this}))}__init(){this.mobileHandler=e=>(this.scrollIfNeeded(e),!0)}__init2(){this.desktopHandler=e=>{if(this.scene){var t=this.scene.scrollOffset(),n=e.getAttribute("data-index");return n&&this.scrollTo(t*(n+1)),!0}return this.scrollIfNeeded(e),!0}}__init3(){this.scrollHandler=()=>{var e=location.hash;if(""==e.replace("#!","").trim()||""==e.replace("#","").trim()||e.split("/").length>1)return!1;var t=e.replace("#!","").replace("#","");if(t.indexOf("section-")>=0){let e=document.querySelector("#"+t);return e?this.handler(e):(console.warn("#"+t+" was not found, did you forget to enable permalinks?"),!1)}{let e=document.querySelector("#section-"+t);if(e)return this.handler(e);if(document.querySelector("#"+t))return this.handler(document.querySelector("#"+t))}_optionalChain([document,"access",e=>e.querySelector,"call",e=>e(".content"),"optionalAccess",e=>e.classList,"access",e=>e.remove,"call",e=>e("active")]);let n=document.querySelector("#menu-main-menu li a"),r=document.querySelector('#menu-main-menu li a[href^="'+this.escapeRegExp(e)+'"]');if(r)[].forEach.call(n,(e=>{e!=r&&e.classList.remove("active")})),r.classList.add("active");else{var i=document.querySelector('a[href^="'+this.escapeRegExp(e)+'"]');i&&i.hasAttribute("no-hash")&&(location.hash="")}return null}}__init4(){this.trigger=(e,t,n=null)=>{let r=null;r=n?new CustomEvent(t,{detail:n}):new Event(t),e instanceof NodeList?e.forEach((e=>{e.dispatchEvent(r)})):e.dispatchEvent(r)}}__init5(){this.countDecimals=function(e){return Math.floor(e)===e?0:e.toString().split(".")[1].length||0}}__init6(){this.format=(e,t)=>String(e).replace(/(\d)(?=(\d{3})+(?!\d))/g,"$1"+t)}initCounters(){document.body.addEventListener("section.in",(e=>{let{section:section}=e.detail;if(section){let cntrs=section.querySelectorAll(".counter");if(!cntrs||0==cntrs.length)return;[].forEach.call(cntrs,(cntr=>{if(cntr){let elm=cntr.querySelector(".block-title");if(!elm)return;let settings=eval("("+cntr.getAttribute("data-settings")+")"),step=parseFloat(settings.step),initVal=parseFloat(settings.start),lastVal=parseFloat(settings.end),totalDecimals=this.countDecimals(step);var formatOutput=e=>(settings.seperator&&""!=settings.seperator&&(e=this.format(e,settings.seperator)),e),update=e=>{let t=(e*(lastVal-initVal)+step).toFixed(totalDecimals);elm.innerHTML=settings.prefix+formatOutput(t)+settings.suffix,e>=1&&(elm.innerHTML=settings.prefix+formatOutput(settings.end)+settings.suffix)};counter(parseFloat(settings.duration),update)}}))}}));let counters=document.querySelectorAll(".counter .count");counters.length&&[].forEach.call(counters,(e=>{let t=e.innerHTML.match(/\d+/),n=e.innerHTML;t&&t.length&&(t.map((e=>{n=n.replace(e,'<span data-count="'+e+'" class="inner-counter inner-counter-'+e+'">'+e+"</span>")})),e.innerHTML=n)}))}__init7(){this.getScrollPosition=e=>({x:void 0!==e.pageXOffset?e.pageXOffset:e.scrollLeft,y:void 0!==e.pageYOffset?e.pageYOffset:e.scrollTop})}__init8(){this.showTab=e=>{var t=document.querySelector("#"+e);if(t){var n=closest(t,".na-tabs");let r=n.querySelectorAll(".tab-content");[].forEach.call(r,(e=>{e.classList.remove("active")}));let i=n.querySelectorAll(".tab-nav");[].forEach.call(i,(e=>{e.classList.remove("active")})),setTimeout((function(){t.classList.add("active"),_optionalChain([closest,"call",e=>e(t,"li"),"optionalAccess",e=>e.classList,"access",e=>e.add,"call",e=>e("active")]),_optionalChain([document.querySelector('a[href="#'+e+'"]'),"optionalAccess",e=>e.classList,"access",e=>e.add,"call",e=>e("active")])}),400)}}}escapeRegExp(e){return e.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g,"\\$&")}__init9(){this.sectionObserver=()=>{if("IntersectionObserver"in window){const e=new IntersectionObserver((e=>{e.forEach((e=>{e.intersectionRatio>0?(e.target.classList.add("in-once"),e.target.classList.add("in"),e.target.classList.remove("out"),this.trigger(document.body,"section.in",{section:e.target})):(e.target.classList.add("out"),e.target.classList.remove("in"),this.trigger(document.body,"section.out",{section:e.target}))}))}),{threshold:[.4]});let t=document.querySelectorAll(".observe"),n=document.querySelectorAll(".section");n&&n.forEach((t=>{"true"!=t.getAttribute("is-observed")&&(t.setAttribute("is-observed","true"),e.observe(t))})),t&&t.forEach((t=>{"true"!=t.getAttribute("is-observed")&&(t.setAttribute("is-observed","true"),setTimeout((()=>e.observe(t)),2e3))}))}}}scrollIfNeeded(e,t=null,n=this.headerOffset){let r=e.offsetTop;this.scrollTo(r,t,n)}scrollTo(e,t=null,n=this.headerOffset){let r=document.scrollingElement||document.body;r&&animate({from:r.scrollTop,to:e-n,duration:1e3,ease:backOut,onUpdate:e=>{r.scrollTop=e},onComplete:t})}}app.ready((function(){new Theme(options);try{/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)||document.body.classList.add("custom-scrollbar")}catch(e){}}))})();
+  ***************************************************************************** */
+  /* global Reflect, Promise */
+
+
+  var __assign = function() {
+      __assign = Object.assign || function __assign(t) {
+          for (var s, i = 1, n = arguments.length; i < n; i++) {
+              s = arguments[i];
+              for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          }
+          return t;
+      };
+      return __assign.apply(this, arguments);
+  };
+
+  function __rest(s, e) {
+      var t = {};
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+          t[p] = s[p];
+      if (s != null && typeof Object.getOwnPropertySymbols === "function")
+          for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+              if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                  t[p[i]] = s[p[i]];
+          }
+      return t;
+  }
+
+  function __spreadArray(to, from, pack) {
+      if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+          if (ar || !(i in from)) {
+              if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+              ar[i] = from[i];
+          }
+      }
+      return to.concat(ar || from);
+  }
+
+  var warning = function () { };
+  var invariant = function () { };
+  {
+      warning = function (check, message) {
+          if (!check && typeof console !== 'undefined') {
+              console.warn(message);
+          }
+      };
+      invariant = function (check, message) {
+          if (!check) {
+              throw new Error(message);
+          }
+      };
+  }
+
+  var clamp$1 = function (min, max, v) {
+      return Math.min(Math.max(v, min), max);
+  };
+
+  var safeMin = 0.001;
+  var minDuration = 0.01;
+  var maxDuration = 10.0;
+  var minDamping = 0.05;
+  var maxDamping = 1;
+  function findSpring(_a) {
+      var _b = _a.duration, duration = _b === void 0 ? 800 : _b, _c = _a.bounce, bounce = _c === void 0 ? 0.25 : _c, _d = _a.velocity, velocity = _d === void 0 ? 0 : _d, _e = _a.mass, mass = _e === void 0 ? 1 : _e;
+      var envelope;
+      var derivative;
+      warning(duration <= maxDuration * 1000, "Spring duration must be 10 seconds or less");
+      var dampingRatio = 1 - bounce;
+      dampingRatio = clamp$1(minDamping, maxDamping, dampingRatio);
+      duration = clamp$1(minDuration, maxDuration, duration / 1000);
+      if (dampingRatio < 1) {
+          envelope = function (undampedFreq) {
+              var exponentialDecay = undampedFreq * dampingRatio;
+              var delta = exponentialDecay * duration;
+              var a = exponentialDecay - velocity;
+              var b = calcAngularFreq(undampedFreq, dampingRatio);
+              var c = Math.exp(-delta);
+              return safeMin - (a / b) * c;
+          };
+          derivative = function (undampedFreq) {
+              var exponentialDecay = undampedFreq * dampingRatio;
+              var delta = exponentialDecay * duration;
+              var d = delta * velocity + velocity;
+              var e = Math.pow(dampingRatio, 2) * Math.pow(undampedFreq, 2) * duration;
+              var f = Math.exp(-delta);
+              var g = calcAngularFreq(Math.pow(undampedFreq, 2), dampingRatio);
+              var factor = -envelope(undampedFreq) + safeMin > 0 ? -1 : 1;
+              return (factor * ((d - e) * f)) / g;
+          };
+      }
+      else {
+          envelope = function (undampedFreq) {
+              var a = Math.exp(-undampedFreq * duration);
+              var b = (undampedFreq - velocity) * duration + 1;
+              return -safeMin + a * b;
+          };
+          derivative = function (undampedFreq) {
+              var a = Math.exp(-undampedFreq * duration);
+              var b = (velocity - undampedFreq) * (duration * duration);
+              return a * b;
+          };
+      }
+      var initialGuess = 5 / duration;
+      var undampedFreq = approximateRoot(envelope, derivative, initialGuess);
+      duration = duration * 1000;
+      if (isNaN(undampedFreq)) {
+          return {
+              stiffness: 100,
+              damping: 10,
+              duration: duration,
+          };
+      }
+      else {
+          var stiffness = Math.pow(undampedFreq, 2) * mass;
+          return {
+              stiffness: stiffness,
+              damping: dampingRatio * 2 * Math.sqrt(mass * stiffness),
+              duration: duration,
+          };
+      }
+  }
+  var rootIterations = 12;
+  function approximateRoot(envelope, derivative, initialGuess) {
+      var result = initialGuess;
+      for (var i = 1; i < rootIterations; i++) {
+          result = result - envelope(result) / derivative(result);
+      }
+      return result;
+  }
+  function calcAngularFreq(undampedFreq, dampingRatio) {
+      return undampedFreq * Math.sqrt(1 - dampingRatio * dampingRatio);
+  }
+
+  var durationKeys = ["duration", "bounce"];
+  var physicsKeys = ["stiffness", "damping", "mass"];
+  function isSpringType(options, keys) {
+      return keys.some(function (key) { return options[key] !== undefined; });
+  }
+  function getSpringOptions(options) {
+      var springOptions = __assign({ velocity: 0.0, stiffness: 100, damping: 10, mass: 1.0, isResolvedFromDuration: false }, options);
+      if (!isSpringType(options, physicsKeys) &&
+          isSpringType(options, durationKeys)) {
+          var derived = findSpring(options);
+          springOptions = __assign(__assign(__assign({}, springOptions), derived), { velocity: 0.0, mass: 1.0 });
+          springOptions.isResolvedFromDuration = true;
+      }
+      return springOptions;
+  }
+  function spring(_a) {
+      var _b = _a.from, from = _b === void 0 ? 0.0 : _b, _c = _a.to, to = _c === void 0 ? 1.0 : _c, _d = _a.restSpeed, restSpeed = _d === void 0 ? 2 : _d, restDelta = _a.restDelta, options = __rest(_a, ["from", "to", "restSpeed", "restDelta"]);
+      var state = { done: false, value: from };
+      var _e = getSpringOptions(options), stiffness = _e.stiffness, damping = _e.damping, mass = _e.mass, velocity = _e.velocity, duration = _e.duration, isResolvedFromDuration = _e.isResolvedFromDuration;
+      var resolveSpring = zero;
+      var resolveVelocity = zero;
+      function createSpring() {
+          var initialVelocity = velocity ? -(velocity / 1000) : 0.0;
+          var initialDelta = to - from;
+          var dampingRatio = damping / (2 * Math.sqrt(stiffness * mass));
+          var undampedAngularFreq = Math.sqrt(stiffness / mass) / 1000;
+          restDelta !== null && restDelta !== void 0 ? restDelta : (restDelta = Math.abs(to - from) <= 1 ? 0.01 : 0.4);
+          if (dampingRatio < 1) {
+              var angularFreq_1 = calcAngularFreq(undampedAngularFreq, dampingRatio);
+              resolveSpring = function (t) {
+                  var envelope = Math.exp(-dampingRatio * undampedAngularFreq * t);
+                  return (to -
+                      envelope *
+                          (((initialVelocity +
+                              dampingRatio * undampedAngularFreq * initialDelta) /
+                              angularFreq_1) *
+                              Math.sin(angularFreq_1 * t) +
+                              initialDelta * Math.cos(angularFreq_1 * t)));
+              };
+              resolveVelocity = function (t) {
+                  var envelope = Math.exp(-dampingRatio * undampedAngularFreq * t);
+                  return (dampingRatio *
+                      undampedAngularFreq *
+                      envelope *
+                      ((Math.sin(angularFreq_1 * t) *
+                          (initialVelocity +
+                              dampingRatio *
+                                  undampedAngularFreq *
+                                  initialDelta)) /
+                          angularFreq_1 +
+                          initialDelta * Math.cos(angularFreq_1 * t)) -
+                      envelope *
+                          (Math.cos(angularFreq_1 * t) *
+                              (initialVelocity +
+                                  dampingRatio *
+                                      undampedAngularFreq *
+                                      initialDelta) -
+                              angularFreq_1 *
+                                  initialDelta *
+                                  Math.sin(angularFreq_1 * t)));
+              };
+          }
+          else if (dampingRatio === 1) {
+              resolveSpring = function (t) {
+                  return to -
+                      Math.exp(-undampedAngularFreq * t) *
+                          (initialDelta +
+                              (initialVelocity + undampedAngularFreq * initialDelta) *
+                                  t);
+              };
+          }
+          else {
+              var dampedAngularFreq_1 = undampedAngularFreq * Math.sqrt(dampingRatio * dampingRatio - 1);
+              resolveSpring = function (t) {
+                  var envelope = Math.exp(-dampingRatio * undampedAngularFreq * t);
+                  var freqForT = Math.min(dampedAngularFreq_1 * t, 300);
+                  return (to -
+                      (envelope *
+                          ((initialVelocity +
+                              dampingRatio * undampedAngularFreq * initialDelta) *
+                              Math.sinh(freqForT) +
+                              dampedAngularFreq_1 *
+                                  initialDelta *
+                                  Math.cosh(freqForT))) /
+                          dampedAngularFreq_1);
+              };
+          }
+      }
+      createSpring();
+      return {
+          next: function (t) {
+              var current = resolveSpring(t);
+              if (!isResolvedFromDuration) {
+                  var currentVelocity = resolveVelocity(t) * 1000;
+                  var isBelowVelocityThreshold = Math.abs(currentVelocity) <= restSpeed;
+                  var isBelowDisplacementThreshold = Math.abs(to - current) <= restDelta;
+                  state.done =
+                      isBelowVelocityThreshold && isBelowDisplacementThreshold;
+              }
+              else {
+                  state.done = t >= duration;
+              }
+              state.value = state.done ? to : current;
+              return state;
+          },
+          flipTarget: function () {
+              var _a;
+              velocity = -velocity;
+              _a = [to, from], from = _a[0], to = _a[1];
+              createSpring();
+          },
+      };
+  }
+  spring.needsInterpolation = function (a, b) {
+      return typeof a === "string" || typeof b === "string";
+  };
+  var zero = function (_t) { return 0; };
+
+  var progress = function (from, to, value) {
+      var toFromDifference = to - from;
+      return toFromDifference === 0 ? 1 : (value - from) / toFromDifference;
+  };
+
+  var mix = function (from, to, progress) {
+      return -progress * from + progress * to + from;
+  };
+
+  var clamp = function (min, max) { return function (v) {
+      return Math.max(Math.min(v, max), min);
+  }; };
+  var sanitize = function (v) { return (v % 1 ? Number(v.toFixed(5)) : v); };
+  var floatRegex = /(-)?([\d]*\.?[\d])+/g;
+  var colorRegex = /(#[0-9a-f]{6}|#[0-9a-f]{3}|#(?:[0-9a-f]{2}){2,4}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2,3}\s*\/*\s*[\d\.]+%?\))/gi;
+  var singleColorRegex = /^(#[0-9a-f]{3}|#(?:[0-9a-f]{2}){2,4}|(rgb|hsl)a?\((-?[\d\.]+%?[,\s]+){2,3}\s*\/*\s*[\d\.]+%?\))$/i;
+  function isString$1(v) {
+      return typeof v === 'string';
+  }
+
+  var number = {
+      test: function (v) { return typeof v === 'number'; },
+      parse: parseFloat,
+      transform: function (v) { return v; },
+  };
+  var alpha = __assign(__assign({}, number), { transform: clamp(0, 1) });
+  __assign(__assign({}, number), { default: 1 });
+
+  var createUnitType = function (unit) { return ({
+      test: function (v) {
+          return isString$1(v) && v.endsWith(unit) && v.split(' ').length === 1;
+      },
+      parse: parseFloat,
+      transform: function (v) { return "" + v + unit; },
+  }); };
+  var percent = createUnitType('%');
+  __assign(__assign({}, percent), { parse: function (v) { return percent.parse(v) / 100; }, transform: function (v) { return percent.transform(v * 100); } });
+
+  var isColorString = function (type, testProp) { return function (v) {
+      return Boolean((isString$1(v) && singleColorRegex.test(v) && v.startsWith(type)) ||
+          (testProp && Object.prototype.hasOwnProperty.call(v, testProp)));
+  }; };
+  var splitColor = function (aName, bName, cName) { return function (v) {
+      var _a;
+      if (!isString$1(v))
+          return v;
+      var _b = v.match(floatRegex), a = _b[0], b = _b[1], c = _b[2], alpha = _b[3];
+      return _a = {},
+          _a[aName] = parseFloat(a),
+          _a[bName] = parseFloat(b),
+          _a[cName] = parseFloat(c),
+          _a.alpha = alpha !== undefined ? parseFloat(alpha) : 1,
+          _a;
+  }; };
+
+  var hsla = {
+      test: isColorString('hsl', 'hue'),
+      parse: splitColor('hue', 'saturation', 'lightness'),
+      transform: function (_a) {
+          var hue = _a.hue, saturation = _a.saturation, lightness = _a.lightness, _b = _a.alpha, alpha$1 = _b === void 0 ? 1 : _b;
+          return ('hsla(' +
+              Math.round(hue) +
+              ', ' +
+              percent.transform(sanitize(saturation)) +
+              ', ' +
+              percent.transform(sanitize(lightness)) +
+              ', ' +
+              sanitize(alpha.transform(alpha$1)) +
+              ')');
+      },
+  };
+
+  var clampRgbUnit = clamp(0, 255);
+  var rgbUnit = __assign(__assign({}, number), { transform: function (v) { return Math.round(clampRgbUnit(v)); } });
+  var rgba = {
+      test: isColorString('rgb', 'red'),
+      parse: splitColor('red', 'green', 'blue'),
+      transform: function (_a) {
+          var red = _a.red, green = _a.green, blue = _a.blue, _b = _a.alpha, alpha$1 = _b === void 0 ? 1 : _b;
+          return 'rgba(' +
+              rgbUnit.transform(red) +
+              ', ' +
+              rgbUnit.transform(green) +
+              ', ' +
+              rgbUnit.transform(blue) +
+              ', ' +
+              sanitize(alpha.transform(alpha$1)) +
+              ')';
+      },
+  };
+
+  function parseHex(v) {
+      var r = '';
+      var g = '';
+      var b = '';
+      var a = '';
+      if (v.length > 5) {
+          r = v.substr(1, 2);
+          g = v.substr(3, 2);
+          b = v.substr(5, 2);
+          a = v.substr(7, 2);
+      }
+      else {
+          r = v.substr(1, 1);
+          g = v.substr(2, 1);
+          b = v.substr(3, 1);
+          a = v.substr(4, 1);
+          r += r;
+          g += g;
+          b += b;
+          a += a;
+      }
+      return {
+          red: parseInt(r, 16),
+          green: parseInt(g, 16),
+          blue: parseInt(b, 16),
+          alpha: a ? parseInt(a, 16) / 255 : 1,
+      };
+  }
+  var hex = {
+      test: isColorString('#'),
+      parse: parseHex,
+      transform: rgba.transform,
+  };
+
+  var color = {
+      test: function (v) { return rgba.test(v) || hex.test(v) || hsla.test(v); },
+      parse: function (v) {
+          if (rgba.test(v)) {
+              return rgba.parse(v);
+          }
+          else if (hsla.test(v)) {
+              return hsla.parse(v);
+          }
+          else {
+              return hex.parse(v);
+          }
+      },
+      transform: function (v) {
+          return isString$1(v)
+              ? v
+              : v.hasOwnProperty('red')
+                  ? rgba.transform(v)
+                  : hsla.transform(v);
+      },
+  };
+
+  var colorToken = '${c}';
+  var numberToken = '${n}';
+  function test(v) {
+      var _a, _b, _c, _d;
+      return (isNaN(v) &&
+          isString$1(v) &&
+          ((_b = (_a = v.match(floatRegex)) === null || _a === void 0 ? void 0 : _a.length) !== null && _b !== void 0 ? _b : 0) + ((_d = (_c = v.match(colorRegex)) === null || _c === void 0 ? void 0 : _c.length) !== null && _d !== void 0 ? _d : 0) > 0);
+  }
+  function analyse$1(v) {
+      var values = [];
+      var numColors = 0;
+      var colors = v.match(colorRegex);
+      if (colors) {
+          numColors = colors.length;
+          v = v.replace(colorRegex, colorToken);
+          values.push.apply(values, colors.map(color.parse));
+      }
+      var numbers = v.match(floatRegex);
+      if (numbers) {
+          v = v.replace(floatRegex, numberToken);
+          values.push.apply(values, numbers.map(number.parse));
+      }
+      return { values: values, numColors: numColors, tokenised: v };
+  }
+  function parse(v) {
+      return analyse$1(v).values;
+  }
+  function createTransformer(v) {
+      var _a = analyse$1(v), values = _a.values, numColors = _a.numColors, tokenised = _a.tokenised;
+      var numValues = values.length;
+      return function (v) {
+          var output = tokenised;
+          for (var i = 0; i < numValues; i++) {
+              output = output.replace(i < numColors ? colorToken : numberToken, i < numColors ? color.transform(v[i]) : sanitize(v[i]));
+          }
+          return output;
+      };
+  }
+  var convertNumbersToZero = function (v) {
+      return typeof v === 'number' ? 0 : v;
+  };
+  function getAnimatableNone(v) {
+      var parsed = parse(v);
+      var transformer = createTransformer(v);
+      return transformer(parsed.map(convertNumbersToZero));
+  }
+  var complex = { test: test, parse: parse, createTransformer: createTransformer, getAnimatableNone: getAnimatableNone };
+
+  var mixLinearColor = function (from, to, v) {
+      var fromExpo = from * from;
+      var toExpo = to * to;
+      return Math.sqrt(Math.max(0, v * (toExpo - fromExpo) + fromExpo));
+  };
+  var colorTypes = [hex, rgba, hsla];
+  var getColorType = function (v) {
+      return colorTypes.find(function (type) { return type.test(v); });
+  };
+  var notAnimatable = function (color) {
+      return "'" + color + "' is not an animatable color. Use the equivalent color code instead.";
+  };
+  var mixColor = function (from, to) {
+      var fromColorType = getColorType(from);
+      var toColorType = getColorType(to);
+      invariant(!!fromColorType, notAnimatable(from));
+      invariant(!!toColorType, notAnimatable(to));
+      invariant(fromColorType.transform === toColorType.transform, "Both colors must be hex/RGBA, OR both must be HSLA.");
+      var fromColor = fromColorType.parse(from);
+      var toColor = toColorType.parse(to);
+      var blended = __assign({}, fromColor);
+      var mixFunc = fromColorType === hsla ? mix : mixLinearColor;
+      return function (v) {
+          for (var key in blended) {
+              if (key !== "alpha") {
+                  blended[key] = mixFunc(fromColor[key], toColor[key], v);
+              }
+          }
+          blended.alpha = mix(fromColor.alpha, toColor.alpha, v);
+          return fromColorType.transform(blended);
+      };
+  };
+
+  var isNum = function (v) { return typeof v === 'number'; };
+
+  var combineFunctions = function (a, b) { return function (v) { return b(a(v)); }; };
+  var pipe = function () {
+      var transformers = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+          transformers[_i] = arguments[_i];
+      }
+      return transformers.reduce(combineFunctions);
+  };
+
+  function getMixer(origin, target) {
+      if (isNum(origin)) {
+          return function (v) { return mix(origin, target, v); };
+      }
+      else if (color.test(origin)) {
+          return mixColor(origin, target);
+      }
+      else {
+          return mixComplex(origin, target);
+      }
+  }
+  var mixArray = function (from, to) {
+      var output = __spreadArray([], from);
+      var numValues = output.length;
+      var blendValue = from.map(function (fromThis, i) { return getMixer(fromThis, to[i]); });
+      return function (v) {
+          for (var i = 0; i < numValues; i++) {
+              output[i] = blendValue[i](v);
+          }
+          return output;
+      };
+  };
+  var mixObject = function (origin, target) {
+      var output = __assign(__assign({}, origin), target);
+      var blendValue = {};
+      for (var key in output) {
+          if (origin[key] !== undefined && target[key] !== undefined) {
+              blendValue[key] = getMixer(origin[key], target[key]);
+          }
+      }
+      return function (v) {
+          for (var key in blendValue) {
+              output[key] = blendValue[key](v);
+          }
+          return output;
+      };
+  };
+  function analyse(value) {
+      var parsed = complex.parse(value);
+      var numValues = parsed.length;
+      var numNumbers = 0;
+      var numRGB = 0;
+      var numHSL = 0;
+      for (var i = 0; i < numValues; i++) {
+          if (numNumbers || typeof parsed[i] === "number") {
+              numNumbers++;
+          }
+          else {
+              if (parsed[i].hue !== undefined) {
+                  numHSL++;
+              }
+              else {
+                  numRGB++;
+              }
+          }
+      }
+      return { parsed: parsed, numNumbers: numNumbers, numRGB: numRGB, numHSL: numHSL };
+  }
+  var mixComplex = function (origin, target) {
+      var template = complex.createTransformer(target);
+      var originStats = analyse(origin);
+      var targetStats = analyse(target);
+      invariant(originStats.numHSL === targetStats.numHSL &&
+          originStats.numRGB === targetStats.numRGB &&
+          originStats.numNumbers >= targetStats.numNumbers, "Complex values '" + origin + "' and '" + target + "' too different to mix. Ensure all colors are of the same type.");
+      return pipe(mixArray(originStats.parsed, targetStats.parsed), template);
+  };
+
+  var mixNumber = function (from, to) { return function (p) { return mix(from, to, p); }; };
+  function detectMixerFactory(v) {
+      if (typeof v === 'number') {
+          return mixNumber;
+      }
+      else if (typeof v === 'string') {
+          if (color.test(v)) {
+              return mixColor;
+          }
+          else {
+              return mixComplex;
+          }
+      }
+      else if (Array.isArray(v)) {
+          return mixArray;
+      }
+      else if (typeof v === 'object') {
+          return mixObject;
+      }
+  }
+  function createMixers(output, ease, customMixer) {
+      var mixers = [];
+      var mixerFactory = customMixer || detectMixerFactory(output[0]);
+      var numMixers = output.length - 1;
+      for (var i = 0; i < numMixers; i++) {
+          var mixer = mixerFactory(output[i], output[i + 1]);
+          if (ease) {
+              var easingFunction = Array.isArray(ease) ? ease[i] : ease;
+              mixer = pipe(easingFunction, mixer);
+          }
+          mixers.push(mixer);
+      }
+      return mixers;
+  }
+  function fastInterpolate(_a, _b) {
+      var from = _a[0], to = _a[1];
+      var mixer = _b[0];
+      return function (v) { return mixer(progress(from, to, v)); };
+  }
+  function slowInterpolate(input, mixers) {
+      var inputLength = input.length;
+      var lastInputIndex = inputLength - 1;
+      return function (v) {
+          var mixerIndex = 0;
+          var foundMixerIndex = false;
+          if (v <= input[0]) {
+              foundMixerIndex = true;
+          }
+          else if (v >= input[lastInputIndex]) {
+              mixerIndex = lastInputIndex - 1;
+              foundMixerIndex = true;
+          }
+          if (!foundMixerIndex) {
+              var i = 1;
+              for (; i < inputLength; i++) {
+                  if (input[i] > v || i === lastInputIndex) {
+                      break;
+                  }
+              }
+              mixerIndex = i - 1;
+          }
+          var progressInRange = progress(input[mixerIndex], input[mixerIndex + 1], v);
+          return mixers[mixerIndex](progressInRange);
+      };
+  }
+  function interpolate(input, output, _a) {
+      var _b = _a === void 0 ? {} : _a, _c = _b.clamp, isClamp = _c === void 0 ? true : _c, ease = _b.ease, mixer = _b.mixer;
+      var inputLength = input.length;
+      invariant(inputLength === output.length, 'Both input and output ranges must be the same length');
+      invariant(!ease || !Array.isArray(ease) || ease.length === inputLength - 1, 'Array of easing functions must be of length `input.length - 1`, as it applies to the transitions **between** the defined values.');
+      if (input[0] > input[inputLength - 1]) {
+          input = [].concat(input);
+          output = [].concat(output);
+          input.reverse();
+          output.reverse();
+      }
+      var mixers = createMixers(output, ease, mixer);
+      var interpolator = inputLength === 2
+          ? fastInterpolate(input, mixers)
+          : slowInterpolate(input, mixers);
+      return isClamp
+          ? function (v) { return interpolator(clamp$1(input[0], input[inputLength - 1], v)); }
+          : interpolator;
+  }
+
+  var reverseEasing = function (easing) { return function (p) { return 1 - easing(1 - p); }; };
+  var mirrorEasing = function (easing) { return function (p) {
+      return p <= 0.5 ? easing(2 * p) / 2 : (2 - easing(2 * (1 - p))) / 2;
+  }; };
+  var createExpoIn = function (power) { return function (p) { return Math.pow(p, power); }; };
+  var createBackIn = function (power) { return function (p) {
+      return p * p * ((power + 1) * p - power);
+  }; };
+  var createAnticipate = function (power) {
+      var backEasing = createBackIn(power);
+      return function (p) {
+          return (p *= 2) < 1
+              ? 0.5 * backEasing(p)
+              : 0.5 * (2 - Math.pow(2, -10 * (p - 1)));
+      };
+  };
+
+  var DEFAULT_OVERSHOOT_STRENGTH = 1.525;
+  var easeIn = createExpoIn(2);
+  var easeInOut = mirrorEasing(easeIn);
+  var backIn = createBackIn(DEFAULT_OVERSHOOT_STRENGTH);
+  var backOut = reverseEasing(backIn);
+  createAnticipate(DEFAULT_OVERSHOOT_STRENGTH);
+
+  function defaultEasing(values, easing) {
+      return values.map(function () { return easing || easeInOut; }).splice(0, values.length - 1);
+  }
+  function defaultOffset(values) {
+      var numValues = values.length;
+      return values.map(function (_value, i) {
+          return i !== 0 ? i / (numValues - 1) : 0;
+      });
+  }
+  function convertOffsetToTimes(offset, duration) {
+      return offset.map(function (o) { return o * duration; });
+  }
+  function keyframes(_a) {
+      var _b = _a.from, from = _b === void 0 ? 0 : _b, _c = _a.to, to = _c === void 0 ? 1 : _c, ease = _a.ease, offset = _a.offset, _d = _a.duration, duration = _d === void 0 ? 300 : _d;
+      var state = { done: false, value: from };
+      var values = Array.isArray(to) ? to : [from, to];
+      var times = convertOffsetToTimes(offset && offset.length === values.length
+          ? offset
+          : defaultOffset(values), duration);
+      function createInterpolator() {
+          return interpolate(times, values, {
+              ease: Array.isArray(ease) ? ease : defaultEasing(values, ease),
+          });
+      }
+      var interpolator = createInterpolator();
+      return {
+          next: function (t) {
+              state.value = interpolator(t);
+              state.done = t >= duration;
+              return state;
+          },
+          flipTarget: function () {
+              values.reverse();
+              interpolator = createInterpolator();
+          },
+      };
+  }
+
+  function decay(_a) {
+      var _b = _a.velocity, velocity = _b === void 0 ? 0 : _b, _c = _a.from, from = _c === void 0 ? 0 : _c, _d = _a.power, power = _d === void 0 ? 0.8 : _d, _e = _a.timeConstant, timeConstant = _e === void 0 ? 350 : _e, _f = _a.restDelta, restDelta = _f === void 0 ? 0.5 : _f, modifyTarget = _a.modifyTarget;
+      var state = { done: false, value: from };
+      var amplitude = power * velocity;
+      var ideal = from + amplitude;
+      var target = modifyTarget === undefined ? ideal : modifyTarget(ideal);
+      if (target !== ideal)
+          amplitude = target - from;
+      return {
+          next: function (t) {
+              var delta = -amplitude * Math.exp(-t / timeConstant);
+              state.done = !(delta > restDelta || delta < -restDelta);
+              state.value = state.done ? target : target + delta;
+              return state;
+          },
+          flipTarget: function () { },
+      };
+  }
+
+  var types = { keyframes: keyframes, spring: spring, decay: decay };
+  function detectAnimationFromOptions(config) {
+      if (Array.isArray(config.to)) {
+          return keyframes;
+      }
+      else if (types[config.type]) {
+          return types[config.type];
+      }
+      var keys = new Set(Object.keys(config));
+      if (keys.has("ease") ||
+          (keys.has("duration") && !keys.has("dampingRatio"))) {
+          return keyframes;
+      }
+      else if (keys.has("dampingRatio") ||
+          keys.has("stiffness") ||
+          keys.has("mass") ||
+          keys.has("damping") ||
+          keys.has("restSpeed") ||
+          keys.has("restDelta")) {
+          return spring;
+      }
+      return keyframes;
+  }
+
+  var defaultTimestep = (1 / 60) * 1000;
+  var getCurrentTime = typeof performance !== "undefined"
+      ? function () { return performance.now(); }
+      : function () { return Date.now(); };
+  var onNextFrame = typeof window !== "undefined"
+      ? function (callback) {
+          return window.requestAnimationFrame(callback);
+      }
+      : function (callback) {
+          return setTimeout(function () { return callback(getCurrentTime()); }, defaultTimestep);
+      };
+
+  function createRenderStep(runNextFrame) {
+      var toRun = [];
+      var toRunNextFrame = [];
+      var numToRun = 0;
+      var isProcessing = false;
+      var toKeepAlive = new WeakSet();
+      var step = {
+          schedule: function (callback, keepAlive, immediate) {
+              if (keepAlive === void 0) { keepAlive = false; }
+              if (immediate === void 0) { immediate = false; }
+              var addToCurrentFrame = immediate && isProcessing;
+              var buffer = addToCurrentFrame ? toRun : toRunNextFrame;
+              if (keepAlive)
+                  toKeepAlive.add(callback);
+              if (buffer.indexOf(callback) === -1) {
+                  buffer.push(callback);
+                  if (addToCurrentFrame && isProcessing)
+                      numToRun = toRun.length;
+              }
+              return callback;
+          },
+          cancel: function (callback) {
+              var index = toRunNextFrame.indexOf(callback);
+              if (index !== -1)
+                  toRunNextFrame.splice(index, 1);
+              toKeepAlive.delete(callback);
+          },
+          process: function (frameData) {
+              var _a;
+              isProcessing = true;
+              _a = [toRunNextFrame, toRun], toRun = _a[0], toRunNextFrame = _a[1];
+              toRunNextFrame.length = 0;
+              numToRun = toRun.length;
+              if (numToRun) {
+                  for (var i = 0; i < numToRun; i++) {
+                      var callback = toRun[i];
+                      callback(frameData);
+                      if (toKeepAlive.has(callback)) {
+                          step.schedule(callback);
+                          runNextFrame();
+                      }
+                  }
+              }
+              isProcessing = false;
+          },
+      };
+      return step;
+  }
+
+  var maxElapsed = 40;
+  var useDefaultElapsed = true;
+  var runNextFrame = false;
+  var isProcessing = false;
+  var frame = {
+      delta: 0,
+      timestamp: 0
+  };
+  var stepsOrder = ["read", "update", "preRender", "render", "postRender"];
+  var steps = /*#__PURE__*/stepsOrder.reduce(function (acc, key) {
+      acc[key] = createRenderStep(function () {
+          return runNextFrame = true;
+      });
+      return acc;
+  }, {});
+  var sync = /*#__PURE__*/stepsOrder.reduce(function (acc, key) {
+      var step = steps[key];
+      acc[key] = function (process, keepAlive, immediate) {
+          if (keepAlive === void 0) {
+              keepAlive = false;
+          }
+          if (immediate === void 0) {
+              immediate = false;
+          }
+          if (!runNextFrame) startLoop();
+          return step.schedule(process, keepAlive, immediate);
+      };
+      return acc;
+  }, {});
+  var cancelSync = /*#__PURE__*/stepsOrder.reduce(function (acc, key) {
+      acc[key] = steps[key].cancel;
+      return acc;
+  }, {});
+  var processStep = function (stepId) {
+      return steps[stepId].process(frame);
+  };
+  var processFrame = function (timestamp) {
+      runNextFrame = false;
+      frame.delta = useDefaultElapsed ? defaultTimestep : Math.max(Math.min(timestamp - frame.timestamp, maxElapsed), 1);
+      frame.timestamp = timestamp;
+      isProcessing = true;
+      stepsOrder.forEach(processStep);
+      isProcessing = false;
+      if (runNextFrame) {
+          useDefaultElapsed = false;
+          onNextFrame(processFrame);
+      }
+  };
+  var startLoop = function () {
+      runNextFrame = true;
+      useDefaultElapsed = true;
+      if (!isProcessing) onNextFrame(processFrame);
+  };
+
+  function loopElapsed(elapsed, duration, delay) {
+      if (delay === void 0) { delay = 0; }
+      return elapsed - duration - delay;
+  }
+  function reverseElapsed(elapsed, duration, delay, isForwardPlayback) {
+      if (delay === void 0) { delay = 0; }
+      if (isForwardPlayback === void 0) { isForwardPlayback = true; }
+      return isForwardPlayback
+          ? loopElapsed(duration + -elapsed, duration, delay)
+          : duration - (elapsed - duration) + delay;
+  }
+  function hasRepeatDelayElapsed(elapsed, duration, delay, isForwardPlayback) {
+      return isForwardPlayback ? elapsed >= duration + delay : elapsed <= -delay;
+  }
+
+  var framesync = function (update) {
+      var passTimestamp = function (_a) {
+          var delta = _a.delta;
+          return update(delta);
+      };
+      return {
+          start: function () { return sync.update(passTimestamp, true); },
+          stop: function () { return cancelSync.update(passTimestamp); },
+      };
+  };
+  function animate(_a) {
+      var _b, _c;
+      var from = _a.from, _d = _a.autoplay, autoplay = _d === void 0 ? true : _d, _e = _a.driver, driver = _e === void 0 ? framesync : _e, _f = _a.elapsed, elapsed = _f === void 0 ? 0 : _f, _g = _a.repeat, repeatMax = _g === void 0 ? 0 : _g, _h = _a.repeatType, repeatType = _h === void 0 ? "loop" : _h, _j = _a.repeatDelay, repeatDelay = _j === void 0 ? 0 : _j, onPlay = _a.onPlay, onStop = _a.onStop, onComplete = _a.onComplete, onRepeat = _a.onRepeat, onUpdate = _a.onUpdate, options = __rest(_a, ["from", "autoplay", "driver", "elapsed", "repeat", "repeatType", "repeatDelay", "onPlay", "onStop", "onComplete", "onRepeat", "onUpdate"]);
+      var to = options.to;
+      var driverControls;
+      var repeatCount = 0;
+      var computedDuration = options.duration;
+      var latest;
+      var isComplete = false;
+      var isForwardPlayback = true;
+      var interpolateFromNumber;
+      var animator = detectAnimationFromOptions(options);
+      if ((_c = (_b = animator).needsInterpolation) === null || _c === void 0 ? void 0 : _c.call(_b, from, to)) {
+          interpolateFromNumber = interpolate([0, 100], [from, to], {
+              clamp: false,
+          });
+          from = 0;
+          to = 100;
+      }
+      var animation = animator(__assign(__assign({}, options), { from: from, to: to }));
+      function repeat() {
+          repeatCount++;
+          if (repeatType === "reverse") {
+              isForwardPlayback = repeatCount % 2 === 0;
+              elapsed = reverseElapsed(elapsed, computedDuration, repeatDelay, isForwardPlayback);
+          }
+          else {
+              elapsed = loopElapsed(elapsed, computedDuration, repeatDelay);
+              if (repeatType === "mirror")
+                  animation.flipTarget();
+          }
+          isComplete = false;
+          onRepeat && onRepeat();
+      }
+      function complete() {
+          driverControls.stop();
+          onComplete && onComplete();
+      }
+      function update(delta) {
+          if (!isForwardPlayback)
+              delta = -delta;
+          elapsed += delta;
+          if (!isComplete) {
+              var state = animation.next(Math.max(0, elapsed));
+              latest = state.value;
+              if (interpolateFromNumber)
+                  latest = interpolateFromNumber(latest);
+              isComplete = isForwardPlayback ? state.done : elapsed <= 0;
+          }
+          onUpdate === null || onUpdate === void 0 ? void 0 : onUpdate(latest);
+          if (isComplete) {
+              if (repeatCount === 0)
+                  computedDuration !== null && computedDuration !== void 0 ? computedDuration : (computedDuration = elapsed);
+              if (repeatCount < repeatMax) {
+                  hasRepeatDelayElapsed(elapsed, computedDuration, repeatDelay, isForwardPlayback) && repeat();
+              }
+              else {
+                  complete();
+              }
+          }
+      }
+      function play() {
+          onPlay === null || onPlay === void 0 ? void 0 : onPlay();
+          driverControls = driver(update);
+          driverControls.start();
+      }
+      autoplay && play();
+      return {
+          stop: function () {
+              onStop === null || onStop === void 0 ? void 0 : onStop();
+              driverControls.stop();
+          },
+      };
+  }
+
+  class ParallaxElement {
+  	
+  	
+  	
+  	
+  	constructor(element) {ParallaxElement.prototype.__init.call(this);
+  		if (!element) {
+  			return;
+  		}
+
+  		this.element = element;
+  		this.isScroll = false;
+
+  		this.latestScroll = 0;
+  		this.init();
+  	}
+
+  	init() {
+  		window.addEventListener(
+  			"scroll",
+  			() => {
+  				this.latestScroll = window.scrollY;
+  				this.checkScroll();
+  			},
+  			false
+  		);
+  	}
+  	checkScroll() {
+  		if (!this.isScroll) {
+  			window.requestAnimationFrame(this.update);
+  		}
+  		this.isScroll = true;
+  	}
+
+  	__init() {this.update = () => {
+  		this.currentScroll = this.latestScroll;
+  		this.isScroll = false;
+  		var helloScroll = this.currentScroll / 4;
+
+  		this.element.style.transform = "translate3d(0, " + helloScroll + "px, 0)";
+  	};}
+
+  	getOffsetTop(elem) {
+  		var top = 0;
+
+  		do {
+  			top += elem.offsetTop - elem.scrollTop;
+  		} while ((elem = elem.offsetParent));
+
+  		return top;
+  	}
+  }
+
+  class Parallax {
+  	
+  	
+  	
+  	
+  	__init2() {this.parallaxElements = [];}
+  	constructor() {Parallax.prototype.__init2.call(this);
+  		this.elements = document.querySelectorAll(".entry-header figure.entry-image");
+  		if (!this.elements || this.elements.length == 0) {  
+  			return;
+  		}
+  		this.isScroll = false;
+
+  		this.latestScroll = 0;
+  		var requestAnimationFrame = window.requestAnimationFrame || window["mozRequestAnimationFrame"] || window['webkitRequestAnimationFrame'] || window["msRequestAnimationFrame"];
+
+  		window.requestAnimationFrame = requestAnimationFrame;
+  		[].forEach.call(this.elements, (elm) => {
+  			this.parallaxElements.push(new ParallaxElement(elm));
+  		});
+  	}
+  }
+
+  const counter = (duration, callback) => {
+      let startTime = null;
+      //get the current timestamp and assign it to the currentTime variable
+      let currentTime = Date.now();
+
+      //pass the current timestamp to the step function
+      const step = () => {
+          //if the start time is null, assign the current time to startTime
+          if (!startTime) {
+              startTime = currentTime;
+          }
+
+          //calculate the value to be used in calculating the number to be displayed
+          const progress = Math.min((currentTime - startTime) / duration, 1);
+
+          //calculate what to be displayed using the value gotten above
+          callback(progress);
+
+          //checking to make sure the counter does not exceed the last value (lastVal)
+          if (progress < 1) {
+              window.requestAnimationFrame(step);
+          } else {
+              window.cancelAnimationFrame(window.requestAnimationFrame(step));
+          }
+      };
+
+      //start animating
+      window.requestAnimationFrame(step);
+  };
+
+  class Team {
+  	__init() {this.last = null;}
+  	constructor() {Team.prototype.__init.call(this);
+  		document.addEventListener("keydown", (event) => {
+  			if (event.key == "27") {
+  				event.preventDefault();
+  				window.location.hash = "#!";
+  			}
+  		});
+  		window.addEventListener("hashchange", (e) => {
+  			var hash = window.location.hash.replace(/^#!/, "");
+  			if (hash) {
+  				var path = hash.split("/");
+  				if (path[0] == "team-member") {
+  					this.show(path[1]);
+  				} else if (path[0] == "team") {
+  					this.filter(path[1]);
+  				}
+  			}
+  		});
+  	}
+  	filter(term_id) {
+  		let current = document.querySelector('a[href="' + window.location.hash + '"]');
+  		if (current) {
+  			current.classList.add("active");
+  			let closest = this.closest(current, ".na-team-wrapper");
+  			if (closest) {
+  				let listItems = closest.querySelectorAll("ul.na-team>li");
+
+  				if (listItems && listItems.length) {
+  					[].forEach.call(listItems, (listItem) => {
+  						let data = listItem.querySelector("a[data-terms]");
+  						if (!data) {
+  							return;
+  						}
+  						let terms = data.getAttribute("data-terms");
+  						let mterms = terms.split(",");
+  						if (mterms.indexOf(term_id) >= 0) {
+  							listItem.classList.remove("hidden");
+  							animate({
+  								from: 0,
+  								to: 1,
+  								duration: 1000,
+  								ease: backOut,
+  								onUpdate: (value) => {
+  									listItem.style.opacity = value;
+  								},
+  								onComplete: () => {},
+  							});
+  						} else {
+  							animate({
+  								from: 1,
+  								to: 0,
+  								duration: 100,
+  								ease: backOut,
+  								onUpdate: (value) => {
+  									listItem.style.opacity = value;
+  								},
+  								onComplete: () => {
+  									listItem.classList.add("hidden");
+  								},
+  							});
+  						}
+  					});
+  				}
+  			}
+  			let all = document.querySelectorAll('a[href^="#!team/"]');
+  			if (all && all.length) {
+  				[].forEach.call(all, (elm) => {
+  					if (current != elm) {
+  						elm.classList.remove("active");
+  					}
+  				});
+  			}
+  		}
+  	}
+  	show(id) {
+  		let data = new FormData();
+  		data.append("action", "team_member");
+  		data.append("id", id);
+  		document.body.classList.add("na-team-active");
+  		fetch(TeamSettings.url, {
+  			method: "POST", // or 'PUT'
+  			headers: {
+  				"Content-Type": "application/x-www-form-urlencoded",
+  			},
+  			body: data,
+  		})
+  			.then((response) => response.json())
+  			.then((result) => {
+  				if (result && result.status == "success") {
+  					var post_template = wp.template("team-member");
+  					let div = document.createElement("div");
+  					div.setAttribute("id", "na-team-member-template");
+
+  					let close = document.createElement("a");
+  					close.setAttribute("class", "close-team");
+  					close.addEventListener("click", (e) => {
+  						e.preventDefault();
+  						document.querySelector("#na-team-member-template").remove();
+  						document.body.classList.remove("na-team-active");
+
+  						window.location.hash = "#!";
+  					});
+  					close.href = "#";
+
+  					div.innerHTML = post_template(result.post);
+  					div.appendChild(close);
+  					div.style.display = "block";
+  				} else {
+  					document.body.classList.remove("na-team-active");
+  				}
+  			})
+  			.catch((error) => {
+  				console.error("Error:", error);
+  				window.location.hash = "#!";
+  				document.body.classList.remove("na-team-active");
+  			});
+
+  		return false;
+  	}
+  	closest(el, selector) {
+  		var matchesFn;
+
+  		// find vendor prefix
+  		["matches", "webkitMatchesSelector", "mozMatchesSelector", "msMatchesSelector", "oMatchesSelector"].some(function (fn) {
+  			if (typeof document.body[fn] == "function") {
+  				matchesFn = fn;
+  				return true;
+  			}
+  			return false;
+  		});
+
+  		var parent;
+
+  		// traverse parents
+  		while (el) {
+  			parent = el.parentElement;
+  			if (parent && parent[matchesFn](selector)) {
+  				return parent;
+  			}
+  			el = parent;
+  		}
+
+  		return null;
+  	}
+  }
+
+  // packages/alpinejs/src/scheduler.js
+  var flushPending = false;
+  var flushing = false;
+  var queue = [];
+  function scheduler(callback) {
+    queueJob(callback);
+  }
+  function queueJob(job) {
+    if (!queue.includes(job))
+      queue.push(job);
+    queueFlush();
+  }
+  function dequeueJob(job) {
+    let index = queue.indexOf(job);
+    if (index !== -1)
+      queue.splice(index, 1);
+  }
+  function queueFlush() {
+    if (!flushing && !flushPending) {
+      flushPending = true;
+      queueMicrotask(flushJobs);
+    }
+  }
+  function flushJobs() {
+    flushPending = false;
+    flushing = true;
+    for (let i = 0; i < queue.length; i++) {
+      queue[i]();
+    }
+    queue.length = 0;
+    flushing = false;
+  }
+
+  // packages/alpinejs/src/reactivity.js
+  var reactive;
+  var effect;
+  var release;
+  var raw;
+  var shouldSchedule = true;
+  function disableEffectScheduling(callback) {
+    shouldSchedule = false;
+    callback();
+    shouldSchedule = true;
+  }
+  function setReactivityEngine(engine) {
+    reactive = engine.reactive;
+    release = engine.release;
+    effect = (callback) => engine.effect(callback, {scheduler: (task) => {
+      if (shouldSchedule) {
+        scheduler(task);
+      } else {
+        task();
+      }
+    }});
+    raw = engine.raw;
+  }
+  function overrideEffect(override) {
+    effect = override;
+  }
+  function elementBoundEffect(el) {
+    let cleanup2 = () => {
+    };
+    let wrappedEffect = (callback) => {
+      let effectReference = effect(callback);
+      if (!el._x_effects) {
+        el._x_effects = new Set();
+        el._x_runEffects = () => {
+          el._x_effects.forEach((i) => i());
+        };
+      }
+      el._x_effects.add(effectReference);
+      cleanup2 = () => {
+        if (effectReference === void 0)
+          return;
+        el._x_effects.delete(effectReference);
+        release(effectReference);
+      };
+      return effectReference;
+    };
+    return [wrappedEffect, () => {
+      cleanup2();
+    }];
+  }
+
+  // packages/alpinejs/src/mutation.js
+  var onAttributeAddeds = [];
+  var onElRemoveds = [];
+  var onElAddeds = [];
+  function onElAdded(callback) {
+    onElAddeds.push(callback);
+  }
+  function onElRemoved(el, callback) {
+    if (typeof callback === "function") {
+      if (!el._x_cleanups)
+        el._x_cleanups = [];
+      el._x_cleanups.push(callback);
+    } else {
+      callback = el;
+      onElRemoveds.push(callback);
+    }
+  }
+  function onAttributesAdded(callback) {
+    onAttributeAddeds.push(callback);
+  }
+  function onAttributeRemoved(el, name, callback) {
+    if (!el._x_attributeCleanups)
+      el._x_attributeCleanups = {};
+    if (!el._x_attributeCleanups[name])
+      el._x_attributeCleanups[name] = [];
+    el._x_attributeCleanups[name].push(callback);
+  }
+  function cleanupAttributes(el, names) {
+    if (!el._x_attributeCleanups)
+      return;
+    Object.entries(el._x_attributeCleanups).forEach(([name, value]) => {
+      if (names === void 0 || names.includes(name)) {
+        value.forEach((i) => i());
+        delete el._x_attributeCleanups[name];
+      }
+    });
+  }
+  var observer = new MutationObserver(onMutate);
+  var currentlyObserving = false;
+  function startObservingMutations() {
+    observer.observe(document, {subtree: true, childList: true, attributes: true, attributeOldValue: true});
+    currentlyObserving = true;
+  }
+  function stopObservingMutations() {
+    flushObserver();
+    observer.disconnect();
+    currentlyObserving = false;
+  }
+  var recordQueue = [];
+  var willProcessRecordQueue = false;
+  function flushObserver() {
+    recordQueue = recordQueue.concat(observer.takeRecords());
+    if (recordQueue.length && !willProcessRecordQueue) {
+      willProcessRecordQueue = true;
+      queueMicrotask(() => {
+        processRecordQueue();
+        willProcessRecordQueue = false;
+      });
+    }
+  }
+  function processRecordQueue() {
+    onMutate(recordQueue);
+    recordQueue.length = 0;
+  }
+  function mutateDom(callback) {
+    if (!currentlyObserving)
+      return callback();
+    stopObservingMutations();
+    let result = callback();
+    startObservingMutations();
+    return result;
+  }
+  var isCollecting = false;
+  var deferredMutations = [];
+  function deferMutations() {
+    isCollecting = true;
+  }
+  function flushAndStopDeferringMutations() {
+    isCollecting = false;
+    onMutate(deferredMutations);
+    deferredMutations = [];
+  }
+  function onMutate(mutations) {
+    if (isCollecting) {
+      deferredMutations = deferredMutations.concat(mutations);
+      return;
+    }
+    let addedNodes = [];
+    let removedNodes = [];
+    let addedAttributes = new Map();
+    let removedAttributes = new Map();
+    for (let i = 0; i < mutations.length; i++) {
+      if (mutations[i].target._x_ignoreMutationObserver)
+        continue;
+      if (mutations[i].type === "childList") {
+        mutations[i].addedNodes.forEach((node) => node.nodeType === 1 && addedNodes.push(node));
+        mutations[i].removedNodes.forEach((node) => node.nodeType === 1 && removedNodes.push(node));
+      }
+      if (mutations[i].type === "attributes") {
+        let el = mutations[i].target;
+        let name = mutations[i].attributeName;
+        let oldValue = mutations[i].oldValue;
+        let add2 = () => {
+          if (!addedAttributes.has(el))
+            addedAttributes.set(el, []);
+          addedAttributes.get(el).push({name, value: el.getAttribute(name)});
+        };
+        let remove = () => {
+          if (!removedAttributes.has(el))
+            removedAttributes.set(el, []);
+          removedAttributes.get(el).push(name);
+        };
+        if (el.hasAttribute(name) && oldValue === null) {
+          add2();
+        } else if (el.hasAttribute(name)) {
+          remove();
+          add2();
+        } else {
+          remove();
+        }
+      }
+    }
+    removedAttributes.forEach((attrs, el) => {
+      cleanupAttributes(el, attrs);
+    });
+    addedAttributes.forEach((attrs, el) => {
+      onAttributeAddeds.forEach((i) => i(el, attrs));
+    });
+    for (let node of removedNodes) {
+      if (addedNodes.includes(node))
+        continue;
+      onElRemoveds.forEach((i) => i(node));
+      if (node._x_cleanups) {
+        while (node._x_cleanups.length)
+          node._x_cleanups.pop()();
+      }
+    }
+    addedNodes.forEach((node) => {
+      node._x_ignoreSelf = true;
+      node._x_ignore = true;
+    });
+    for (let node of addedNodes) {
+      if (removedNodes.includes(node))
+        continue;
+      if (!node.isConnected)
+        continue;
+      delete node._x_ignoreSelf;
+      delete node._x_ignore;
+      onElAddeds.forEach((i) => i(node));
+      node._x_ignore = true;
+      node._x_ignoreSelf = true;
+    }
+    addedNodes.forEach((node) => {
+      delete node._x_ignoreSelf;
+      delete node._x_ignore;
+    });
+    addedNodes = null;
+    removedNodes = null;
+    addedAttributes = null;
+    removedAttributes = null;
+  }
+
+  // packages/alpinejs/src/scope.js
+  function scope(node) {
+    return mergeProxies(closestDataStack(node));
+  }
+  function addScopeToNode(node, data2, referenceNode) {
+    node._x_dataStack = [data2, ...closestDataStack(referenceNode || node)];
+    return () => {
+      node._x_dataStack = node._x_dataStack.filter((i) => i !== data2);
+    };
+  }
+  function refreshScope(element, scope2) {
+    let existingScope = element._x_dataStack[0];
+    Object.entries(scope2).forEach(([key, value]) => {
+      existingScope[key] = value;
+    });
+  }
+  function closestDataStack(node) {
+    if (node._x_dataStack)
+      return node._x_dataStack;
+    if (typeof ShadowRoot === "function" && node instanceof ShadowRoot) {
+      return closestDataStack(node.host);
+    }
+    if (!node.parentNode) {
+      return [];
+    }
+    return closestDataStack(node.parentNode);
+  }
+  function mergeProxies(objects) {
+    let thisProxy = new Proxy({}, {
+      ownKeys: () => {
+        return Array.from(new Set(objects.flatMap((i) => Object.keys(i))));
+      },
+      has: (target, name) => {
+        return objects.some((obj) => obj.hasOwnProperty(name));
+      },
+      get: (target, name) => {
+        return (objects.find((obj) => {
+          if (obj.hasOwnProperty(name)) {
+            let descriptor = Object.getOwnPropertyDescriptor(obj, name);
+            if (descriptor.get && descriptor.get._x_alreadyBound || descriptor.set && descriptor.set._x_alreadyBound) {
+              return true;
+            }
+            if ((descriptor.get || descriptor.set) && descriptor.enumerable) {
+              let getter = descriptor.get;
+              let setter = descriptor.set;
+              let property = descriptor;
+              getter = getter && getter.bind(thisProxy);
+              setter = setter && setter.bind(thisProxy);
+              if (getter)
+                getter._x_alreadyBound = true;
+              if (setter)
+                setter._x_alreadyBound = true;
+              Object.defineProperty(obj, name, {
+                ...property,
+                get: getter,
+                set: setter
+              });
+            }
+            return true;
+          }
+          return false;
+        }) || {})[name];
+      },
+      set: (target, name, value) => {
+        let closestObjectWithKey = objects.find((obj) => obj.hasOwnProperty(name));
+        if (closestObjectWithKey) {
+          closestObjectWithKey[name] = value;
+        } else {
+          objects[objects.length - 1][name] = value;
+        }
+        return true;
+      }
+    });
+    return thisProxy;
+  }
+
+  // packages/alpinejs/src/interceptor.js
+  function initInterceptors(data2) {
+    let isObject2 = (val) => typeof val === "object" && !Array.isArray(val) && val !== null;
+    let recurse = (obj, basePath = "") => {
+      Object.entries(Object.getOwnPropertyDescriptors(obj)).forEach(([key, {value, enumerable}]) => {
+        if (enumerable === false || value === void 0)
+          return;
+        let path = basePath === "" ? key : `${basePath}.${key}`;
+        if (typeof value === "object" && value !== null && value._x_interceptor) {
+          obj[key] = value.initialize(data2, path, key);
+        } else {
+          if (isObject2(value) && value !== obj && !(value instanceof Element)) {
+            recurse(value, path);
+          }
+        }
+      });
+    };
+    return recurse(data2);
+  }
+  function interceptor(callback, mutateObj = () => {
+  }) {
+    let obj = {
+      initialValue: void 0,
+      _x_interceptor: true,
+      initialize(data2, path, key) {
+        return callback(this.initialValue, () => get(data2, path), (value) => set(data2, path, value), path, key);
+      }
+    };
+    mutateObj(obj);
+    return (initialValue) => {
+      if (typeof initialValue === "object" && initialValue !== null && initialValue._x_interceptor) {
+        let initialize = obj.initialize.bind(obj);
+        obj.initialize = (data2, path, key) => {
+          let innerValue = initialValue.initialize(data2, path, key);
+          obj.initialValue = innerValue;
+          return initialize(data2, path, key);
+        };
+      } else {
+        obj.initialValue = initialValue;
+      }
+      return obj;
+    };
+  }
+  function get(obj, path) {
+    return path.split(".").reduce((carry, segment) => carry[segment], obj);
+  }
+  function set(obj, path, value) {
+    if (typeof path === "string")
+      path = path.split(".");
+    if (path.length === 1)
+      obj[path[0]] = value;
+    else if (path.length === 0)
+      throw error;
+    else {
+      if (obj[path[0]])
+        return set(obj[path[0]], path.slice(1), value);
+      else {
+        obj[path[0]] = {};
+        return set(obj[path[0]], path.slice(1), value);
+      }
+    }
+  }
+
+  // packages/alpinejs/src/magics.js
+  var magics = {};
+  function magic(name, callback) {
+    magics[name] = callback;
+  }
+  function injectMagics(obj, el) {
+    Object.entries(magics).forEach(([name, callback]) => {
+      Object.defineProperty(obj, `$${name}`, {
+        get() {
+          let [utilities, cleanup2] = getElementBoundUtilities(el);
+          utilities = {interceptor, ...utilities};
+          onElRemoved(el, cleanup2);
+          return callback(el, utilities);
+        },
+        enumerable: false
+      });
+    });
+    return obj;
+  }
+
+  // packages/alpinejs/src/utils/error.js
+  function tryCatch(el, expression, callback, ...args) {
+    try {
+      return callback(...args);
+    } catch (e) {
+      handleError(e, el, expression);
+    }
+  }
+  function handleError(error2, el, expression = void 0) {
+    Object.assign(error2, {el, expression});
+    console.warn(`Alpine Expression Error: ${error2.message}
+
+${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
+    setTimeout(() => {
+      throw error2;
+    }, 0);
+  }
+
+  // packages/alpinejs/src/evaluator.js
+  var shouldAutoEvaluateFunctions = true;
+  function dontAutoEvaluateFunctions(callback) {
+    let cache = shouldAutoEvaluateFunctions;
+    shouldAutoEvaluateFunctions = false;
+    callback();
+    shouldAutoEvaluateFunctions = cache;
+  }
+  function evaluate(el, expression, extras = {}) {
+    let result;
+    evaluateLater(el, expression)((value) => result = value, extras);
+    return result;
+  }
+  function evaluateLater(...args) {
+    return theEvaluatorFunction(...args);
+  }
+  var theEvaluatorFunction = normalEvaluator;
+  function setEvaluator(newEvaluator) {
+    theEvaluatorFunction = newEvaluator;
+  }
+  function normalEvaluator(el, expression) {
+    let overriddenMagics = {};
+    injectMagics(overriddenMagics, el);
+    let dataStack = [overriddenMagics, ...closestDataStack(el)];
+    if (typeof expression === "function") {
+      return generateEvaluatorFromFunction(dataStack, expression);
+    }
+    let evaluator = generateEvaluatorFromString(dataStack, expression, el);
+    return tryCatch.bind(null, el, expression, evaluator);
+  }
+  function generateEvaluatorFromFunction(dataStack, func) {
+    return (receiver = () => {
+    }, {scope: scope2 = {}, params = []} = {}) => {
+      let result = func.apply(mergeProxies([scope2, ...dataStack]), params);
+      runIfTypeOfFunction(receiver, result);
+    };
+  }
+  var evaluatorMemo = {};
+  function generateFunctionFromString(expression, el) {
+    if (evaluatorMemo[expression]) {
+      return evaluatorMemo[expression];
+    }
+    let AsyncFunction = Object.getPrototypeOf(async function() {
+    }).constructor;
+    let rightSideSafeExpression = /^[\n\s]*if.*\(.*\)/.test(expression) || /^(let|const)\s/.test(expression) ? `(() => { ${expression} })()` : expression;
+    const safeAsyncFunction = () => {
+      try {
+        return new AsyncFunction(["__self", "scope"], `with (scope) { __self.result = ${rightSideSafeExpression} }; __self.finished = true; return __self.result;`);
+      } catch (error2) {
+        handleError(error2, el, expression);
+        return Promise.resolve();
+      }
+    };
+    let func = safeAsyncFunction();
+    evaluatorMemo[expression] = func;
+    return func;
+  }
+  function generateEvaluatorFromString(dataStack, expression, el) {
+    let func = generateFunctionFromString(expression, el);
+    return (receiver = () => {
+    }, {scope: scope2 = {}, params = []} = {}) => {
+      func.result = void 0;
+      func.finished = false;
+      let completeScope = mergeProxies([scope2, ...dataStack]);
+      if (typeof func === "function") {
+        let promise = func(func, completeScope).catch((error2) => handleError(error2, el, expression));
+        if (func.finished) {
+          runIfTypeOfFunction(receiver, func.result, completeScope, params, el);
+          func.result = void 0;
+        } else {
+          promise.then((result) => {
+            runIfTypeOfFunction(receiver, result, completeScope, params, el);
+          }).catch((error2) => handleError(error2, el, expression)).finally(() => func.result = void 0);
+        }
+      }
+    };
+  }
+  function runIfTypeOfFunction(receiver, value, scope2, params, el) {
+    if (shouldAutoEvaluateFunctions && typeof value === "function") {
+      let result = value.apply(scope2, params);
+      if (result instanceof Promise) {
+        result.then((i) => runIfTypeOfFunction(receiver, i, scope2, params)).catch((error2) => handleError(error2, el, value));
+      } else {
+        receiver(result);
+      }
+    } else {
+      receiver(value);
+    }
+  }
+
+  // packages/alpinejs/src/directives.js
+  var prefixAsString = "x-";
+  function prefix(subject = "") {
+    return prefixAsString + subject;
+  }
+  function setPrefix(newPrefix) {
+    prefixAsString = newPrefix;
+  }
+  var directiveHandlers = {};
+  function directive(name, callback) {
+    directiveHandlers[name] = callback;
+  }
+  function directives(el, attributes, originalAttributeOverride) {
+    attributes = Array.from(attributes);
+    if (el._x_virtualDirectives) {
+      let vAttributes = Object.entries(el._x_virtualDirectives).map(([name, value]) => ({name, value}));
+      let staticAttributes = attributesOnly(vAttributes);
+      vAttributes = vAttributes.map((attribute) => {
+        if (staticAttributes.find((attr) => attr.name === attribute.name)) {
+          return {
+            name: `x-bind:${attribute.name}`,
+            value: `"${attribute.value}"`
+          };
+        }
+        return attribute;
+      });
+      attributes = attributes.concat(vAttributes);
+    }
+    let transformedAttributeMap = {};
+    let directives2 = attributes.map(toTransformedAttributes((newName, oldName) => transformedAttributeMap[newName] = oldName)).filter(outNonAlpineAttributes).map(toParsedDirectives(transformedAttributeMap, originalAttributeOverride)).sort(byPriority);
+    return directives2.map((directive2) => {
+      return getDirectiveHandler(el, directive2);
+    });
+  }
+  function attributesOnly(attributes) {
+    return Array.from(attributes).map(toTransformedAttributes()).filter((attr) => !outNonAlpineAttributes(attr));
+  }
+  var isDeferringHandlers = false;
+  var directiveHandlerStacks = new Map();
+  var currentHandlerStackKey = Symbol();
+  function deferHandlingDirectives(callback) {
+    isDeferringHandlers = true;
+    let key = Symbol();
+    currentHandlerStackKey = key;
+    directiveHandlerStacks.set(key, []);
+    let flushHandlers = () => {
+      while (directiveHandlerStacks.get(key).length)
+        directiveHandlerStacks.get(key).shift()();
+      directiveHandlerStacks.delete(key);
+    };
+    let stopDeferring = () => {
+      isDeferringHandlers = false;
+      flushHandlers();
+    };
+    callback(flushHandlers);
+    stopDeferring();
+  }
+  function getElementBoundUtilities(el) {
+    let cleanups = [];
+    let cleanup2 = (callback) => cleanups.push(callback);
+    let [effect3, cleanupEffect] = elementBoundEffect(el);
+    cleanups.push(cleanupEffect);
+    let utilities = {
+      Alpine: alpine_default,
+      effect: effect3,
+      cleanup: cleanup2,
+      evaluateLater: evaluateLater.bind(evaluateLater, el),
+      evaluate: evaluate.bind(evaluate, el)
+    };
+    let doCleanup = () => cleanups.forEach((i) => i());
+    return [utilities, doCleanup];
+  }
+  function getDirectiveHandler(el, directive2) {
+    let noop = () => {
+    };
+    let handler3 = directiveHandlers[directive2.type] || noop;
+    let [utilities, cleanup2] = getElementBoundUtilities(el);
+    onAttributeRemoved(el, directive2.original, cleanup2);
+    let fullHandler = () => {
+      if (el._x_ignore || el._x_ignoreSelf)
+        return;
+      handler3.inline && handler3.inline(el, directive2, utilities);
+      handler3 = handler3.bind(handler3, el, directive2, utilities);
+      isDeferringHandlers ? directiveHandlerStacks.get(currentHandlerStackKey).push(handler3) : handler3();
+    };
+    fullHandler.runCleanups = cleanup2;
+    return fullHandler;
+  }
+  var startingWith = (subject, replacement) => ({name, value}) => {
+    if (name.startsWith(subject))
+      name = name.replace(subject, replacement);
+    return {name, value};
+  };
+  var into = (i) => i;
+  function toTransformedAttributes(callback = () => {
+  }) {
+    return ({name, value}) => {
+      let {name: newName, value: newValue} = attributeTransformers.reduce((carry, transform) => {
+        return transform(carry);
+      }, {name, value});
+      if (newName !== name)
+        callback(newName, name);
+      return {name: newName, value: newValue};
+    };
+  }
+  var attributeTransformers = [];
+  function mapAttributes(callback) {
+    attributeTransformers.push(callback);
+  }
+  function outNonAlpineAttributes({name}) {
+    return alpineAttributeRegex().test(name);
+  }
+  var alpineAttributeRegex = () => new RegExp(`^${prefixAsString}([^:^.]+)\\b`);
+  function toParsedDirectives(transformedAttributeMap, originalAttributeOverride) {
+    return ({name, value}) => {
+      let typeMatch = name.match(alpineAttributeRegex());
+      let valueMatch = name.match(/:([a-zA-Z0-9\-:]+)/);
+      let modifiers = name.match(/\.[^.\]]+(?=[^\]]*$)/g) || [];
+      let original = originalAttributeOverride || transformedAttributeMap[name] || name;
+      return {
+        type: typeMatch ? typeMatch[1] : null,
+        value: valueMatch ? valueMatch[1] : null,
+        modifiers: modifiers.map((i) => i.replace(".", "")),
+        expression: value,
+        original
+      };
+    };
+  }
+  var DEFAULT = "DEFAULT";
+  var directiveOrder = [
+    "ignore",
+    "ref",
+    "data",
+    "id",
+    "bind",
+    "init",
+    "for",
+    "mask",
+    "model",
+    "modelable",
+    "transition",
+    "show",
+    "if",
+    DEFAULT,
+    "teleport"
+  ];
+  function byPriority(a, b) {
+    let typeA = directiveOrder.indexOf(a.type) === -1 ? DEFAULT : a.type;
+    let typeB = directiveOrder.indexOf(b.type) === -1 ? DEFAULT : b.type;
+    return directiveOrder.indexOf(typeA) - directiveOrder.indexOf(typeB);
+  }
+
+  // packages/alpinejs/src/utils/dispatch.js
+  function dispatch(el, name, detail = {}) {
+    el.dispatchEvent(new CustomEvent(name, {
+      detail,
+      bubbles: true,
+      composed: true,
+      cancelable: true
+    }));
+  }
+
+  // packages/alpinejs/src/nextTick.js
+  var tickStack = [];
+  var isHolding = false;
+  function nextTick(callback = () => {
+  }) {
+    queueMicrotask(() => {
+      isHolding || setTimeout(() => {
+        releaseNextTicks();
+      });
+    });
+    return new Promise((res) => {
+      tickStack.push(() => {
+        callback();
+        res();
+      });
+    });
+  }
+  function releaseNextTicks() {
+    isHolding = false;
+    while (tickStack.length)
+      tickStack.shift()();
+  }
+  function holdNextTicks() {
+    isHolding = true;
+  }
+
+  // packages/alpinejs/src/utils/walk.js
+  function walk(el, callback) {
+    if (typeof ShadowRoot === "function" && el instanceof ShadowRoot) {
+      Array.from(el.children).forEach((el2) => walk(el2, callback));
+      return;
+    }
+    let skip = false;
+    callback(el, () => skip = true);
+    if (skip)
+      return;
+    let node = el.firstElementChild;
+    while (node) {
+      walk(node, callback);
+      node = node.nextElementSibling;
+    }
+  }
+
+  // packages/alpinejs/src/utils/warn.js
+  function warn(message, ...args) {
+    console.warn(`Alpine Warning: ${message}`, ...args);
+  }
+
+  // packages/alpinejs/src/lifecycle.js
+  function start() {
+    if (!document.body)
+      warn("Unable to initialize. Trying to load Alpine before `<body>` is available. Did you forget to add `defer` in Alpine's `<script>` tag?");
+    dispatch(document, "alpine:init");
+    dispatch(document, "alpine:initializing");
+    startObservingMutations();
+    onElAdded((el) => initTree(el, walk));
+    onElRemoved((el) => destroyTree(el));
+    onAttributesAdded((el, attrs) => {
+      directives(el, attrs).forEach((handle) => handle());
+    });
+    let outNestedComponents = (el) => !closestRoot(el.parentElement, true);
+    Array.from(document.querySelectorAll(allSelectors())).filter(outNestedComponents).forEach((el) => {
+      initTree(el);
+    });
+    dispatch(document, "alpine:initialized");
+  }
+  var rootSelectorCallbacks = [];
+  var initSelectorCallbacks = [];
+  function rootSelectors() {
+    return rootSelectorCallbacks.map((fn) => fn());
+  }
+  function allSelectors() {
+    return rootSelectorCallbacks.concat(initSelectorCallbacks).map((fn) => fn());
+  }
+  function addRootSelector(selectorCallback) {
+    rootSelectorCallbacks.push(selectorCallback);
+  }
+  function addInitSelector(selectorCallback) {
+    initSelectorCallbacks.push(selectorCallback);
+  }
+  function closestRoot(el, includeInitSelectors = false) {
+    return findClosest(el, (element) => {
+      const selectors = includeInitSelectors ? allSelectors() : rootSelectors();
+      if (selectors.some((selector) => element.matches(selector)))
+        return true;
+    });
+  }
+  function findClosest(el, callback) {
+    if (!el)
+      return;
+    if (callback(el))
+      return el;
+    if (el._x_teleportBack)
+      el = el._x_teleportBack;
+    if (!el.parentElement)
+      return;
+    return findClosest(el.parentElement, callback);
+  }
+  function isRoot(el) {
+    return rootSelectors().some((selector) => el.matches(selector));
+  }
+  function initTree(el, walker = walk) {
+    deferHandlingDirectives(() => {
+      walker(el, (el2, skip) => {
+        directives(el2, el2.attributes).forEach((handle) => handle());
+        el2._x_ignore && skip();
+      });
+    });
+  }
+  function destroyTree(root) {
+    walk(root, (el) => cleanupAttributes(el));
+  }
+
+  // packages/alpinejs/src/utils/classes.js
+  function setClasses(el, value) {
+    if (Array.isArray(value)) {
+      return setClassesFromString(el, value.join(" "));
+    } else if (typeof value === "object" && value !== null) {
+      return setClassesFromObject(el, value);
+    } else if (typeof value === "function") {
+      return setClasses(el, value());
+    }
+    return setClassesFromString(el, value);
+  }
+  function setClassesFromString(el, classString) {
+    let missingClasses = (classString2) => classString2.split(" ").filter((i) => !el.classList.contains(i)).filter(Boolean);
+    let addClassesAndReturnUndo = (classes) => {
+      el.classList.add(...classes);
+      return () => {
+        el.classList.remove(...classes);
+      };
+    };
+    classString = classString === true ? classString = "" : classString || "";
+    return addClassesAndReturnUndo(missingClasses(classString));
+  }
+  function setClassesFromObject(el, classObject) {
+    let split = (classString) => classString.split(" ").filter(Boolean);
+    let forAdd = Object.entries(classObject).flatMap(([classString, bool]) => bool ? split(classString) : false).filter(Boolean);
+    let forRemove = Object.entries(classObject).flatMap(([classString, bool]) => !bool ? split(classString) : false).filter(Boolean);
+    let added = [];
+    let removed = [];
+    forRemove.forEach((i) => {
+      if (el.classList.contains(i)) {
+        el.classList.remove(i);
+        removed.push(i);
+      }
+    });
+    forAdd.forEach((i) => {
+      if (!el.classList.contains(i)) {
+        el.classList.add(i);
+        added.push(i);
+      }
+    });
+    return () => {
+      removed.forEach((i) => el.classList.add(i));
+      added.forEach((i) => el.classList.remove(i));
+    };
+  }
+
+  // packages/alpinejs/src/utils/styles.js
+  function setStyles(el, value) {
+    if (typeof value === "object" && value !== null) {
+      return setStylesFromObject(el, value);
+    }
+    return setStylesFromString(el, value);
+  }
+  function setStylesFromObject(el, value) {
+    let previousStyles = {};
+    Object.entries(value).forEach(([key, value2]) => {
+      previousStyles[key] = el.style[key];
+      if (!key.startsWith("--")) {
+        key = kebabCase(key);
+      }
+      el.style.setProperty(key, value2);
+    });
+    setTimeout(() => {
+      if (el.style.length === 0) {
+        el.removeAttribute("style");
+      }
+    });
+    return () => {
+      setStyles(el, previousStyles);
+    };
+  }
+  function setStylesFromString(el, value) {
+    let cache = el.getAttribute("style", value);
+    el.setAttribute("style", value);
+    return () => {
+      el.setAttribute("style", cache || "");
+    };
+  }
+  function kebabCase(subject) {
+    return subject.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+  }
+
+  // packages/alpinejs/src/utils/once.js
+  function once(callback, fallback = () => {
+  }) {
+    let called = false;
+    return function() {
+      if (!called) {
+        called = true;
+        callback.apply(this, arguments);
+      } else {
+        fallback.apply(this, arguments);
+      }
+    };
+  }
+
+  // packages/alpinejs/src/directives/x-transition.js
+  directive("transition", (el, {value, modifiers, expression}, {evaluate: evaluate2}) => {
+    if (typeof expression === "function")
+      expression = evaluate2(expression);
+    if (!expression) {
+      registerTransitionsFromHelper(el, modifiers, value);
+    } else {
+      registerTransitionsFromClassString(el, expression, value);
+    }
+  });
+  function registerTransitionsFromClassString(el, classString, stage) {
+    registerTransitionObject(el, setClasses, "");
+    let directiveStorageMap = {
+      enter: (classes) => {
+        el._x_transition.enter.during = classes;
+      },
+      "enter-start": (classes) => {
+        el._x_transition.enter.start = classes;
+      },
+      "enter-end": (classes) => {
+        el._x_transition.enter.end = classes;
+      },
+      leave: (classes) => {
+        el._x_transition.leave.during = classes;
+      },
+      "leave-start": (classes) => {
+        el._x_transition.leave.start = classes;
+      },
+      "leave-end": (classes) => {
+        el._x_transition.leave.end = classes;
+      }
+    };
+    directiveStorageMap[stage](classString);
+  }
+  function registerTransitionsFromHelper(el, modifiers, stage) {
+    registerTransitionObject(el, setStyles);
+    let doesntSpecify = !modifiers.includes("in") && !modifiers.includes("out") && !stage;
+    let transitioningIn = doesntSpecify || modifiers.includes("in") || ["enter"].includes(stage);
+    let transitioningOut = doesntSpecify || modifiers.includes("out") || ["leave"].includes(stage);
+    if (modifiers.includes("in") && !doesntSpecify) {
+      modifiers = modifiers.filter((i, index) => index < modifiers.indexOf("out"));
+    }
+    if (modifiers.includes("out") && !doesntSpecify) {
+      modifiers = modifiers.filter((i, index) => index > modifiers.indexOf("out"));
+    }
+    let wantsAll = !modifiers.includes("opacity") && !modifiers.includes("scale");
+    let wantsOpacity = wantsAll || modifiers.includes("opacity");
+    let wantsScale = wantsAll || modifiers.includes("scale");
+    let opacityValue = wantsOpacity ? 0 : 1;
+    let scaleValue = wantsScale ? modifierValue(modifiers, "scale", 95) / 100 : 1;
+    let delay = modifierValue(modifiers, "delay", 0);
+    let origin = modifierValue(modifiers, "origin", "center");
+    let property = "opacity, transform";
+    let durationIn = modifierValue(modifiers, "duration", 150) / 1e3;
+    let durationOut = modifierValue(modifiers, "duration", 75) / 1e3;
+    let easing = `cubic-bezier(0.4, 0.0, 0.2, 1)`;
+    if (transitioningIn) {
+      el._x_transition.enter.during = {
+        transformOrigin: origin,
+        transitionDelay: delay,
+        transitionProperty: property,
+        transitionDuration: `${durationIn}s`,
+        transitionTimingFunction: easing
+      };
+      el._x_transition.enter.start = {
+        opacity: opacityValue,
+        transform: `scale(${scaleValue})`
+      };
+      el._x_transition.enter.end = {
+        opacity: 1,
+        transform: `scale(1)`
+      };
+    }
+    if (transitioningOut) {
+      el._x_transition.leave.during = {
+        transformOrigin: origin,
+        transitionDelay: delay,
+        transitionProperty: property,
+        transitionDuration: `${durationOut}s`,
+        transitionTimingFunction: easing
+      };
+      el._x_transition.leave.start = {
+        opacity: 1,
+        transform: `scale(1)`
+      };
+      el._x_transition.leave.end = {
+        opacity: opacityValue,
+        transform: `scale(${scaleValue})`
+      };
+    }
+  }
+  function registerTransitionObject(el, setFunction, defaultValue = {}) {
+    if (!el._x_transition)
+      el._x_transition = {
+        enter: {during: defaultValue, start: defaultValue, end: defaultValue},
+        leave: {during: defaultValue, start: defaultValue, end: defaultValue},
+        in(before = () => {
+        }, after = () => {
+        }) {
+          transition(el, setFunction, {
+            during: this.enter.during,
+            start: this.enter.start,
+            end: this.enter.end
+          }, before, after);
+        },
+        out(before = () => {
+        }, after = () => {
+        }) {
+          transition(el, setFunction, {
+            during: this.leave.during,
+            start: this.leave.start,
+            end: this.leave.end
+          }, before, after);
+        }
+      };
+  }
+  window.Element.prototype._x_toggleAndCascadeWithTransitions = function(el, value, show, hide) {
+    const nextTick2 = document.visibilityState === "visible" ? requestAnimationFrame : setTimeout;
+    let clickAwayCompatibleShow = () => nextTick2(show);
+    if (value) {
+      if (el._x_transition && (el._x_transition.enter || el._x_transition.leave)) {
+        el._x_transition.enter && (Object.entries(el._x_transition.enter.during).length || Object.entries(el._x_transition.enter.start).length || Object.entries(el._x_transition.enter.end).length) ? el._x_transition.in(show) : clickAwayCompatibleShow();
+      } else {
+        el._x_transition ? el._x_transition.in(show) : clickAwayCompatibleShow();
+      }
+      return;
+    }
+    el._x_hidePromise = el._x_transition ? new Promise((resolve, reject) => {
+      el._x_transition.out(() => {
+      }, () => resolve(hide));
+      el._x_transitioning.beforeCancel(() => reject({isFromCancelledTransition: true}));
+    }) : Promise.resolve(hide);
+    queueMicrotask(() => {
+      let closest = closestHide(el);
+      if (closest) {
+        if (!closest._x_hideChildren)
+          closest._x_hideChildren = [];
+        closest._x_hideChildren.push(el);
+      } else {
+        nextTick2(() => {
+          let hideAfterChildren = (el2) => {
+            let carry = Promise.all([
+              el2._x_hidePromise,
+              ...(el2._x_hideChildren || []).map(hideAfterChildren)
+            ]).then(([i]) => i());
+            delete el2._x_hidePromise;
+            delete el2._x_hideChildren;
+            return carry;
+          };
+          hideAfterChildren(el).catch((e) => {
+            if (!e.isFromCancelledTransition)
+              throw e;
+          });
+        });
+      }
+    });
+  };
+  function closestHide(el) {
+    let parent = el.parentNode;
+    if (!parent)
+      return;
+    return parent._x_hidePromise ? parent : closestHide(parent);
+  }
+  function transition(el, setFunction, {during, start: start2, end} = {}, before = () => {
+  }, after = () => {
+  }) {
+    if (el._x_transitioning)
+      el._x_transitioning.cancel();
+    if (Object.keys(during).length === 0 && Object.keys(start2).length === 0 && Object.keys(end).length === 0) {
+      before();
+      after();
+      return;
+    }
+    let undoStart, undoDuring, undoEnd;
+    performTransition(el, {
+      start() {
+        undoStart = setFunction(el, start2);
+      },
+      during() {
+        undoDuring = setFunction(el, during);
+      },
+      before,
+      end() {
+        undoStart();
+        undoEnd = setFunction(el, end);
+      },
+      after,
+      cleanup() {
+        undoDuring();
+        undoEnd();
+      }
+    });
+  }
+  function performTransition(el, stages) {
+    let interrupted, reachedBefore, reachedEnd;
+    let finish = once(() => {
+      mutateDom(() => {
+        interrupted = true;
+        if (!reachedBefore)
+          stages.before();
+        if (!reachedEnd) {
+          stages.end();
+          releaseNextTicks();
+        }
+        stages.after();
+        if (el.isConnected)
+          stages.cleanup();
+        delete el._x_transitioning;
+      });
+    });
+    el._x_transitioning = {
+      beforeCancels: [],
+      beforeCancel(callback) {
+        this.beforeCancels.push(callback);
+      },
+      cancel: once(function() {
+        while (this.beforeCancels.length) {
+          this.beforeCancels.shift()();
+        }
+        finish();
+      }),
+      finish
+    };
+    mutateDom(() => {
+      stages.start();
+      stages.during();
+    });
+    holdNextTicks();
+    requestAnimationFrame(() => {
+      if (interrupted)
+        return;
+      let duration = Number(getComputedStyle(el).transitionDuration.replace(/,.*/, "").replace("s", "")) * 1e3;
+      let delay = Number(getComputedStyle(el).transitionDelay.replace(/,.*/, "").replace("s", "")) * 1e3;
+      if (duration === 0)
+        duration = Number(getComputedStyle(el).animationDuration.replace("s", "")) * 1e3;
+      mutateDom(() => {
+        stages.before();
+      });
+      reachedBefore = true;
+      requestAnimationFrame(() => {
+        if (interrupted)
+          return;
+        mutateDom(() => {
+          stages.end();
+        });
+        releaseNextTicks();
+        setTimeout(el._x_transitioning.finish, duration + delay);
+        reachedEnd = true;
+      });
+    });
+  }
+  function modifierValue(modifiers, key, fallback) {
+    if (modifiers.indexOf(key) === -1)
+      return fallback;
+    const rawValue = modifiers[modifiers.indexOf(key) + 1];
+    if (!rawValue)
+      return fallback;
+    if (key === "scale") {
+      if (isNaN(rawValue))
+        return fallback;
+    }
+    if (key === "duration") {
+      let match = rawValue.match(/([0-9]+)ms/);
+      if (match)
+        return match[1];
+    }
+    if (key === "origin") {
+      if (["top", "right", "left", "center", "bottom"].includes(modifiers[modifiers.indexOf(key) + 2])) {
+        return [rawValue, modifiers[modifiers.indexOf(key) + 2]].join(" ");
+      }
+    }
+    return rawValue;
+  }
+
+  // packages/alpinejs/src/clone.js
+  var isCloning = false;
+  function skipDuringClone(callback, fallback = () => {
+  }) {
+    return (...args) => isCloning ? fallback(...args) : callback(...args);
+  }
+  function clone(oldEl, newEl) {
+    if (!newEl._x_dataStack)
+      newEl._x_dataStack = oldEl._x_dataStack;
+    isCloning = true;
+    dontRegisterReactiveSideEffects(() => {
+      cloneTree(newEl);
+    });
+    isCloning = false;
+  }
+  function cloneTree(el) {
+    let hasRunThroughFirstEl = false;
+    let shallowWalker = (el2, callback) => {
+      walk(el2, (el3, skip) => {
+        if (hasRunThroughFirstEl && isRoot(el3))
+          return skip();
+        hasRunThroughFirstEl = true;
+        callback(el3, skip);
+      });
+    };
+    initTree(el, shallowWalker);
+  }
+  function dontRegisterReactiveSideEffects(callback) {
+    let cache = effect;
+    overrideEffect((callback2, el) => {
+      let storedEffect = cache(callback2);
+      release(storedEffect);
+      return () => {
+      };
+    });
+    callback();
+    overrideEffect(cache);
+  }
+
+  // packages/alpinejs/src/utils/bind.js
+  function bind(el, name, value, modifiers = []) {
+    if (!el._x_bindings)
+      el._x_bindings = reactive({});
+    el._x_bindings[name] = value;
+    name = modifiers.includes("camel") ? camelCase(name) : name;
+    switch (name) {
+      case "value":
+        bindInputValue(el, value);
+        break;
+      case "style":
+        bindStyles(el, value);
+        break;
+      case "class":
+        bindClasses(el, value);
+        break;
+      default:
+        bindAttribute(el, name, value);
+        break;
+    }
+  }
+  function bindInputValue(el, value) {
+    if (el.type === "radio") {
+      if (el.attributes.value === void 0) {
+        el.value = value;
+      }
+      if (window.fromModel) {
+        el.checked = checkedAttrLooseCompare(el.value, value);
+      }
+    } else if (el.type === "checkbox") {
+      if (Number.isInteger(value)) {
+        el.value = value;
+      } else if (!Number.isInteger(value) && !Array.isArray(value) && typeof value !== "boolean" && ![null, void 0].includes(value)) {
+        el.value = String(value);
+      } else {
+        if (Array.isArray(value)) {
+          el.checked = value.some((val) => checkedAttrLooseCompare(val, el.value));
+        } else {
+          el.checked = !!value;
+        }
+      }
+    } else if (el.tagName === "SELECT") {
+      updateSelect(el, value);
+    } else {
+      if (el.value === value)
+        return;
+      el.value = value;
+    }
+  }
+  function bindClasses(el, value) {
+    if (el._x_undoAddedClasses)
+      el._x_undoAddedClasses();
+    el._x_undoAddedClasses = setClasses(el, value);
+  }
+  function bindStyles(el, value) {
+    if (el._x_undoAddedStyles)
+      el._x_undoAddedStyles();
+    el._x_undoAddedStyles = setStyles(el, value);
+  }
+  function bindAttribute(el, name, value) {
+    if ([null, void 0, false].includes(value) && attributeShouldntBePreservedIfFalsy(name)) {
+      el.removeAttribute(name);
+    } else {
+      if (isBooleanAttr(name))
+        value = name;
+      setIfChanged(el, name, value);
+    }
+  }
+  function setIfChanged(el, attrName, value) {
+    if (el.getAttribute(attrName) != value) {
+      el.setAttribute(attrName, value);
+    }
+  }
+  function updateSelect(el, value) {
+    const arrayWrappedValue = [].concat(value).map((value2) => {
+      return value2 + "";
+    });
+    Array.from(el.options).forEach((option) => {
+      option.selected = arrayWrappedValue.includes(option.value);
+    });
+  }
+  function camelCase(subject) {
+    return subject.toLowerCase().replace(/-(\w)/g, (match, char) => char.toUpperCase());
+  }
+  function checkedAttrLooseCompare(valueA, valueB) {
+    return valueA == valueB;
+  }
+  function isBooleanAttr(attrName) {
+    const booleanAttributes = [
+      "disabled",
+      "checked",
+      "required",
+      "readonly",
+      "hidden",
+      "open",
+      "selected",
+      "autofocus",
+      "itemscope",
+      "multiple",
+      "novalidate",
+      "allowfullscreen",
+      "allowpaymentrequest",
+      "formnovalidate",
+      "autoplay",
+      "controls",
+      "loop",
+      "muted",
+      "playsinline",
+      "default",
+      "ismap",
+      "reversed",
+      "async",
+      "defer",
+      "nomodule"
+    ];
+    return booleanAttributes.includes(attrName);
+  }
+  function attributeShouldntBePreservedIfFalsy(name) {
+    return !["aria-pressed", "aria-checked", "aria-expanded", "aria-selected"].includes(name);
+  }
+  function getBinding(el, name, fallback) {
+    if (el._x_bindings && el._x_bindings[name] !== void 0)
+      return el._x_bindings[name];
+    let attr = el.getAttribute(name);
+    if (attr === null)
+      return typeof fallback === "function" ? fallback() : fallback;
+    if (isBooleanAttr(name)) {
+      return !![name, "true"].includes(attr);
+    }
+    if (attr === "")
+      return true;
+    return attr;
+  }
+
+  // packages/alpinejs/src/utils/debounce.js
+  function debounce(func, wait) {
+    var timeout;
+    return function() {
+      var context = this, args = arguments;
+      var later = function() {
+        timeout = null;
+        func.apply(context, args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  // packages/alpinejs/src/utils/throttle.js
+  function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+      let context = this, args = arguments;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    };
+  }
+
+  // packages/alpinejs/src/plugin.js
+  function plugin(callback) {
+    callback(alpine_default);
+  }
+
+  // packages/alpinejs/src/store.js
+  var stores = {};
+  var isReactive = false;
+  function store(name, value) {
+    if (!isReactive) {
+      stores = reactive(stores);
+      isReactive = true;
+    }
+    if (value === void 0) {
+      return stores[name];
+    }
+    stores[name] = value;
+    if (typeof value === "object" && value !== null && value.hasOwnProperty("init") && typeof value.init === "function") {
+      stores[name].init();
+    }
+    initInterceptors(stores[name]);
+  }
+  function getStores() {
+    return stores;
+  }
+
+  // packages/alpinejs/src/binds.js
+  var binds = {};
+  function bind2(name, bindings) {
+    let getBindings = typeof bindings !== "function" ? () => bindings : bindings;
+    if (name instanceof Element) {
+      applyBindingsObject(name, getBindings());
+    } else {
+      binds[name] = getBindings;
+    }
+  }
+  function injectBindingProviders(obj) {
+    Object.entries(binds).forEach(([name, callback]) => {
+      Object.defineProperty(obj, name, {
+        get() {
+          return (...args) => {
+            return callback(...args);
+          };
+        }
+      });
+    });
+    return obj;
+  }
+  function applyBindingsObject(el, obj, original) {
+    let cleanupRunners = [];
+    while (cleanupRunners.length)
+      cleanupRunners.pop()();
+    let attributes = Object.entries(obj).map(([name, value]) => ({name, value}));
+    let staticAttributes = attributesOnly(attributes);
+    attributes = attributes.map((attribute) => {
+      if (staticAttributes.find((attr) => attr.name === attribute.name)) {
+        return {
+          name: `x-bind:${attribute.name}`,
+          value: `"${attribute.value}"`
+        };
+      }
+      return attribute;
+    });
+    directives(el, attributes, original).map((handle) => {
+      cleanupRunners.push(handle.runCleanups);
+      handle();
+    });
+  }
+
+  // packages/alpinejs/src/datas.js
+  var datas = {};
+  function data(name, callback) {
+    datas[name] = callback;
+  }
+  function injectDataProviders(obj, context) {
+    Object.entries(datas).forEach(([name, callback]) => {
+      Object.defineProperty(obj, name, {
+        get() {
+          return (...args) => {
+            return callback.bind(context)(...args);
+          };
+        },
+        enumerable: false
+      });
+    });
+    return obj;
+  }
+
+  // packages/alpinejs/src/alpine.js
+  var Alpine = {
+    get reactive() {
+      return reactive;
+    },
+    get release() {
+      return release;
+    },
+    get effect() {
+      return effect;
+    },
+    get raw() {
+      return raw;
+    },
+    version: "3.10.3",
+    flushAndStopDeferringMutations,
+    dontAutoEvaluateFunctions,
+    disableEffectScheduling,
+    setReactivityEngine,
+    closestDataStack,
+    skipDuringClone,
+    addRootSelector,
+    addInitSelector,
+    addScopeToNode,
+    deferMutations,
+    mapAttributes,
+    evaluateLater,
+    setEvaluator,
+    mergeProxies,
+    findClosest,
+    closestRoot,
+    interceptor,
+    transition,
+    setStyles,
+    mutateDom,
+    directive,
+    throttle,
+    debounce,
+    evaluate,
+    initTree,
+    nextTick,
+    prefixed: prefix,
+    prefix: setPrefix,
+    plugin,
+    magic,
+    store,
+    start,
+    clone,
+    bound: getBinding,
+    $data: scope,
+    data,
+    bind: bind2
+  };
+  var alpine_default = Alpine;
+
+  // node_modules/@vue/shared/dist/shared.esm-bundler.js
+  function makeMap(str, expectsLowerCase) {
+    const map = Object.create(null);
+    const list = str.split(",");
+    for (let i = 0; i < list.length; i++) {
+      map[list[i]] = true;
+    }
+    return expectsLowerCase ? (val) => !!map[val.toLowerCase()] : (val) => !!map[val];
+  }
+  var EMPTY_OBJ = Object.freeze({}) ;
+  var extend = Object.assign;
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
+  var hasOwn = (val, key) => hasOwnProperty.call(val, key);
+  var isArray = Array.isArray;
+  var isMap = (val) => toTypeString(val) === "[object Map]";
+  var isString = (val) => typeof val === "string";
+  var isSymbol = (val) => typeof val === "symbol";
+  var isObject = (val) => val !== null && typeof val === "object";
+  var objectToString = Object.prototype.toString;
+  var toTypeString = (value) => objectToString.call(value);
+  var toRawType = (value) => {
+    return toTypeString(value).slice(8, -1);
+  };
+  var isIntegerKey = (key) => isString(key) && key !== "NaN" && key[0] !== "-" && "" + parseInt(key, 10) === key;
+  var cacheStringFunction = (fn) => {
+    const cache = Object.create(null);
+    return (str) => {
+      const hit = cache[str];
+      return hit || (cache[str] = fn(str));
+    };
+  };
+  var capitalize = cacheStringFunction((str) => str.charAt(0).toUpperCase() + str.slice(1));
+  var hasChanged = (value, oldValue) => value !== oldValue && (value === value || oldValue === oldValue);
+
+  // node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js
+  var targetMap = new WeakMap();
+  var effectStack = [];
+  var activeEffect;
+  var ITERATE_KEY = Symbol("iterate" );
+  var MAP_KEY_ITERATE_KEY = Symbol("Map key iterate" );
+  function isEffect(fn) {
+    return fn && fn._isEffect === true;
+  }
+  function effect2(fn, options = EMPTY_OBJ) {
+    if (isEffect(fn)) {
+      fn = fn.raw;
+    }
+    const effect3 = createReactiveEffect(fn, options);
+    if (!options.lazy) {
+      effect3();
+    }
+    return effect3;
+  }
+  function stop(effect3) {
+    if (effect3.active) {
+      cleanup(effect3);
+      if (effect3.options.onStop) {
+        effect3.options.onStop();
+      }
+      effect3.active = false;
+    }
+  }
+  var uid = 0;
+  function createReactiveEffect(fn, options) {
+    const effect3 = function reactiveEffect() {
+      if (!effect3.active) {
+        return fn();
+      }
+      if (!effectStack.includes(effect3)) {
+        cleanup(effect3);
+        try {
+          enableTracking();
+          effectStack.push(effect3);
+          activeEffect = effect3;
+          return fn();
+        } finally {
+          effectStack.pop();
+          resetTracking();
+          activeEffect = effectStack[effectStack.length - 1];
+        }
+      }
+    };
+    effect3.id = uid++;
+    effect3.allowRecurse = !!options.allowRecurse;
+    effect3._isEffect = true;
+    effect3.active = true;
+    effect3.raw = fn;
+    effect3.deps = [];
+    effect3.options = options;
+    return effect3;
+  }
+  function cleanup(effect3) {
+    const {deps} = effect3;
+    if (deps.length) {
+      for (let i = 0; i < deps.length; i++) {
+        deps[i].delete(effect3);
+      }
+      deps.length = 0;
+    }
+  }
+  var shouldTrack = true;
+  var trackStack = [];
+  function pauseTracking() {
+    trackStack.push(shouldTrack);
+    shouldTrack = false;
+  }
+  function enableTracking() {
+    trackStack.push(shouldTrack);
+    shouldTrack = true;
+  }
+  function resetTracking() {
+    const last = trackStack.pop();
+    shouldTrack = last === void 0 ? true : last;
+  }
+  function track(target, type, key) {
+    if (!shouldTrack || activeEffect === void 0) {
+      return;
+    }
+    let depsMap = targetMap.get(target);
+    if (!depsMap) {
+      targetMap.set(target, depsMap = new Map());
+    }
+    let dep = depsMap.get(key);
+    if (!dep) {
+      depsMap.set(key, dep = new Set());
+    }
+    if (!dep.has(activeEffect)) {
+      dep.add(activeEffect);
+      activeEffect.deps.push(dep);
+      if (activeEffect.options.onTrack) {
+        activeEffect.options.onTrack({
+          effect: activeEffect,
+          target,
+          type,
+          key
+        });
+      }
+    }
+  }
+  function trigger(target, type, key, newValue, oldValue, oldTarget) {
+    const depsMap = targetMap.get(target);
+    if (!depsMap) {
+      return;
+    }
+    const effects = new Set();
+    const add2 = (effectsToAdd) => {
+      if (effectsToAdd) {
+        effectsToAdd.forEach((effect3) => {
+          if (effect3 !== activeEffect || effect3.allowRecurse) {
+            effects.add(effect3);
+          }
+        });
+      }
+    };
+    if (type === "clear") {
+      depsMap.forEach(add2);
+    } else if (key === "length" && isArray(target)) {
+      depsMap.forEach((dep, key2) => {
+        if (key2 === "length" || key2 >= newValue) {
+          add2(dep);
+        }
+      });
+    } else {
+      if (key !== void 0) {
+        add2(depsMap.get(key));
+      }
+      switch (type) {
+        case "add":
+          if (!isArray(target)) {
+            add2(depsMap.get(ITERATE_KEY));
+            if (isMap(target)) {
+              add2(depsMap.get(MAP_KEY_ITERATE_KEY));
+            }
+          } else if (isIntegerKey(key)) {
+            add2(depsMap.get("length"));
+          }
+          break;
+        case "delete":
+          if (!isArray(target)) {
+            add2(depsMap.get(ITERATE_KEY));
+            if (isMap(target)) {
+              add2(depsMap.get(MAP_KEY_ITERATE_KEY));
+            }
+          }
+          break;
+        case "set":
+          if (isMap(target)) {
+            add2(depsMap.get(ITERATE_KEY));
+          }
+          break;
+      }
+    }
+    const run = (effect3) => {
+      if (effect3.options.onTrigger) {
+        effect3.options.onTrigger({
+          effect: effect3,
+          target,
+          key,
+          type,
+          newValue,
+          oldValue,
+          oldTarget
+        });
+      }
+      if (effect3.options.scheduler) {
+        effect3.options.scheduler(effect3);
+      } else {
+        effect3();
+      }
+    };
+    effects.forEach(run);
+  }
+  var isNonTrackableKeys = /* @__PURE__ */ makeMap(`__proto__,__v_isRef,__isVue`);
+  var builtInSymbols = new Set(Object.getOwnPropertyNames(Symbol).map((key) => Symbol[key]).filter(isSymbol));
+  var get2 = /* @__PURE__ */ createGetter();
+  var shallowGet = /* @__PURE__ */ createGetter(false, true);
+  var readonlyGet = /* @__PURE__ */ createGetter(true);
+  var shallowReadonlyGet = /* @__PURE__ */ createGetter(true, true);
+  var arrayInstrumentations = {};
+  ["includes", "indexOf", "lastIndexOf"].forEach((key) => {
+    const method = Array.prototype[key];
+    arrayInstrumentations[key] = function(...args) {
+      const arr = toRaw(this);
+      for (let i = 0, l = this.length; i < l; i++) {
+        track(arr, "get", i + "");
+      }
+      const res = method.apply(arr, args);
+      if (res === -1 || res === false) {
+        return method.apply(arr, args.map(toRaw));
+      } else {
+        return res;
+      }
+    };
+  });
+  ["push", "pop", "shift", "unshift", "splice"].forEach((key) => {
+    const method = Array.prototype[key];
+    arrayInstrumentations[key] = function(...args) {
+      pauseTracking();
+      const res = method.apply(this, args);
+      resetTracking();
+      return res;
+    };
+  });
+  function createGetter(isReadonly = false, shallow = false) {
+    return function get3(target, key, receiver) {
+      if (key === "__v_isReactive") {
+        return !isReadonly;
+      } else if (key === "__v_isReadonly") {
+        return isReadonly;
+      } else if (key === "__v_raw" && receiver === (isReadonly ? shallow ? shallowReadonlyMap : readonlyMap : shallow ? shallowReactiveMap : reactiveMap).get(target)) {
+        return target;
+      }
+      const targetIsArray = isArray(target);
+      if (!isReadonly && targetIsArray && hasOwn(arrayInstrumentations, key)) {
+        return Reflect.get(arrayInstrumentations, key, receiver);
+      }
+      const res = Reflect.get(target, key, receiver);
+      if (isSymbol(key) ? builtInSymbols.has(key) : isNonTrackableKeys(key)) {
+        return res;
+      }
+      if (!isReadonly) {
+        track(target, "get", key);
+      }
+      if (shallow) {
+        return res;
+      }
+      if (isRef(res)) {
+        const shouldUnwrap = !targetIsArray || !isIntegerKey(key);
+        return shouldUnwrap ? res.value : res;
+      }
+      if (isObject(res)) {
+        return isReadonly ? readonly(res) : reactive2(res);
+      }
+      return res;
+    };
+  }
+  var set2 = /* @__PURE__ */ createSetter();
+  var shallowSet = /* @__PURE__ */ createSetter(true);
+  function createSetter(shallow = false) {
+    return function set3(target, key, value, receiver) {
+      let oldValue = target[key];
+      if (!shallow) {
+        value = toRaw(value);
+        oldValue = toRaw(oldValue);
+        if (!isArray(target) && isRef(oldValue) && !isRef(value)) {
+          oldValue.value = value;
+          return true;
+        }
+      }
+      const hadKey = isArray(target) && isIntegerKey(key) ? Number(key) < target.length : hasOwn(target, key);
+      const result = Reflect.set(target, key, value, receiver);
+      if (target === toRaw(receiver)) {
+        if (!hadKey) {
+          trigger(target, "add", key, value);
+        } else if (hasChanged(value, oldValue)) {
+          trigger(target, "set", key, value, oldValue);
+        }
+      }
+      return result;
+    };
+  }
+  function deleteProperty(target, key) {
+    const hadKey = hasOwn(target, key);
+    const oldValue = target[key];
+    const result = Reflect.deleteProperty(target, key);
+    if (result && hadKey) {
+      trigger(target, "delete", key, void 0, oldValue);
+    }
+    return result;
+  }
+  function has(target, key) {
+    const result = Reflect.has(target, key);
+    if (!isSymbol(key) || !builtInSymbols.has(key)) {
+      track(target, "has", key);
+    }
+    return result;
+  }
+  function ownKeys(target) {
+    track(target, "iterate", isArray(target) ? "length" : ITERATE_KEY);
+    return Reflect.ownKeys(target);
+  }
+  var mutableHandlers = {
+    get: get2,
+    set: set2,
+    deleteProperty,
+    has,
+    ownKeys
+  };
+  var readonlyHandlers = {
+    get: readonlyGet,
+    set(target, key) {
+      {
+        console.warn(`Set operation on key "${String(key)}" failed: target is readonly.`, target);
+      }
+      return true;
+    },
+    deleteProperty(target, key) {
+      {
+        console.warn(`Delete operation on key "${String(key)}" failed: target is readonly.`, target);
+      }
+      return true;
+    }
+  };
+  extend({}, mutableHandlers, {
+    get: shallowGet,
+    set: shallowSet
+  });
+  extend({}, readonlyHandlers, {
+    get: shallowReadonlyGet
+  });
+  var toReactive = (value) => isObject(value) ? reactive2(value) : value;
+  var toReadonly = (value) => isObject(value) ? readonly(value) : value;
+  var toShallow = (value) => value;
+  var getProto = (v) => Reflect.getPrototypeOf(v);
+  function get$1(target, key, isReadonly = false, isShallow = false) {
+    target = target["__v_raw"];
+    const rawTarget = toRaw(target);
+    const rawKey = toRaw(key);
+    if (key !== rawKey) {
+      !isReadonly && track(rawTarget, "get", key);
+    }
+    !isReadonly && track(rawTarget, "get", rawKey);
+    const {has: has2} = getProto(rawTarget);
+    const wrap = isShallow ? toShallow : isReadonly ? toReadonly : toReactive;
+    if (has2.call(rawTarget, key)) {
+      return wrap(target.get(key));
+    } else if (has2.call(rawTarget, rawKey)) {
+      return wrap(target.get(rawKey));
+    } else if (target !== rawTarget) {
+      target.get(key);
+    }
+  }
+  function has$1(key, isReadonly = false) {
+    const target = this["__v_raw"];
+    const rawTarget = toRaw(target);
+    const rawKey = toRaw(key);
+    if (key !== rawKey) {
+      !isReadonly && track(rawTarget, "has", key);
+    }
+    !isReadonly && track(rawTarget, "has", rawKey);
+    return key === rawKey ? target.has(key) : target.has(key) || target.has(rawKey);
+  }
+  function size(target, isReadonly = false) {
+    target = target["__v_raw"];
+    !isReadonly && track(toRaw(target), "iterate", ITERATE_KEY);
+    return Reflect.get(target, "size", target);
+  }
+  function add(value) {
+    value = toRaw(value);
+    const target = toRaw(this);
+    const proto = getProto(target);
+    const hadKey = proto.has.call(target, value);
+    if (!hadKey) {
+      target.add(value);
+      trigger(target, "add", value, value);
+    }
+    return this;
+  }
+  function set$1(key, value) {
+    value = toRaw(value);
+    const target = toRaw(this);
+    const {has: has2, get: get3} = getProto(target);
+    let hadKey = has2.call(target, key);
+    if (!hadKey) {
+      key = toRaw(key);
+      hadKey = has2.call(target, key);
+    } else {
+      checkIdentityKeys(target, has2, key);
+    }
+    const oldValue = get3.call(target, key);
+    target.set(key, value);
+    if (!hadKey) {
+      trigger(target, "add", key, value);
+    } else if (hasChanged(value, oldValue)) {
+      trigger(target, "set", key, value, oldValue);
+    }
+    return this;
+  }
+  function deleteEntry(key) {
+    const target = toRaw(this);
+    const {has: has2, get: get3} = getProto(target);
+    let hadKey = has2.call(target, key);
+    if (!hadKey) {
+      key = toRaw(key);
+      hadKey = has2.call(target, key);
+    } else {
+      checkIdentityKeys(target, has2, key);
+    }
+    const oldValue = get3 ? get3.call(target, key) : void 0;
+    const result = target.delete(key);
+    if (hadKey) {
+      trigger(target, "delete", key, void 0, oldValue);
+    }
+    return result;
+  }
+  function clear() {
+    const target = toRaw(this);
+    const hadItems = target.size !== 0;
+    const oldTarget = isMap(target) ? new Map(target) : new Set(target) ;
+    const result = target.clear();
+    if (hadItems) {
+      trigger(target, "clear", void 0, void 0, oldTarget);
+    }
+    return result;
+  }
+  function createForEach(isReadonly, isShallow) {
+    return function forEach(callback, thisArg) {
+      const observed = this;
+      const target = observed["__v_raw"];
+      const rawTarget = toRaw(target);
+      const wrap = isShallow ? toShallow : isReadonly ? toReadonly : toReactive;
+      !isReadonly && track(rawTarget, "iterate", ITERATE_KEY);
+      return target.forEach((value, key) => {
+        return callback.call(thisArg, wrap(value), wrap(key), observed);
+      });
+    };
+  }
+  function createIterableMethod(method, isReadonly, isShallow) {
+    return function(...args) {
+      const target = this["__v_raw"];
+      const rawTarget = toRaw(target);
+      const targetIsMap = isMap(rawTarget);
+      const isPair = method === "entries" || method === Symbol.iterator && targetIsMap;
+      const isKeyOnly = method === "keys" && targetIsMap;
+      const innerIterator = target[method](...args);
+      const wrap = isShallow ? toShallow : isReadonly ? toReadonly : toReactive;
+      !isReadonly && track(rawTarget, "iterate", isKeyOnly ? MAP_KEY_ITERATE_KEY : ITERATE_KEY);
+      return {
+        next() {
+          const {value, done} = innerIterator.next();
+          return done ? {value, done} : {
+            value: isPair ? [wrap(value[0]), wrap(value[1])] : wrap(value),
+            done
+          };
+        },
+        [Symbol.iterator]() {
+          return this;
+        }
+      };
+    };
+  }
+  function createReadonlyMethod(type) {
+    return function(...args) {
+      {
+        const key = args[0] ? `on key "${args[0]}" ` : ``;
+        console.warn(`${capitalize(type)} operation ${key}failed: target is readonly.`, toRaw(this));
+      }
+      return type === "delete" ? false : this;
+    };
+  }
+  var mutableInstrumentations = {
+    get(key) {
+      return get$1(this, key);
+    },
+    get size() {
+      return size(this);
+    },
+    has: has$1,
+    add,
+    set: set$1,
+    delete: deleteEntry,
+    clear,
+    forEach: createForEach(false, false)
+  };
+  var shallowInstrumentations = {
+    get(key) {
+      return get$1(this, key, false, true);
+    },
+    get size() {
+      return size(this);
+    },
+    has: has$1,
+    add,
+    set: set$1,
+    delete: deleteEntry,
+    clear,
+    forEach: createForEach(false, true)
+  };
+  var readonlyInstrumentations = {
+    get(key) {
+      return get$1(this, key, true);
+    },
+    get size() {
+      return size(this, true);
+    },
+    has(key) {
+      return has$1.call(this, key, true);
+    },
+    add: createReadonlyMethod("add"),
+    set: createReadonlyMethod("set"),
+    delete: createReadonlyMethod("delete"),
+    clear: createReadonlyMethod("clear"),
+    forEach: createForEach(true, false)
+  };
+  var shallowReadonlyInstrumentations = {
+    get(key) {
+      return get$1(this, key, true, true);
+    },
+    get size() {
+      return size(this, true);
+    },
+    has(key) {
+      return has$1.call(this, key, true);
+    },
+    add: createReadonlyMethod("add"),
+    set: createReadonlyMethod("set"),
+    delete: createReadonlyMethod("delete"),
+    clear: createReadonlyMethod("clear"),
+    forEach: createForEach(true, true)
+  };
+  var iteratorMethods = ["keys", "values", "entries", Symbol.iterator];
+  iteratorMethods.forEach((method) => {
+    mutableInstrumentations[method] = createIterableMethod(method, false, false);
+    readonlyInstrumentations[method] = createIterableMethod(method, true, false);
+    shallowInstrumentations[method] = createIterableMethod(method, false, true);
+    shallowReadonlyInstrumentations[method] = createIterableMethod(method, true, true);
+  });
+  function createInstrumentationGetter(isReadonly, shallow) {
+    const instrumentations = shallow ? isReadonly ? shallowReadonlyInstrumentations : shallowInstrumentations : isReadonly ? readonlyInstrumentations : mutableInstrumentations;
+    return (target, key, receiver) => {
+      if (key === "__v_isReactive") {
+        return !isReadonly;
+      } else if (key === "__v_isReadonly") {
+        return isReadonly;
+      } else if (key === "__v_raw") {
+        return target;
+      }
+      return Reflect.get(hasOwn(instrumentations, key) && key in target ? instrumentations : target, key, receiver);
+    };
+  }
+  var mutableCollectionHandlers = {
+    get: createInstrumentationGetter(false, false)
+  };
+  var readonlyCollectionHandlers = {
+    get: createInstrumentationGetter(true, false)
+  };
+  function checkIdentityKeys(target, has2, key) {
+    const rawKey = toRaw(key);
+    if (rawKey !== key && has2.call(target, rawKey)) {
+      const type = toRawType(target);
+      console.warn(`Reactive ${type} contains both the raw and reactive versions of the same object${type === `Map` ? ` as keys` : ``}, which can lead to inconsistencies. Avoid differentiating between the raw and reactive versions of an object and only use the reactive version if possible.`);
+    }
+  }
+  var reactiveMap = new WeakMap();
+  var shallowReactiveMap = new WeakMap();
+  var readonlyMap = new WeakMap();
+  var shallowReadonlyMap = new WeakMap();
+  function targetTypeMap(rawType) {
+    switch (rawType) {
+      case "Object":
+      case "Array":
+        return 1;
+      case "Map":
+      case "Set":
+      case "WeakMap":
+      case "WeakSet":
+        return 2;
+      default:
+        return 0;
+    }
+  }
+  function getTargetType(value) {
+    return value["__v_skip"] || !Object.isExtensible(value) ? 0 : targetTypeMap(toRawType(value));
+  }
+  function reactive2(target) {
+    if (target && target["__v_isReadonly"]) {
+      return target;
+    }
+    return createReactiveObject(target, false, mutableHandlers, mutableCollectionHandlers, reactiveMap);
+  }
+  function readonly(target) {
+    return createReactiveObject(target, true, readonlyHandlers, readonlyCollectionHandlers, readonlyMap);
+  }
+  function createReactiveObject(target, isReadonly, baseHandlers, collectionHandlers, proxyMap) {
+    if (!isObject(target)) {
+      {
+        console.warn(`value cannot be made reactive: ${String(target)}`);
+      }
+      return target;
+    }
+    if (target["__v_raw"] && !(isReadonly && target["__v_isReactive"])) {
+      return target;
+    }
+    const existingProxy = proxyMap.get(target);
+    if (existingProxy) {
+      return existingProxy;
+    }
+    const targetType = getTargetType(target);
+    if (targetType === 0) {
+      return target;
+    }
+    const proxy = new Proxy(target, targetType === 2 ? collectionHandlers : baseHandlers);
+    proxyMap.set(target, proxy);
+    return proxy;
+  }
+  function toRaw(observed) {
+    return observed && toRaw(observed["__v_raw"]) || observed;
+  }
+  function isRef(r) {
+    return Boolean(r && r.__v_isRef === true);
+  }
+
+  // packages/alpinejs/src/magics/$nextTick.js
+  magic("nextTick", () => nextTick);
+
+  // packages/alpinejs/src/magics/$dispatch.js
+  magic("dispatch", (el) => dispatch.bind(dispatch, el));
+
+  // packages/alpinejs/src/magics/$watch.js
+  magic("watch", (el, {evaluateLater: evaluateLater2, effect: effect3}) => (key, callback) => {
+    let evaluate2 = evaluateLater2(key);
+    let firstTime = true;
+    let oldValue;
+    let effectReference = effect3(() => evaluate2((value) => {
+      JSON.stringify(value);
+      if (!firstTime) {
+        queueMicrotask(() => {
+          callback(value, oldValue);
+          oldValue = value;
+        });
+      } else {
+        oldValue = value;
+      }
+      firstTime = false;
+    }));
+    el._x_effects.delete(effectReference);
+  });
+
+  // packages/alpinejs/src/magics/$store.js
+  magic("store", getStores);
+
+  // packages/alpinejs/src/magics/$data.js
+  magic("data", (el) => scope(el));
+
+  // packages/alpinejs/src/magics/$root.js
+  magic("root", (el) => closestRoot(el));
+
+  // packages/alpinejs/src/magics/$refs.js
+  magic("refs", (el) => {
+    if (el._x_refs_proxy)
+      return el._x_refs_proxy;
+    el._x_refs_proxy = mergeProxies(getArrayOfRefObject(el));
+    return el._x_refs_proxy;
+  });
+  function getArrayOfRefObject(el) {
+    let refObjects = [];
+    let currentEl = el;
+    while (currentEl) {
+      if (currentEl._x_refs)
+        refObjects.push(currentEl._x_refs);
+      currentEl = currentEl.parentNode;
+    }
+    return refObjects;
+  }
+
+  // packages/alpinejs/src/ids.js
+  var globalIdMemo = {};
+  function findAndIncrementId(name) {
+    if (!globalIdMemo[name])
+      globalIdMemo[name] = 0;
+    return ++globalIdMemo[name];
+  }
+  function closestIdRoot(el, name) {
+    return findClosest(el, (element) => {
+      if (element._x_ids && element._x_ids[name])
+        return true;
+    });
+  }
+  function setIdRoot(el, name) {
+    if (!el._x_ids)
+      el._x_ids = {};
+    if (!el._x_ids[name])
+      el._x_ids[name] = findAndIncrementId(name);
+  }
+
+  // packages/alpinejs/src/magics/$id.js
+  magic("id", (el) => (name, key = null) => {
+    let root = closestIdRoot(el, name);
+    let id = root ? root._x_ids[name] : findAndIncrementId(name);
+    return key ? `${name}-${id}-${key}` : `${name}-${id}`;
+  });
+
+  // packages/alpinejs/src/magics/$el.js
+  magic("el", (el) => el);
+
+  // packages/alpinejs/src/magics/index.js
+  warnMissingPluginMagic("Focus", "focus", "focus");
+  warnMissingPluginMagic("Persist", "persist", "persist");
+  function warnMissingPluginMagic(name, magicName, slug) {
+    magic(magicName, (el) => warn(`You can't use [$${directiveName}] without first installing the "${name}" plugin here: https://alpinejs.dev/plugins/${slug}`, el));
+  }
+
+  // packages/alpinejs/src/directives/x-modelable.js
+  directive("modelable", (el, {expression}, {effect: effect3, evaluateLater: evaluateLater2}) => {
+    let func = evaluateLater2(expression);
+    let innerGet = () => {
+      let result;
+      func((i) => result = i);
+      return result;
+    };
+    let evaluateInnerSet = evaluateLater2(`${expression} = __placeholder`);
+    let innerSet = (val) => evaluateInnerSet(() => {
+    }, {scope: {__placeholder: val}});
+    let initialValue = innerGet();
+    innerSet(initialValue);
+    queueMicrotask(() => {
+      if (!el._x_model)
+        return;
+      el._x_removeModelListeners["default"]();
+      let outerGet = el._x_model.get;
+      let outerSet = el._x_model.set;
+      effect3(() => innerSet(outerGet()));
+      effect3(() => outerSet(innerGet()));
+    });
+  });
+
+  // packages/alpinejs/src/directives/x-teleport.js
+  directive("teleport", (el, {expression}, {cleanup: cleanup2}) => {
+    if (el.tagName.toLowerCase() !== "template")
+      warn("x-teleport can only be used on a <template> tag", el);
+    let target = document.querySelector(expression);
+    if (!target)
+      warn(`Cannot find x-teleport element for selector: "${expression}"`);
+    let clone2 = el.content.cloneNode(true).firstElementChild;
+    el._x_teleport = clone2;
+    clone2._x_teleportBack = el;
+    if (el._x_forwardEvents) {
+      el._x_forwardEvents.forEach((eventName) => {
+        clone2.addEventListener(eventName, (e) => {
+          e.stopPropagation();
+          el.dispatchEvent(new e.constructor(e.type, e));
+        });
+      });
+    }
+    addScopeToNode(clone2, {}, el);
+    mutateDom(() => {
+      target.appendChild(clone2);
+      initTree(clone2);
+      clone2._x_ignore = true;
+    });
+    cleanup2(() => clone2.remove());
+  });
+
+  // packages/alpinejs/src/directives/x-ignore.js
+  var handler = () => {
+  };
+  handler.inline = (el, {modifiers}, {cleanup: cleanup2}) => {
+    modifiers.includes("self") ? el._x_ignoreSelf = true : el._x_ignore = true;
+    cleanup2(() => {
+      modifiers.includes("self") ? delete el._x_ignoreSelf : delete el._x_ignore;
+    });
+  };
+  directive("ignore", handler);
+
+  // packages/alpinejs/src/directives/x-effect.js
+  directive("effect", (el, {expression}, {effect: effect3}) => effect3(evaluateLater(el, expression)));
+
+  // packages/alpinejs/src/utils/on.js
+  function on(el, event, modifiers, callback) {
+    let listenerTarget = el;
+    let handler3 = (e) => callback(e);
+    let options = {};
+    let wrapHandler = (callback2, wrapper) => (e) => wrapper(callback2, e);
+    if (modifiers.includes("dot"))
+      event = dotSyntax(event);
+    if (modifiers.includes("camel"))
+      event = camelCase2(event);
+    if (modifiers.includes("passive"))
+      options.passive = true;
+    if (modifiers.includes("capture"))
+      options.capture = true;
+    if (modifiers.includes("window"))
+      listenerTarget = window;
+    if (modifiers.includes("document"))
+      listenerTarget = document;
+    if (modifiers.includes("prevent"))
+      handler3 = wrapHandler(handler3, (next, e) => {
+        e.preventDefault();
+        next(e);
+      });
+    if (modifiers.includes("stop"))
+      handler3 = wrapHandler(handler3, (next, e) => {
+        e.stopPropagation();
+        next(e);
+      });
+    if (modifiers.includes("self"))
+      handler3 = wrapHandler(handler3, (next, e) => {
+        e.target === el && next(e);
+      });
+    if (modifiers.includes("away") || modifiers.includes("outside")) {
+      listenerTarget = document;
+      handler3 = wrapHandler(handler3, (next, e) => {
+        if (el.contains(e.target))
+          return;
+        if (e.target.isConnected === false)
+          return;
+        if (el.offsetWidth < 1 && el.offsetHeight < 1)
+          return;
+        if (el._x_isShown === false)
+          return;
+        next(e);
+      });
+    }
+    if (modifiers.includes("once")) {
+      handler3 = wrapHandler(handler3, (next, e) => {
+        next(e);
+        listenerTarget.removeEventListener(event, handler3, options);
+      });
+    }
+    handler3 = wrapHandler(handler3, (next, e) => {
+      if (isKeyEvent(event)) {
+        if (isListeningForASpecificKeyThatHasntBeenPressed(e, modifiers)) {
+          return;
+        }
+      }
+      next(e);
+    });
+    if (modifiers.includes("debounce")) {
+      let nextModifier = modifiers[modifiers.indexOf("debounce") + 1] || "invalid-wait";
+      let wait = isNumeric(nextModifier.split("ms")[0]) ? Number(nextModifier.split("ms")[0]) : 250;
+      handler3 = debounce(handler3, wait);
+    }
+    if (modifiers.includes("throttle")) {
+      let nextModifier = modifiers[modifiers.indexOf("throttle") + 1] || "invalid-wait";
+      let wait = isNumeric(nextModifier.split("ms")[0]) ? Number(nextModifier.split("ms")[0]) : 250;
+      handler3 = throttle(handler3, wait);
+    }
+    listenerTarget.addEventListener(event, handler3, options);
+    return () => {
+      listenerTarget.removeEventListener(event, handler3, options);
+    };
+  }
+  function dotSyntax(subject) {
+    return subject.replace(/-/g, ".");
+  }
+  function camelCase2(subject) {
+    return subject.toLowerCase().replace(/-(\w)/g, (match, char) => char.toUpperCase());
+  }
+  function isNumeric(subject) {
+    return !Array.isArray(subject) && !isNaN(subject);
+  }
+  function kebabCase2(subject) {
+    return subject.replace(/([a-z])([A-Z])/g, "$1-$2").replace(/[_\s]/, "-").toLowerCase();
+  }
+  function isKeyEvent(event) {
+    return ["keydown", "keyup"].includes(event);
+  }
+  function isListeningForASpecificKeyThatHasntBeenPressed(e, modifiers) {
+    let keyModifiers = modifiers.filter((i) => {
+      return !["window", "document", "prevent", "stop", "once"].includes(i);
+    });
+    if (keyModifiers.includes("debounce")) {
+      let debounceIndex = keyModifiers.indexOf("debounce");
+      keyModifiers.splice(debounceIndex, isNumeric((keyModifiers[debounceIndex + 1] || "invalid-wait").split("ms")[0]) ? 2 : 1);
+    }
+    if (keyModifiers.length === 0)
+      return false;
+    if (keyModifiers.length === 1 && keyToModifiers(e.key).includes(keyModifiers[0]))
+      return false;
+    const systemKeyModifiers = ["ctrl", "shift", "alt", "meta", "cmd", "super"];
+    const selectedSystemKeyModifiers = systemKeyModifiers.filter((modifier) => keyModifiers.includes(modifier));
+    keyModifiers = keyModifiers.filter((i) => !selectedSystemKeyModifiers.includes(i));
+    if (selectedSystemKeyModifiers.length > 0) {
+      const activelyPressedKeyModifiers = selectedSystemKeyModifiers.filter((modifier) => {
+        if (modifier === "cmd" || modifier === "super")
+          modifier = "meta";
+        return e[`${modifier}Key`];
+      });
+      if (activelyPressedKeyModifiers.length === selectedSystemKeyModifiers.length) {
+        if (keyToModifiers(e.key).includes(keyModifiers[0]))
+          return false;
+      }
+    }
+    return true;
+  }
+  function keyToModifiers(key) {
+    if (!key)
+      return [];
+    key = kebabCase2(key);
+    let modifierToKeyMap = {
+      ctrl: "control",
+      slash: "/",
+      space: "-",
+      spacebar: "-",
+      cmd: "meta",
+      esc: "escape",
+      up: "arrow-up",
+      down: "arrow-down",
+      left: "arrow-left",
+      right: "arrow-right",
+      period: ".",
+      equal: "="
+    };
+    modifierToKeyMap[key] = key;
+    return Object.keys(modifierToKeyMap).map((modifier) => {
+      if (modifierToKeyMap[modifier] === key)
+        return modifier;
+    }).filter((modifier) => modifier);
+  }
+
+  // packages/alpinejs/src/directives/x-model.js
+  directive("model", (el, {modifiers, expression}, {effect: effect3, cleanup: cleanup2}) => {
+    let evaluate2 = evaluateLater(el, expression);
+    let assignmentExpression = `${expression} = rightSideOfExpression($event, ${expression})`;
+    let evaluateAssignment = evaluateLater(el, assignmentExpression);
+    var event = el.tagName.toLowerCase() === "select" || ["checkbox", "radio"].includes(el.type) || modifiers.includes("lazy") ? "change" : "input";
+    let assigmentFunction = generateAssignmentFunction(el, modifiers, expression);
+    let removeListener = on(el, event, modifiers, (e) => {
+      evaluateAssignment(() => {
+      }, {scope: {
+        $event: e,
+        rightSideOfExpression: assigmentFunction
+      }});
+    });
+    if (!el._x_removeModelListeners)
+      el._x_removeModelListeners = {};
+    el._x_removeModelListeners["default"] = removeListener;
+    cleanup2(() => el._x_removeModelListeners["default"]());
+    let evaluateSetModel = evaluateLater(el, `${expression} = __placeholder`);
+    el._x_model = {
+      get() {
+        let result;
+        evaluate2((value) => result = value);
+        return result;
+      },
+      set(value) {
+        evaluateSetModel(() => {
+        }, {scope: {__placeholder: value}});
+      }
+    };
+    el._x_forceModelUpdate = () => {
+      evaluate2((value) => {
+        if (value === void 0 && expression.match(/\./))
+          value = "";
+        window.fromModel = true;
+        mutateDom(() => bind(el, "value", value));
+        delete window.fromModel;
+      });
+    };
+    effect3(() => {
+      if (modifiers.includes("unintrusive") && document.activeElement.isSameNode(el))
+        return;
+      el._x_forceModelUpdate();
+    });
+  });
+  function generateAssignmentFunction(el, modifiers, expression) {
+    if (el.type === "radio") {
+      mutateDom(() => {
+        if (!el.hasAttribute("name"))
+          el.setAttribute("name", expression);
+      });
+    }
+    return (event, currentValue) => {
+      return mutateDom(() => {
+        if (event instanceof CustomEvent && event.detail !== void 0) {
+          return event.detail || event.target.value;
+        } else if (el.type === "checkbox") {
+          if (Array.isArray(currentValue)) {
+            let newValue = modifiers.includes("number") ? safeParseNumber(event.target.value) : event.target.value;
+            return event.target.checked ? currentValue.concat([newValue]) : currentValue.filter((el2) => !checkedAttrLooseCompare2(el2, newValue));
+          } else {
+            return event.target.checked;
+          }
+        } else if (el.tagName.toLowerCase() === "select" && el.multiple) {
+          return modifiers.includes("number") ? Array.from(event.target.selectedOptions).map((option) => {
+            let rawValue = option.value || option.text;
+            return safeParseNumber(rawValue);
+          }) : Array.from(event.target.selectedOptions).map((option) => {
+            return option.value || option.text;
+          });
+        } else {
+          let rawValue = event.target.value;
+          return modifiers.includes("number") ? safeParseNumber(rawValue) : modifiers.includes("trim") ? rawValue.trim() : rawValue;
+        }
+      });
+    };
+  }
+  function safeParseNumber(rawValue) {
+    let number = rawValue ? parseFloat(rawValue) : null;
+    return isNumeric2(number) ? number : rawValue;
+  }
+  function checkedAttrLooseCompare2(valueA, valueB) {
+    return valueA == valueB;
+  }
+  function isNumeric2(subject) {
+    return !Array.isArray(subject) && !isNaN(subject);
+  }
+
+  // packages/alpinejs/src/directives/x-cloak.js
+  directive("cloak", (el) => queueMicrotask(() => mutateDom(() => el.removeAttribute(prefix("cloak")))));
+
+  // packages/alpinejs/src/directives/x-init.js
+  addInitSelector(() => `[${prefix("init")}]`);
+  directive("init", skipDuringClone((el, {expression}, {evaluate: evaluate2}) => {
+    if (typeof expression === "string") {
+      return !!expression.trim() && evaluate2(expression, {}, false);
+    }
+    return evaluate2(expression, {}, false);
+  }));
+
+  // packages/alpinejs/src/directives/x-text.js
+  directive("text", (el, {expression}, {effect: effect3, evaluateLater: evaluateLater2}) => {
+    let evaluate2 = evaluateLater2(expression);
+    effect3(() => {
+      evaluate2((value) => {
+        mutateDom(() => {
+          el.textContent = value;
+        });
+      });
+    });
+  });
+
+  // packages/alpinejs/src/directives/x-html.js
+  directive("html", (el, {expression}, {effect: effect3, evaluateLater: evaluateLater2}) => {
+    let evaluate2 = evaluateLater2(expression);
+    effect3(() => {
+      evaluate2((value) => {
+        mutateDom(() => {
+          el.innerHTML = value;
+          el._x_ignoreSelf = true;
+          initTree(el);
+          delete el._x_ignoreSelf;
+        });
+      });
+    });
+  });
+
+  // packages/alpinejs/src/directives/x-bind.js
+  mapAttributes(startingWith(":", into(prefix("bind:"))));
+  directive("bind", (el, {value, modifiers, expression, original}, {effect: effect3}) => {
+    if (!value) {
+      let bindingProviders = {};
+      injectBindingProviders(bindingProviders);
+      let getBindings = evaluateLater(el, expression);
+      getBindings((bindings) => {
+        applyBindingsObject(el, bindings, original);
+      }, {scope: bindingProviders});
+      return;
+    }
+    if (value === "key")
+      return storeKeyForXFor(el, expression);
+    let evaluate2 = evaluateLater(el, expression);
+    effect3(() => evaluate2((result) => {
+      if (result === void 0 && expression.match(/\./))
+        result = "";
+      mutateDom(() => bind(el, value, result, modifiers));
+    }));
+  });
+  function storeKeyForXFor(el, expression) {
+    el._x_keyExpression = expression;
+  }
+
+  // packages/alpinejs/src/directives/x-data.js
+  addRootSelector(() => `[${prefix("data")}]`);
+  directive("data", skipDuringClone((el, {expression}, {cleanup: cleanup2}) => {
+    expression = expression === "" ? "{}" : expression;
+    let magicContext = {};
+    injectMagics(magicContext, el);
+    let dataProviderContext = {};
+    injectDataProviders(dataProviderContext, magicContext);
+    let data2 = evaluate(el, expression, {scope: dataProviderContext});
+    if (data2 === void 0)
+      data2 = {};
+    injectMagics(data2, el);
+    let reactiveData = reactive(data2);
+    initInterceptors(reactiveData);
+    let undo = addScopeToNode(el, reactiveData);
+    reactiveData["init"] && evaluate(el, reactiveData["init"]);
+    cleanup2(() => {
+      reactiveData["destroy"] && evaluate(el, reactiveData["destroy"]);
+      undo();
+    });
+  }));
+
+  // packages/alpinejs/src/directives/x-show.js
+  directive("show", (el, {modifiers, expression}, {effect: effect3}) => {
+    let evaluate2 = evaluateLater(el, expression);
+    if (!el._x_doHide)
+      el._x_doHide = () => {
+        mutateDom(() => {
+          el.style.setProperty("display", "none", modifiers.includes("important") ? "important" : void 0);
+        });
+      };
+    if (!el._x_doShow)
+      el._x_doShow = () => {
+        mutateDom(() => {
+          if (el.style.length === 1 && el.style.display === "none") {
+            el.removeAttribute("style");
+          } else {
+            el.style.removeProperty("display");
+          }
+        });
+      };
+    let hide = () => {
+      el._x_doHide();
+      el._x_isShown = false;
+    };
+    let show = () => {
+      el._x_doShow();
+      el._x_isShown = true;
+    };
+    let clickAwayCompatibleShow = () => setTimeout(show);
+    let toggle = once((value) => value ? show() : hide(), (value) => {
+      if (typeof el._x_toggleAndCascadeWithTransitions === "function") {
+        el._x_toggleAndCascadeWithTransitions(el, value, show, hide);
+      } else {
+        value ? clickAwayCompatibleShow() : hide();
+      }
+    });
+    let oldValue;
+    let firstTime = true;
+    effect3(() => evaluate2((value) => {
+      if (!firstTime && value === oldValue)
+        return;
+      if (modifiers.includes("immediate"))
+        value ? clickAwayCompatibleShow() : hide();
+      toggle(value);
+      oldValue = value;
+      firstTime = false;
+    }));
+  });
+
+  // packages/alpinejs/src/directives/x-for.js
+  directive("for", (el, {expression}, {effect: effect3, cleanup: cleanup2}) => {
+    let iteratorNames = parseForExpression(expression);
+    let evaluateItems = evaluateLater(el, iteratorNames.items);
+    let evaluateKey = evaluateLater(el, el._x_keyExpression || "index");
+    el._x_prevKeys = [];
+    el._x_lookup = {};
+    effect3(() => loop(el, iteratorNames, evaluateItems, evaluateKey));
+    cleanup2(() => {
+      Object.values(el._x_lookup).forEach((el2) => el2.remove());
+      delete el._x_prevKeys;
+      delete el._x_lookup;
+    });
+  });
+  function loop(el, iteratorNames, evaluateItems, evaluateKey) {
+    let isObject2 = (i) => typeof i === "object" && !Array.isArray(i);
+    let templateEl = el;
+    evaluateItems((items) => {
+      if (isNumeric3(items) && items >= 0) {
+        items = Array.from(Array(items).keys(), (i) => i + 1);
+      }
+      if (items === void 0)
+        items = [];
+      let lookup = el._x_lookup;
+      let prevKeys = el._x_prevKeys;
+      let scopes = [];
+      let keys = [];
+      if (isObject2(items)) {
+        items = Object.entries(items).map(([key, value]) => {
+          let scope2 = getIterationScopeVariables(iteratorNames, value, key, items);
+          evaluateKey((value2) => keys.push(value2), {scope: {index: key, ...scope2}});
+          scopes.push(scope2);
+        });
+      } else {
+        for (let i = 0; i < items.length; i++) {
+          let scope2 = getIterationScopeVariables(iteratorNames, items[i], i, items);
+          evaluateKey((value) => keys.push(value), {scope: {index: i, ...scope2}});
+          scopes.push(scope2);
+        }
+      }
+      let adds = [];
+      let moves = [];
+      let removes = [];
+      let sames = [];
+      for (let i = 0; i < prevKeys.length; i++) {
+        let key = prevKeys[i];
+        if (keys.indexOf(key) === -1)
+          removes.push(key);
+      }
+      prevKeys = prevKeys.filter((key) => !removes.includes(key));
+      let lastKey = "template";
+      for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        let prevIndex = prevKeys.indexOf(key);
+        if (prevIndex === -1) {
+          prevKeys.splice(i, 0, key);
+          adds.push([lastKey, i]);
+        } else if (prevIndex !== i) {
+          let keyInSpot = prevKeys.splice(i, 1)[0];
+          let keyForSpot = prevKeys.splice(prevIndex - 1, 1)[0];
+          prevKeys.splice(i, 0, keyForSpot);
+          prevKeys.splice(prevIndex, 0, keyInSpot);
+          moves.push([keyInSpot, keyForSpot]);
+        } else {
+          sames.push(key);
+        }
+        lastKey = key;
+      }
+      for (let i = 0; i < removes.length; i++) {
+        let key = removes[i];
+        if (!!lookup[key]._x_effects) {
+          lookup[key]._x_effects.forEach(dequeueJob);
+        }
+        lookup[key].remove();
+        lookup[key] = null;
+        delete lookup[key];
+      }
+      for (let i = 0; i < moves.length; i++) {
+        let [keyInSpot, keyForSpot] = moves[i];
+        let elInSpot = lookup[keyInSpot];
+        let elForSpot = lookup[keyForSpot];
+        let marker = document.createElement("div");
+        mutateDom(() => {
+          elForSpot.after(marker);
+          elInSpot.after(elForSpot);
+          elForSpot._x_currentIfEl && elForSpot.after(elForSpot._x_currentIfEl);
+          marker.before(elInSpot);
+          elInSpot._x_currentIfEl && elInSpot.after(elInSpot._x_currentIfEl);
+          marker.remove();
+        });
+        refreshScope(elForSpot, scopes[keys.indexOf(keyForSpot)]);
+      }
+      for (let i = 0; i < adds.length; i++) {
+        let [lastKey2, index] = adds[i];
+        let lastEl = lastKey2 === "template" ? templateEl : lookup[lastKey2];
+        if (lastEl._x_currentIfEl)
+          lastEl = lastEl._x_currentIfEl;
+        let scope2 = scopes[index];
+        let key = keys[index];
+        let clone2 = document.importNode(templateEl.content, true).firstElementChild;
+        addScopeToNode(clone2, reactive(scope2), templateEl);
+        mutateDom(() => {
+          lastEl.after(clone2);
+          initTree(clone2);
+        });
+        if (typeof key === "object") {
+          warn("x-for key cannot be an object, it must be a string or an integer", templateEl);
+        }
+        lookup[key] = clone2;
+      }
+      for (let i = 0; i < sames.length; i++) {
+        refreshScope(lookup[sames[i]], scopes[keys.indexOf(sames[i])]);
+      }
+      templateEl._x_prevKeys = keys;
+    });
+  }
+  function parseForExpression(expression) {
+    let forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
+    let stripParensRE = /^\s*\(|\)\s*$/g;
+    let forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
+    let inMatch = expression.match(forAliasRE);
+    if (!inMatch)
+      return;
+    let res = {};
+    res.items = inMatch[2].trim();
+    let item = inMatch[1].replace(stripParensRE, "").trim();
+    let iteratorMatch = item.match(forIteratorRE);
+    if (iteratorMatch) {
+      res.item = item.replace(forIteratorRE, "").trim();
+      res.index = iteratorMatch[1].trim();
+      if (iteratorMatch[2]) {
+        res.collection = iteratorMatch[2].trim();
+      }
+    } else {
+      res.item = item;
+    }
+    return res;
+  }
+  function getIterationScopeVariables(iteratorNames, item, index, items) {
+    let scopeVariables = {};
+    if (/^\[.*\]$/.test(iteratorNames.item) && Array.isArray(item)) {
+      let names = iteratorNames.item.replace("[", "").replace("]", "").split(",").map((i) => i.trim());
+      names.forEach((name, i) => {
+        scopeVariables[name] = item[i];
+      });
+    } else if (/^\{.*\}$/.test(iteratorNames.item) && !Array.isArray(item) && typeof item === "object") {
+      let names = iteratorNames.item.replace("{", "").replace("}", "").split(",").map((i) => i.trim());
+      names.forEach((name) => {
+        scopeVariables[name] = item[name];
+      });
+    } else {
+      scopeVariables[iteratorNames.item] = item;
+    }
+    if (iteratorNames.index)
+      scopeVariables[iteratorNames.index] = index;
+    if (iteratorNames.collection)
+      scopeVariables[iteratorNames.collection] = items;
+    return scopeVariables;
+  }
+  function isNumeric3(subject) {
+    return !Array.isArray(subject) && !isNaN(subject);
+  }
+
+  // packages/alpinejs/src/directives/x-ref.js
+  function handler2() {
+  }
+  handler2.inline = (el, {expression}, {cleanup: cleanup2}) => {
+    let root = closestRoot(el);
+    if (!root._x_refs)
+      root._x_refs = {};
+    root._x_refs[expression] = el;
+    cleanup2(() => delete root._x_refs[expression]);
+  };
+  directive("ref", handler2);
+
+  // packages/alpinejs/src/directives/x-if.js
+  directive("if", (el, {expression}, {effect: effect3, cleanup: cleanup2}) => {
+    let evaluate2 = evaluateLater(el, expression);
+    let show = () => {
+      if (el._x_currentIfEl)
+        return el._x_currentIfEl;
+      let clone2 = el.content.cloneNode(true).firstElementChild;
+      addScopeToNode(clone2, {}, el);
+      mutateDom(() => {
+        el.after(clone2);
+        initTree(clone2);
+      });
+      el._x_currentIfEl = clone2;
+      el._x_undoIf = () => {
+        walk(clone2, (node) => {
+          if (!!node._x_effects) {
+            node._x_effects.forEach(dequeueJob);
+          }
+        });
+        clone2.remove();
+        delete el._x_currentIfEl;
+      };
+      return clone2;
+    };
+    let hide = () => {
+      if (!el._x_undoIf)
+        return;
+      el._x_undoIf();
+      delete el._x_undoIf;
+    };
+    effect3(() => evaluate2((value) => {
+      value ? show() : hide();
+    }));
+    cleanup2(() => el._x_undoIf && el._x_undoIf());
+  });
+
+  // packages/alpinejs/src/directives/x-id.js
+  directive("id", (el, {expression}, {evaluate: evaluate2}) => {
+    let names = evaluate2(expression);
+    names.forEach((name) => setIdRoot(el, name));
+  });
+
+  // packages/alpinejs/src/directives/x-on.js
+  mapAttributes(startingWith("@", into(prefix("on:"))));
+  directive("on", skipDuringClone((el, {value, modifiers, expression}, {cleanup: cleanup2}) => {
+    let evaluate2 = expression ? evaluateLater(el, expression) : () => {
+    };
+    if (el.tagName.toLowerCase() === "template") {
+      if (!el._x_forwardEvents)
+        el._x_forwardEvents = [];
+      if (!el._x_forwardEvents.includes(value))
+        el._x_forwardEvents.push(value);
+    }
+    let removeListener = on(el, value, modifiers, (e) => {
+      evaluate2(() => {
+      }, {scope: {$event: e}, params: [e]});
+    });
+    cleanup2(() => removeListener());
+  }));
+
+  // packages/alpinejs/src/directives/index.js
+  warnMissingPluginDirective("Collapse", "collapse", "collapse");
+  warnMissingPluginDirective("Intersect", "intersect", "intersect");
+  warnMissingPluginDirective("Focus", "trap", "focus");
+  warnMissingPluginDirective("Mask", "mask", "mask");
+  function warnMissingPluginDirective(name, directiveName2, slug) {
+    directive(directiveName2, (el) => warn(`You can't use [x-${directiveName2}] without first installing the "${name}" plugin here: https://alpinejs.dev/plugins/${slug}`, el));
+  }
+
+  // packages/alpinejs/src/index.js
+  alpine_default.setEvaluator(normalEvaluator);
+  alpine_default.setReactivityEngine({reactive: reactive2, effect: effect2, release: stop, raw: toRaw});
+  var src_default = alpine_default;
+
+  // packages/alpinejs/builds/module.js
+  var module_default = src_default;
+
+  function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }
+
+
+  (function () {
+  	if (window.CustomEvent) return false;
+  	function CustomEvent(event, params) {
+  		params = params || {
+  			bubbles: false,
+  			cancelable: false,
+  			detail: undefined,
+  		};
+  		var evt = document.createEvent("CustomEvent");
+  		evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+  		return evt;
+  	}
+  	CustomEvent.prototype = window.Event.prototype;
+  	//@ts-ignore
+  	window["CustomEvent"] = CustomEvent;
+  })();
+
+  class Theme {
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	constructor(options = {}) {Theme.prototype.__init.call(this);Theme.prototype.__init2.call(this);Theme.prototype.__init3.call(this);Theme.prototype.__init4.call(this);Theme.prototype.__init5.call(this);Theme.prototype.__init6.call(this);Theme.prototype.__init7.call(this);Theme.prototype.__init8.call(this);
+  		this.options = options;
+  		this.controller = null;
+  		this.scene = null;
+  		this.sections = null;
+  		this.Parallax = new Parallax();
+  		this.team = new Team();
+
+  		let header = document.querySelector("#masthead");
+  		this.headerOffset = 0;
+  		if (header && header.classList.contains("fixed") && header.classList.contains("top-0")) {
+  			this.headerOffset = header.clientHeight;
+  		}
+
+  		let toggles = document.querySelectorAll("[data-toggle]");
+  		if (toggles) {
+  			[].forEach.call(toggles, (toggle) => {
+  				let elm = document.querySelector(toggle.getAttribute("data-target"));
+  				if (elm) {
+  					let toggleClass = toggle.getAttribute("data-toggle") ? toggle.getAttribute("data-toggle") : "active";
+
+  					if (toggle.getAttribute("data-toggle-close")) toggle.setAttribute("data-toggle-initial", toggle.innerHTML);
+  					toggle.addEventListener("click", (e) => {
+  						e.preventDefault();
+  						if (elm.classList.contains(toggleClass)) {
+  							elm.classList.remove(toggleClass);
+  							toggle.setAttribute("aria-expanded", "true");
+  							if (toggle.getAttribute("data-toggle-close")) toggle.innerHTML = toggle.getAttribute("data-toggle-initial");
+  						} else {
+  							elm.classList.add(toggleClass);
+  							toggle.setAttribute("aria-expanded", "false");
+  							if (toggle.getAttribute("data-toggle-close")) toggle.innerHTML = toggle.getAttribute("data-toggle-close");
+  						}
+  					});
+  				}
+  			});
+  		}
+
+  		window.Alpine = module_default;
+  		module_default.start();
+  		this.load();
+  	}
+  	load() {
+  		this.innerScroll = document.querySelector("#inner-scroll");
+  		let count = _optionalChain([this, 'access', _6 => _6.innerScroll, 'optionalAccess', _7 => _7.children, 'access', _8 => _8.length]);
+
+  		if (this.options.scrolling && window.innerWidth > this.options.mobile) {
+  			var widthPercent = 100 / count;
+  			// console.log(this.options.scrolling);
+  			switch (parseInt(this.options.scrolling, 10)) {
+  				case 2:
+  					if (count > 0) {
+  						[].forEach.call(this.innerScroll.children, (slide) => {
+  							slide.style.width = widthPercent + "%";
+  							slide.style.height = window.innerHeight + "px";
+  						});
+
+  						this.innerScroll.style.width = 100 * count + "%";
+
+  						this.controller = new ScrollMagic.Controller({});
+  						var wipeAnimation = new TimelineMax();
+
+  						for (let i = 0; i < count; i++) {
+  							wipeAnimation
+  								.to("#inner-scroll", 0.5, {
+  									z: -300,
+  									delay: 1,
+  								})
+  								.to("#inner-scroll", 2, {
+  									x: "-" + widthPercent * (i + 1) + "%",
+  								})
+  								.to("#inner-scroll", 0.5, {
+  									z: 0,
+  								});
+  						}
+
+  						this.scene = new ScrollMagic.Scene({
+  							triggerElement: ".scrolling-container--2",
+  							triggerHook: "onLeave",
+  							duration: "500%",
+  						})
+  							.setPin(".scrolling-container--2")
+  							.setTween(wipeAnimation)
+  							.addTo(this.controller);
+  						var _current = 0;
+  						var offset = 0.3; //offset in percentage
+  						this.scene.on("progress", (event) => {
+  							var v = event.progress * count + offset + 1;
+  							if (v > count) {
+  								v = count;
+  							}
+  							v = parseInt(v.toString(), 10);
+  							if (v != _current) {
+  								[].forEach.call(this.innerScroll.children, function (slide) {
+  									slide.classList.remove("in");
+  								});
+
+  								_optionalChain([this, 'access', _9 => _9.innerScroll, 'access', _10 => _10.children, 'access', _11 => _11[v], 'optionalAccess', _12 => _12.classList, 'access', _13 => _13.add, 'call', _14 => _14("in")]);
+  								_current = v;
+  							}
+  						});
+  					}
+  					break;
+  				case 3:
+  					if (count > 0) {
+  						[].forEach.call(this.innerScroll.children, (slide) => {
+  							slide.style.height = window.innerHeight + "px";
+  						});
+
+  						this.controller = new ScrollMagic.Controller({
+  							globalSceneOptions: {
+  								triggerHook: "onLeave",
+  							},
+  						});
+
+  						[].forEach.call(this.innerScroll.children, (slide) => {
+  							new ScrollMagic.Scene({
+  								triggerElement: slide,
+  							})
+  								.setPin(slide, { pushFollowers: false })
+  								.addTo(this.controller);
+  						});
+  					}
+  					break;
+  				case 4:
+  					if (count > 0) {
+  						this.controller = new ScrollMagic.Controller();
+  						// define movement of panels
+  						let wipeAnimation = new TimelineMax();
+
+  						let is_x = true;
+  						let is_negative = true;
+  						// create scene for every slide
+  						[].forEach.call(this.innerScroll.children, (slide, i) => {
+  							if (i == 0) {
+  								wipeAnimation.fromTo(
+  									slide,
+  									1,
+  									{
+  										x: "0%",
+  										y: 0,
+  									},
+  									{
+  										x: "0%",
+  										y: "0%",
+  										ease: Linear.easeNone,
+  									}
+  								);
+  								return;
+  							}
+  							var dir = {};
+  							if (is_x) {
+  								if (is_negative) {
+  									dir["x"] = "-100%";
+  								} else {
+  									dir["x"] = "100%";
+  								}
+  								is_negative = !is_negative;
+  							} else {
+  								if (is_negative) {
+  									dir["y"] = "-100%";
+  								} else {
+  									dir["y"] = "100%";
+  								}
+  								is_negative = !is_negative;
+  							}
+  							is_x = !is_x;
+  							if (i % 2 == 0 && i != 0) {
+  								is_x = !is_x;
+  							}
+  							this.innerScroll.children[i] &&
+  								wipeAnimation.fromTo(this.innerScroll.children[i], 1, dir, {
+  									x: "0%",
+  									y: "0%",
+  									ease: Linear.easeNone,
+  								});
+  						});
+  						this.scene = new ScrollMagic.Scene({
+  							loglevel: 2,
+  							triggerElement: "#inner-scroll",
+  							triggerHook: "onLeave",
+  							duration: 100 * count + "%",
+  						})
+  							.setPin("#inner-scroll")
+  							.setTween(wipeAnimation)
+  							.addTo(this.controller);
+  					}
+  					break;
+  				case 5:
+  					var slides = document.querySelectorAll(".main-inner > section.section");
+  					count = slides.length;
+  					if (count > 0) {
+  						[].forEach.call(slides, function (slide) {
+  							slide.style.minHeight = window.innerHeight + "px";
+  						});
+  					}
+  					window.addEventListener("resize", function () {
+  						[].forEach.call(slides, function (slide) {
+  							slide.style.minHeight = window.innerHeight + "px";
+  						});
+  					});
+  					break;
+  				default:
+  					var scroll_selector = ".page-template-page-home-section #wrapper";
+  					var section_selector = ".section, .site-footer";
+
+  					let scrollSelector = document.querySelector(scroll_selector);
+  					this.sections = scrollSelector ? scrollSelector.querySelectorAll(section_selector) : null;
+
+  					if (this.sections && this.sections.length) {
+  						let sectionNav = document.createElement("div");
+  						sectionNav.classList.add("section-nav");
+
+  						let sectionInner = document.createElement("ul");
+  						sectionInner.classList.add("inner");
+
+  						sectionNav.appendChild(sectionInner);
+  						document.body.appendChild(sectionNav);
+
+  						[].forEach.call(this.sections, (section) => {
+  							style(section, { height: window.innerHeight + "px" });
+  						});
+
+  						[].forEach.call(this.sections, function (index, section) {
+  							let li = document.createElement("li");
+  							li.setAttribute("data-index", index);
+  							li.innerHTML = index;
+  							sectionInner.appendChild(li);
+  						});
+
+  						break;
+  					}
+  			}
+  		}
+  		this.handler = window.innerWidth > this.options.mobile ? this.desktopHandler : this.mobileHandler;
+  		if (window.innerWidth <= this.options.mobile) {
+  			document.body.classList.add("no-scrolling-style");
+  		}
+
+  		if ("onhashchange" in window) {
+  			window.addEventListener("hashchange", (event) => {
+  				if (this.scrollHandler()) {
+  					event.stopPropagation();
+  					event.preventDefault();
+  					return;
+  				}
+
+  				if (window.location.hash == "#!search") {
+  					document.body.classList.add("search-active");
+  					return;
+  				} else if (document.body.classList.contains("search-active")) {
+  					document.body.classList.remove("search-active");
+  				}
+
+  				let hash = _optionalChain([window, 'access', _15 => _15.location, 'access', _16 => _16.hash, 'optionalAccess', _17 => _17.replace, 'call', _18 => _18("#!", ""), 'access', _19 => _19.replace, 'call', _20 => _20("#", "")]);
+  				if (hash) {
+  					let handler = hash.split("/");
+  					if (handler.length > 1) {
+  						return;
+  					}
+  					let section = document.querySelector(`#${hash}`);
+  					if (section) {
+  						this.scrollIfNeeded(section);
+  						event.stopPropagation();
+  						return;
+  					}
+  				}
+  			});
+  			try {
+  				window.dispatchEvent(new Event("hashchange"));
+  			} catch (e) {}
+  		} else {
+  			var elm = document.querySelector("#menu-main-menu li a[href^=\\/\\#]");
+  			if (elm) {
+  				elm.addEventListener("click", function (event) {
+  					if (this.scrollHandler()) {
+  						event.stopPropagation();
+  						event.preventDefault();
+  					}
+  				});
+  			}
+  		}
+
+  		var elm = document.querySelector(".btn.btn-back");
+  		if (elm) {
+  			elm.addEventListener("click", function () {
+  				document.querySelector(".content").classList.remove("active");
+  				location.hash = "#home";
+  			});
+  		}
+
+  		var elm = document.querySelector("#searchform a.search-close");
+  		if (elm)
+  			elm.addEventListener("click", function () {
+  				document.body.classList.add("search-closed");
+  				document.body.classList.remove("search-active");
+  				setTimeout(function () {
+  					document.body.classList.remove("search-closed");
+  				}, 1000);
+  				return false;
+  			});
+
+  		var menuItems = document.querySelectorAll("#navbar ul li a");
+  		var scrollItems = document.querySelectorAll("#wrapper > section");
+  		window.addEventListener("resize", () => {
+  			if (window.innerWidth <= this.options.mobile) {
+  				if (this.controller) {
+  					if (this.scene) {
+  						this.scene.destroy(true);
+  					}
+  					this.controller.destroy(true);
+  					document.body.classList.add("no-scrolling-style");
+  				}
+  				this.handler = this.mobileHandler;
+  			} else {
+  				this.handler = this.desktopHandler;
+  			}
+  		});
+
+  		window.addEventListener("scroll", () => {
+  			// Get container scroll position
+  			var positon = this.getScrollPosition(window);
+  			var header = document.querySelector("#masthead");
+  			var offset = 0;
+  			if (header) {
+  				offset = header.clientHeight;
+  			}
+  			var fromTop = positon.y + offset + 100;
+
+  			// Get id of current scroll item
+  			var cur = [].map.call(scrollItems, function (item) {
+  				var bounds = item.getBoundingClientRect();
+  				if (bounds.top < fromTop) return item;
+  			});
+  			// Get the id of the current element
+  			cur = cur[cur.length - 1];
+  			var id = cur ? cur.getAttribute("id") : "";
+
+  			[].forEach.call(menuItems, function (menuItem) {
+  				menuItem.classList.remove("active");
+  			});
+
+  			var section = document.querySelector('#navbar ul li a[section="' + id + '"]');
+  			section && section.classList.add("active");
+
+  			if (positon.y > 100) {
+  				document.body.classList.add("scrolling");
+  			} else {
+  				document.body.classList.remove("scrolling");
+  			}
+  		});
+
+  		//widgets
+  		var elms = document.querySelectorAll(".na-posts-dropdown > a");
+  		if (elms.length) {
+  			[].forEach.call(elms, function (elm) {
+  				elm.addEventListener("click", function (e) {
+  					e.preventDefault();
+  					elm.parentNode.classList.remove("active");
+  					return false;
+  				});
+  			});
+  		}
+  		var elms = document.querySelectorAll(".wp-block-na-theme-blocks-accordion");
+  		if (elms.length) {
+  			[].forEach.call(elms, function (elm) {
+  				elm.addEventListener("click", function (e) {
+  					if (!e.target.classList.contains("block-title")) {
+  						return;
+  					}
+  					e.preventDefault();
+  					elm.classList.toggle("open");
+  					return false;
+  				});
+  			});
+  		}
+
+  		let doneBefore = localStorage ? localStorage.getItem("shown") : false;
+  		let expiry = 0;
+  		try {
+  			expiry = localStorage ? parseFloat(localStorage.getItem("expiry")) : new Date().getTime();
+  		} catch (e) {
+  			expiry = 0;
+  		}
+
+  		if (!doneBefore || expiry <= new Date().getTime()) {
+  			let delayLoading = window.delayLoading ? window.delayLoading : 1000;
+  			let endLoading = () => {
+  				setTimeout(function () {
+  					document.body.classList.remove("loading");
+  					setTimeout(() => {
+  						document.body.classList.add("loaded");
+  						var loadingOverlay = document.querySelector(".loading-overlay");
+
+  						if (loadingOverlay && loadingOverlay.parentNode) {
+  							loadingOverlay.parentNode.removeChild(loadingOverlay);
+  						}
+  					}, 2000);
+  				}, delayLoading);
+  				var pos = window.scrollY;
+  				if (pos > 100) {
+  					document.body.classList.add("scrolling");
+  				}
+  			};
+  			app &&
+  				app.ready(() => {
+  					endLoading();
+  					endLoading = () => {};
+  				});
+  			window.addEventListener("load", endLoading);
+
+  			if (localStorage) {
+  				localStorage.setItem("shown", "1");
+  				localStorage.setItem("expiry", (new Date().getTime() + 1000 * 60 * 60 * 24).toString());
+  			}
+  		} else {
+  			document.body.classList.remove("loading");
+  			document.body.classList.add("loaded");
+  			var pos = window.scrollY;
+  			if (pos > 100) {
+  				document.body.classList.add("scrolling");
+  			}
+  		}
+  		this.sectionObserver();
+  		this.initCounters();
+
+  		window["naTheme"] = this;
+
+  		document.body.dispatchEvent(
+  			new CustomEvent("theme-ready", {
+  				bubbles: true,
+  				detail: this,
+  			})
+  		);
+  	}
+  	__init() {this.mobileHandler = (section) => {
+  		this.scrollIfNeeded(section);
+  		return true;
+  	};}
+  	__init2() {this.desktopHandler = (section) => {
+  		if (this.scene) {
+  			var offset = this.scene.scrollOffset();
+  			var index = section.getAttribute("data-index");
+  			if (index) {
+  				this.scrollTo(offset * (index + 1));
+  			}
+  			return true;
+  		} else {
+  			this.scrollIfNeeded(section);
+  		}
+  		return true;
+  	};}
+
+  	__init3() {this.scrollHandler = () => {
+  		var hash = location.hash;
+  		if (hash.replace("#!", "").trim() == "" || hash.replace("#", "").trim() == "" || hash.split("/").length > 1) {
+  			return false;
+  		}
+  		var newHash = hash.replace("#!", "").replace("#", "");
+  		if (newHash.indexOf("section-") >= 0) {
+  			let elm = document.querySelector("#" + newHash);
+  			if (elm) {
+  				return this.handler(elm);
+  			} else {
+  				console.warn("#" + newHash + " was not found, did you forget to enable permalinks?");
+  				return false;
+  			}
+  		} else {
+  			let section = document.querySelector("#section-" + newHash);
+  			if (section) {
+  				return this.handler(section);
+  			} else if (document.querySelector("#" + newHash)) {
+  				return this.handler(document.querySelector("#" + newHash));
+  			}
+  		}
+  		_optionalChain([document, 'access', _21 => _21.querySelector, 'call', _22 => _22(".content"), 'optionalAccess', _23 => _23.classList, 'access', _24 => _24.remove, 'call', _25 => _25("active")]);
+
+  		let menu_items = document.querySelector("#menu-main-menu li a");
+  		let menu_item = document.querySelector('#menu-main-menu li a[href^="' + this.escapeRegExp(hash) + '"]');
+  		if (menu_item) {
+  			[].forEach.call(menu_items, (item) => {
+  				if (item != menu_item) item.classList.remove("active");
+  			});
+  			menu_item.classList.add("active");
+  		} else {
+  			var item = document.querySelector('a[href^="' + this.escapeRegExp(hash) + '"]');
+  			if (item && item.hasAttribute("no-hash")) {
+  				location.hash = "";
+  			}
+  		}
+
+  		return null;
+  	};}
+
+  	__init4() {this.trigger = (element, eventName, detail = null) => {
+  		let event = null;
+  		if (detail) {
+  			event = new CustomEvent(eventName, { detail });
+  		} else {
+  			event = new Event(eventName);
+  		}
+  		if (element instanceof NodeList) {
+  			element.forEach((elm) => {
+  				elm.dispatchEvent(event);
+  			});
+  		} else {
+  			element.dispatchEvent(event);
+  		}
+  	};}
+  	__init5() {this.countDecimals = function (val) {
+  		if (Math.floor(val) === val) return 0;
+  		return val.toString().split(".")[1].length || 0;
+  	};}
+
+  	__init6() {this.format = (num, separator) => String(num).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1" + separator);}
+
+  	initCounters() {
+  		document.body.addEventListener("section.in", (e) => {
+  			let { section } = e.detail;
+  			if (section) {
+  				let cntrs = section.querySelectorAll(".counter");
+  				if (!cntrs || cntrs.length == 0) {
+  					return;
+  				}
+  				[].forEach.call(cntrs, (cntr) => {
+  					if (cntr) {
+  						let elm = cntr.querySelector(".block-title");
+  						if (!elm) {
+  							return;
+  						}
+  						let settings = eval("(" + cntr.getAttribute("data-settings") + ")");
+  						let step = parseFloat(settings.step);
+  						let initVal = parseFloat(settings.start);
+  						let lastVal = parseFloat(settings.end);
+  						let totalDecimals = this.countDecimals(step);
+  						var formatOutput = (output) => {
+  							if (settings.seperator && settings.seperator != "") {
+  								output = this.format(output, settings.seperator);
+  							}
+  							return output;
+  						};
+  						var update = (progress) => {
+  							let output = (progress * (lastVal - initVal) + step).toFixed(totalDecimals);
+  							elm.innerHTML = settings.prefix + formatOutput(output) + settings.suffix;
+  							if (progress >= 1) {
+  								elm.innerHTML = settings.prefix + formatOutput(settings.end) + settings.suffix;
+  							}
+  						};
+
+  						counter(parseFloat(settings.duration), update);
+  					}
+  				});
+  			}
+  		});
+  		let counters = document.querySelectorAll(".counter .count");
+  		if (counters.length) {
+  			[].forEach.call(counters, (elm) => {
+  				let number = elm.innerHTML.match(/\d+/);
+  				let html = elm.innerHTML;
+  				if (number && number.length) {
+  					number.map((n) => {
+  						html = html.replace(n, '<span data-count="' + n + '" class="inner-counter inner-counter-' + n + '">' + n + "</span>");
+  					});
+  					elm.innerHTML = html;
+  				}
+  			});
+  		}
+  	}
+
+  	__init7() {this.getScrollPosition = (el) => ({
+  		x: el.pageXOffset !== undefined ? el.pageXOffset : el.scrollLeft,
+  		y: el.pageYOffset !== undefined ? el.pageYOffset : el.scrollTop,
+  	});}
+
+  	escapeRegExp(str) {
+  		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+  	}
+
+  	__init8() {this.sectionObserver = () => {
+  		if ("IntersectionObserver" in window) {
+  			const observer = new IntersectionObserver(
+  				(entries) => {
+  					entries.forEach((entry) => { 
+  						if (entry.intersectionRatio > 0) {
+  							entry.target.classList.add("in-once");
+  							entry.target.classList.add("in");
+  							entry.target.classList.remove("out");
+  							this.trigger(document.body, "section.in", { section: entry.target });
+  							// observer.unobserve(entry.target);
+  						} else {
+  							entry.target.classList.add("out");
+  							entry.target.classList.remove("in");
+  							this.trigger(document.body, "section.out", { section: entry.target });
+  						}
+  					});
+  				},
+  				{
+  					threshold: [0.4],
+  				}
+  			);
+  			let obsevables = document.querySelectorAll(".observe");
+  			let sections = document.querySelectorAll(".section");
+  			sections &&
+  				sections.forEach((section) => {
+  					if (section.getAttribute("is-observed") != "true") {
+  						section.setAttribute("is-observed", "true");
+  						observer.observe(section);
+  					}
+  				});
+  			obsevables &&
+  				obsevables.forEach((section) => {
+  					if (section.getAttribute("is-observed") != "true") {
+  						section.setAttribute("is-observed", "true");
+  						setTimeout(() => observer.observe(section), 2000);
+  					}
+  				});
+  		}
+  	};}
+
+  	scrollIfNeeded(elm, callback = null, offset = this.headerOffset) {
+  		let to = elm.offsetTop;
+  		this.scrollTo(to, callback, offset);
+  	}
+
+  	scrollTo(to, callback = null, offset = this.headerOffset) {
+  		let scroller = document.scrollingElement || document.body;
+  		if (scroller) {
+  			animate({
+  				from: scroller.scrollTop,
+  				to: to - offset,
+  				duration: 1000,
+  				ease: backOut,
+  				onUpdate: (value) => {
+  					scroller.scrollTop = value;
+  				},
+  				onComplete: callback,
+  			});
+  		}
+  	}
+  }
+
+  app.ready(function () {
+  	new Theme(options);
+  	try {
+  		var mac = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform);
+  		if (!mac) document.body.classList.add("custom-scrollbar");
+  	} catch (error) {}
+  });
+
+})();

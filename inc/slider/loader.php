@@ -40,8 +40,8 @@ class Slider
 
         $args = array(
             'labels'             => $labels,
-            'public'             => true,
-            'publicly_queryable' => true,
+            'public'             => false,
+            'publicly_queryable' => false,
             'show_ui'            => true,
             'show_in_menu'       => true,
             'query_var'          => true,

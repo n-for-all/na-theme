@@ -6,21 +6,18 @@
  */
 get_header();
 
-$filter = $_GET['filter'] ?? [];
-$filter_division = $filter['division'] ?? '';
-
 $tax = $wp_query->get_queried_object();
 
 ?>
-<header class="relative z-0 m-0 bg-no-repeat bg-cover entry-header pattern-1 align-content-center" style="background-image: url(http://gch.invision.ae/wp-content/uploads/2024/05/banner-1.jpg);">
+<header class="relative z-0 m-0 bg-no-repeat bg-cover entry-header pattern-1 align-content-center" style="background-image: url(/wp-content/uploads/2024/05/banner-1.jpg);">
     <div class="absolute bg-blue-700 h-[100%] lg:h-[100%] opacity-50 top-0 w-full z-0"></div>
     <div class="container relative z-10">
         <div class="row">
             <div class="flex flex-wrap ">
                 <div class="grid items-center grid-cols-1 md:grid-cols-2">
                     <div class="md:col-span-1">
-                        <h1 class="mb-4 text-3xl font-bold text-white">Tele-monitoring</h1>
-                        <p class="text-white ">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem. </p>
+                        <h1 class="mb-4 text-3xl font-bold text-white">Doctors</h1>
+                        <p class="text-white "></p>
                     </div>
                 </div>
             </div>

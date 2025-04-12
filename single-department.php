@@ -83,7 +83,7 @@ get_header(); ?>
                             </div>
                         </div>
                     </div>
-                </header><!-- .entry-header -->
+                </header>
                 <div class="sections-list alternating department-sections">
                     <section class="<?php $naTheme->classes('content', 'entry-content'); ?>">
                         <div class="container">

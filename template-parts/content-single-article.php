@@ -26,11 +26,12 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
             </figure>
         <?php endif; ?>
 
-    </header><!-- .entry-header -->
+    </header>
 
-    <div class="<?php $naTheme->classes('content', 'entry-content'); ?> <?php echo $naTheme->get_template_layout(get_the_ID(), 'container'); ?>">
-        <div class="row">
-            <div class="col-md-3 col-xs-12">
+    <div class="<?php $naTheme->classes('content', 'entry-content'); ?>">
+        <?php $naTheme->get_template_layout_before(get_the_ID(), 'container'); ?>
+        <div class="flex">
+            <div class="w-full lg:w-1/3">
                 <div class="news-related-categories">
                     <?php
                     $categories = get_terms(array(
@@ -46,7 +47,7 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                     </ul>
                 </div>
             </div>
-            <div class="col-md-9 col-xs-12">
+            <div class="w-full lg:w-2/3">
                 <div class="entry-inner-content">
                     <?php the_title('<h1 class="text-3xl entry-title">', '</h1>'); ?>
                     <?php
@@ -64,7 +65,8 @@ $featured_image = $naTheme->get_post_thumbnail(null, 'full');
                 </div>
             </div>
         </div>
-    </div><!-- .entry-content -->
+        <?php $naTheme->get_template_layout_after(get_the_ID(), 'container'); ?>
+    </div>
 
     <?php
     edit_post_link(

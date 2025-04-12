@@ -14,7 +14,7 @@
  * @subpackage Twenty_Fifteen
  * @since Twenty Fifteen 1.0
  */
-global $wp_query;
+global $wp_query, $naTheme;
 if ($wp_query->found_posts == 1) {
     $post = $wp_query->post;
     wp_redirect(get_permalink($post), 301);
@@ -35,7 +35,7 @@ get_header(); ?>
                 </figure>
             <?php endif; ?>
         </header>
-        <div class="archive-content container">
+        <div class="container archive-content">
             <h1 class="entry-title"> <?php echo single_cat_title('', false); ?></h1>
             <?php
             the_archive_description('<div class="taxonomy-description">', '</div>');

@@ -13,6 +13,6 @@ $background = $naTheme->get_post_thumbnail(null, 'full');
 	<div class="entry-inner inner full-height">
         <div class="entry-content full-height">
             <?php the_content(); ?>
-        </div><!-- .entry-content -->
+        </div>
 	</div>
 </div><!-- #post-## -->
