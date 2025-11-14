@@ -1241,7 +1241,7 @@ class Theme
         $part = $this->get_meta($post_id, '_wp_page_template_layout');
         return $part != '' ? $part : $default;
     }
-    function get_template_layout_before($post_id, $default)
+    function get_template_layout_before($post_id, $default = 'container')
     {
         $part = $this->get_template_layout($post_id, $default);
         switch ($part) {
@@ -1259,7 +1259,7 @@ class Theme
                 break;
         }
     }
-    function get_template_layout_after($post_id, $default)
+    function get_template_layout_after($post_id, $default = 'container')
     {
         $part = $this->get_template_layout($post_id, $default);
         switch ($part) {
