@@ -15,7 +15,7 @@
 <footer class="site-footer">
     <?php include(locate_template('/inc/sidebars/footer.php')); ?>
     <div class="subfooter">
-        <div class="px-4 mx-auto 2xl:container sm:px-6 lg:px-8">
+        <div class="px-4 mx-auto 2xl:container sm:px-6 lg:px-8 text-sm">
             <?php
             /**
              * Fires before the footer text for footer customization.

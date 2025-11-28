@@ -11,7 +11,7 @@
             <?php
             // Primary navigation menu.
             wp_nav_menu(array(
-                'menu_class'     => 'nav nav-menu bg-white nav-primary md:flex md:mr-auto lg:ml-10 lg:h-full space-y-0',
+                'menu_class'     => 'nav nav-menu nav-primary md:flex md:mr-auto lg:ml-10 lg:h-full space-y-0',
                 'theme_location' => 'primary',
                 'container'            => ''
             ));

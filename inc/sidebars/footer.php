@@ -13,8 +13,8 @@ $columns = $count > 0 ? intval(12 / $count) : 4;
 
 <section class="pt-8 bg-white site-footer">
     <div class="px-4 py-4 mx-auto 2xl:container sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3 xl:gap-24 lg:pb-14">
-            <div class="block w-full lg:max-w-full max-lg:mx-auto">
+        <div class="grid grid-cols-1 lg:gap-8 lg:grid-cols-3 xl:gap-24 lg:pb-6 items-center">
+            <div class="block lg:w-full lg:max-w-full max-lg:mx-auto">
                 <div class="flex flex-col w-full gap-8 lg:max-w-xs ">
                     <?php if ($naTheme->logo_footer) : ?>
                         <a href="<?php echo home_url("/"); ?>"><img src="<?php echo esc_url($naTheme->logo_footer); ?>" alt="" /></a>
